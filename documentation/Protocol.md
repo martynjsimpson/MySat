@@ -1,0 +1,431 @@
+# MySat Communication Protocol
+
+## Purpose
+
+This document defines the command and response protocol used by the MySat Arduino-based CubeSat simulator.
+
+The protocol is currently implemented over a serial connection for development and test, but it is designed to be transport-agnostic so the same logical protocol can later be carried over RF.
+## Design Goals
+
+The protocol is designed to be:
+
+- simple to type by hand during development
+- easy to parse on embedded hardware
+- structured enough to scale beyond the LED demo
+- readable in logs and serial consoles
+- suitable for a future ground-station parser
+## Command Structure
+
+Commands sent **to the device** use a fixed four-field comma-separated structure:
+
+```text
+COMMAND,TARGET,PARAMETER,VALUE
+```
+
+Each command is terminated by a newline.
+
+### Field meanings
+
+| Position | Field | Purpose |
+|---|---|---|
+| 1 | `COMMAND` | The action to perform |
+| 2 | `TARGET` | The subsystem, device, or command domain being addressed |
+| 3 | `PARAMETER` | The property or aspect of the target being acted on |
+| 4 | `VALUE` | The symbolic or numeric value to apply |
+
+### Examples
+
+```text
+SET,LED,ENABLE,TRUE
+SET,LED,ENABLE,FALSE
+SET,LED,STATE,ON
+SET,LED,STATE,OFF
+SET,TELEMETRY,ENABLE,TRUE
+SET,TELEMETRY,ENABLE,FALSE
+SET,TELEMETRY,INTERVAL_S,5
+GET,LED,NONE,NONE
+GET,TELEMETRY,NONE,NONE
+PING,NONE,NONE,NONE
+```
+
+---
+
+## Response Structure
+
+All lines sent **from the device** are timestamped.
+
+General outbound format:
+
+```text
+TIME,TYPE,...
+```
+
+Where:
+
+- `TIME` = elapsed seconds since device boot
+- `TYPE` = `ACK`, `ERR`, or `TLM`
+
+### Timestamp meaning
+
+The device uses the onboard RTC and sets its internal time base to zero during startup.
+
+The first field in every outbound message is therefore:
+
+- not wall-clock time
+- not a real Unix timestamp
+- elapsed seconds since boot
+
+This should be interpreted as:
+
+- mission elapsed time
+- boot-relative time
+- seconds since startup
+
+---
+
+## Response Types
+
+### ACK
+
+Acknowledgement lines indicate that a command was accepted and applied.
+
+Format:
+
+```text
+TIME,ACK,TARGET,VALUE
+```
+
+Examples:
+
+```text
+12,ACK,LED,ENABLE
+13,ACK,LED,ON
+20,ACK,TELEMETRY,INTERVAL_S
+25,ACK,PING,PONG
+```
+
+### ERR
+
+Error lines indicate that a command was rejected, malformed, or invalid.
+
+Format:
+
+```text
+TIME,ERR,ERROR_CODE
+```
+
+Examples:
+
+```text
+30,ERR,BAD_FORMAT
+31,ERR,BAD_VALUE
+32,ERR,BAD_PARAMETER
+33,ERR,UNKNOWN_TARGET
+34,ERR,LED_DISABLED
+```
+
+### TLM
+
+Telemetry lines report current subsystem state.
+
+Format:
+
+```text
+TIME,TLM,TARGET,PARAMETER,VALUE
+```
+
+Examples:
+
+```text
+40,TLM,LED,ENABLE,FALSE
+40,TLM,LED,STATE,OFF
+40,TLM,TELEMETRY,ENABLE,TRUE
+40,TLM,TELEMETRY,INTERVAL_S,5
+```
+
+---
+
+## Command Types
+
+### Implemented command types
+
+| Token | Meaning |
+|---|---|
+| `SET` | Apply a value to a target/parameter |
+| `GET` | Request telemetry/status for a target |
+| `PING` | Confirm parser and communications path are working |
+
+### Reserved command types
+
+| Token | Intended future meaning |
+|---|---|
+| `RESET` | Reset a subsystem or service |
+| `SAVE` | Persist configuration or logs |
+
+---
+
+## Target Types
+
+### Implemented targets
+
+| Token | Meaning |
+|---|---|
+| `LED` | Built-in LED subsystem for development and protocol testing |
+| `TELEMETRY` | Telemetry stream control/configuration target |
+| `NONE` | Placeholder target when not applicable |
+
+### Reserved targets
+
+| Token | Intended future meaning |
+|---|---|
+| `MODE` | Spacecraft operating mode |
+| `STATUS` | General health or summary status |
+| `RADIO` | Communications subsystem |
+| `POWER` | Power domain or EPS-like functions |
+| `PAYLOAD` | Payload subsystem |
+| `THERMAL` | Thermal subsystem |
+| `LOG` | Logs or event store |
+| `WATCHDOG` | Watchdog or fault-monitoring subsystem |
+| `UPTIME` | System uptime reporting |
+
+---
+
+## Parameter Types
+
+### Implemented / defined parameters
+
+| Token | Meaning |
+|---|---|
+| `ENABLE` | Whether a feature or subsystem is allowed to operate |
+| `STATE` | Current state of a target |
+| `INTERVAL_S` | Interval in seconds |
+| `NONE` | Placeholder parameter when not applicable |
+
+### Reserved parameters
+
+| Token | Intended future meaning |
+|---|---|
+| `MODE` | Current operating mode |
+| `HEALTH` | Health/diagnostic condition |
+| `SECONDS` | Elapsed seconds value |
+
+---
+
+## Value Types
+
+Values may be **symbolic** or **numeric**.
+
+### Symbolic values
+
+| Token | Meaning |
+|---|---|
+| `TRUE` | Boolean true / enabled condition |
+| `FALSE` | Boolean false / disabled condition |
+| `ON` | Powered or active output state |
+| `OFF` | Powered-down or inactive output state |
+| `NONE` | Placeholder value |
+
+### Reserved symbolic values
+
+| Token | Intended future meaning |
+|---|---|
+| `ENABLE` | Reserved symbolic state |
+| `DISABLE` | Reserved symbolic state |
+| `SAFE` | Safe mode |
+| `NORMAL` | Nominal operating mode |
+| `LOW_POWER` | Reduced power mode |
+| `ACTIVE` | Running/active state |
+| `IDLE` | Idle/waiting state |
+| `OK` | Healthy/nominal status |
+| `FAIL` | Fault/failure status |
+
+### Numeric values
+
+Numeric values are currently used for command parameters that take an integer rather than a symbolic token.
+
+Example:
+
+```text
+SET,TELEMETRY,INTERVAL_S,5
+```
+
+In this case:
+
+- `COMMAND` = `SET`
+- `TARGET` = `TELEMETRY`
+- `PARAMETER` = `INTERVAL_S`
+- `VALUE` = numeric integer `5`
+
+---
+
+## Usage Guidance
+
+### When to use `ENABLE` vs `STATE`
+
+Use `ENABLE` when controlling whether something is permitted to operate.
+
+Examples:
+
+```text
+SET,LED,ENABLE,TRUE
+SET,TELEMETRY,ENABLE,FALSE
+```
+
+Use `STATE` when controlling or reporting the current operating/output state.
+
+Examples:
+
+```text
+SET,LED,STATE,ON
+TLM,LED,STATE,OFF
+```
+
+### When to use `TRUE` / `FALSE`
+
+Use `TRUE` / `FALSE` for boolean conditions.
+
+Examples:
+
+```text
+SET,LED,ENABLE,TRUE
+TLM,LED,ENABLE,FALSE
+```
+
+### When to use `ON` / `OFF`
+
+Use `ON` / `OFF` for power-like or state-like conditions.
+
+Examples:
+
+```text
+SET,LED,STATE,ON
+TLM,LED,STATE,OFF
+```
+
+### When to use `NONE`
+
+Use `NONE` only as a placeholder when a field is required by the protocol structure but has no meaningful content.
+
+Examples:
+
+```text
+GET,LED,NONE,NONE
+GET,TELEMETRY,NONE,NONE
+PING,NONE,NONE,NONE
+```
+
+---
+
+## Implemented Behaviour
+
+## LED target
+
+The LED subsystem models two separate concepts:
+
+1. **Enable state** — whether LED operation is permitted
+2. **Output state** — whether the LED is currently driven on or off
+
+### Supported LED commands
+
+```text
+SET,LED,ENABLE,TRUE
+SET,LED,ENABLE,FALSE
+SET,LED,STATE,ON
+SET,LED,STATE,OFF
+GET,LED,NONE,NONE
+```
+
+### LED rules
+
+| Command | Behaviour |
+|---|---|
+| `SET,LED,ENABLE,TRUE` | Allows LED operation |
+| `SET,LED,ENABLE,FALSE` | Disables LED operation and forces LED off |
+| `SET,LED,STATE,ON` | Turns LED on, but only if enabled |
+| `SET,LED,STATE,OFF` | Turns LED off |
+| `GET,LED,NONE,NONE` | Returns current LED telemetry |
+
+The invalid state combination **disabled + on** should never occur.
+
+## TELEMETRY target
+
+The telemetry subsystem currently controls periodic telemetry streaming.
+
+### Supported telemetry commands
+
+```text
+SET,TELEMETRY,ENABLE,TRUE
+SET,TELEMETRY,ENABLE,FALSE
+SET,TELEMETRY,INTERVAL_S,5
+GET,TELEMETRY,NONE,NONE
+```
+
+### Telemetry rules
+
+| Command | Behaviour |
+|---|---|
+| `SET,TELEMETRY,ENABLE,TRUE` | Enables periodic telemetry |
+| `SET,TELEMETRY,ENABLE,FALSE` | Disables periodic telemetry |
+| `SET,TELEMETRY,INTERVAL_S,n` | Sets telemetry interval in seconds |
+| `GET,TELEMETRY,NONE,NONE` | Returns telemetry configuration/status |
+
+---
+
+## Error Codes
+
+| Error Code | Meaning |
+|---|---|
+| `BAD_FORMAT` | Command did not match expected field structure |
+| `BAD_VALUE` | Value was invalid for the given command/target/parameter |
+| `BAD_PARAMETER` | Parameter was invalid for the given target |
+| `UNKNOWN_CMD` | Command token was not recognised |
+| `UNKNOWN_TARGET` | Target token was not recognised |
+| `LED_DISABLED` | LED was commanded on while disabled |
+| `OVERFLOW` | Input buffer overflowed before newline was received |
+
+---
+
+## Current Implemented Scope
+
+Currently implemented:
+
+```text
+SET,LED,ENABLE,TRUE
+SET,LED,ENABLE,FALSE
+SET,LED,STATE,ON
+SET,LED,STATE,OFF
+SET,TELEMETRY,ENABLE,TRUE
+SET,TELEMETRY,ENABLE,FALSE
+SET,TELEMETRY,INTERVAL_S,<integer>
+GET,LED,NONE,NONE
+GET,TELEMETRY,NONE,NONE
+PING,NONE,NONE,NONE
+```
+
+---
+
+## Example Session
+
+Commands sent to device:
+
+```text
+PING,NONE,NONE,NONE
+SET,LED,ENABLE,TRUE
+SET,LED,STATE,ON
+GET,LED,NONE,NONE
+SET,TELEMETRY,INTERVAL_S,10
+GET,TELEMETRY,NONE,NONE
+```
+
+Possible responses:
+
+```text
+0,ACK,PING,PONG
+1,ACK,LED,ENABLE
+2,ACK,LED,ON
+3,TLM,LED,ENABLE,TRUE
+3,TLM,LED,STATE,ON
+4,ACK,TELEMETRY,INTERVAL_S
+5,TLM,TELEMETRY,ENABLE,TRUE
+5,TLM,TELEMETRY,INTERVAL_S,10
+```
