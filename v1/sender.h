@@ -1,0 +1,23 @@
+void sendAck(const char *target, const char *value) {
+  Serial.print(getTimestamp());
+  Serial.print(",ACK,");
+  Serial.print(target);
+  Serial.print(",");
+  Serial.println(value);
+}
+
+void sendError(const char *errorCode) {
+  Serial.print(getTimestamp());
+  Serial.print(",ERR,");
+  Serial.println(errorCode);
+}
+
+void sendTelemetry(const char *target, const char *parameter, const char *value) {
+  Serial.print(getTimestamp());
+  Serial.print(",TLM,");
+  Serial.print(target);
+  Serial.print(",");
+  Serial.print(parameter);
+  Serial.print(",");
+  Serial.println(value);
+}
