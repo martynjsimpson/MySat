@@ -2,14 +2,12 @@
 #include "rtc.h"
 #include "sender.h"
 #include "led.h"
+#include "pmic.h"
+#include "telemetry.h"
 
 const size_t BUFFER_SIZE = 96;
 char inputBuffer[BUFFER_SIZE];
 size_t inputPos = 0;
-
-bool telemetryEnabled = true;
-unsigned long telemetryIntervalSeconds = 5;
-unsigned long lastTelemetryTime = 0;
 
 void readSerialCommands();
 void processCommand(char *line);
@@ -30,11 +28,12 @@ void reportTelemetryStatus();
 void setup() {
   setupRtc();
   setupLed();
+  setupBattery();
 
   Serial.begin(115200);
-  while (!Serial) {
-    ;
-  }
+  //while (!Serial) {
+  //  ;
+  //}
 
   lastTelemetryTime = getTimestamp();
 
@@ -235,43 +234,11 @@ void handleGet(const Command &cmd) {
       reportTelemetryStatus();
       break;
 
+    case TARGET_BATTERY:
+      //
+      break;
     default:
       sendError("UNKNOWN_TARGET");
-      break;
-  }
-}
-
-void handleSetTelemetry(const Command &cmd) {
-  switch (cmd.parameter) {
-    case PARAM_ENABLE:
-      if (cmd.value == VALUE_TRUE) {
-        telemetryEnabled = true;
-        sendAck("TELEMETRY", "ENABLE");
-      } else if (cmd.value == VALUE_FALSE) {
-        telemetryEnabled = false;
-        sendAck("TELEMETRY", "DISABLE");
-      } else {
-        sendError("BAD_VALUE");
-      }
-      break;
-
-    case PARAM_INTERVAL_S:
-      if (!cmd.hasNumericValue) {
-        sendError("BAD_VALUE");
-        return;
-      }
-
-      if (cmd.numericValue < 1 || cmd.numericValue > 3600) {
-        sendError("BAD_VALUE");
-        return;
-      }
-
-      telemetryIntervalSeconds = cmd.numericValue;
-      sendAck("TELEMETRY", "INTERVAL_S");
-      break;
-
-    default:
-      sendError("BAD_PARAMETER");
       break;
   }
 }
@@ -284,27 +251,4 @@ void handlePing(const Command &cmd) {
   } else {
     sendError("BAD_FORMAT");
   }
-}
-
-void sendTelemetrySnapshot() {
-  reportLedStatus();
-  reportTelemetryStatus();
-}
-
-void handlePeriodicTelemetry() {
-  if (!telemetryEnabled) {
-    return;
-  }
-
-  unsigned long now = getTimestamp();
-
-  if ((now - lastTelemetryTime) >= telemetryIntervalSeconds) {
-    lastTelemetryTime = now;
-    sendTelemetrySnapshot();
-  }
-}
-
-void reportTelemetryStatus() {
-  sendTelemetry("TELEMETRY", "ENABLE", telemetryEnabled ? "TRUE" : "FALSE");
-  sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
 }
