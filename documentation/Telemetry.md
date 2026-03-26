@@ -1,3 +1,5 @@
+# Telemetry.md
+
 # MySat Telemetry Specification
 
 ## Purpose
@@ -31,6 +33,11 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 140,TLM,LED,STATE,OFF
 140,TLM,TELEMETRY,ENABLE,TRUE
 140,TLM,TELEMETRY,INTERVAL_S,5
+140,TLM,BATTERY,AVAILABLE,TRUE
+140,TLM,BATTERY,ON_BATTERY,FALSE
+140,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+140,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+140,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
 
 ---
@@ -76,6 +83,7 @@ At present, the periodic snapshot includes:
 
 - LED status
 - telemetry configuration/status
+- battery / PMIC status
 
 Typical snapshot:
 
@@ -84,6 +92,11 @@ Typical snapshot:
 200,TLM,LED,STATE,ON
 200,TLM,TELEMETRY,ENABLE,TRUE
 200,TLM,TELEMETRY,INTERVAL_S,5
+200,TLM,BATTERY,AVAILABLE,TRUE
+200,TLM,BATTERY,ON_BATTERY,FALSE
+200,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+200,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+200,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
 
 ---
@@ -157,16 +170,97 @@ Examples:
 
 ---
 
+## BATTERY target
+
+### `BATTERY,AVAILABLE`
+
+Reports whether the battery is detected / available.
+
+Value type:
+- `TRUE`
+- `FALSE`
+
+Examples:
+
+```text
+240,TLM,BATTERY,AVAILABLE,TRUE
+240,TLM,BATTERY,AVAILABLE,FALSE
+```
+
+### `BATTERY,ON_BATTERY`
+
+Reports whether the system is currently running from battery.
+
+Value type:
+- `TRUE`
+- `FALSE`
+
+Examples:
+
+```text
+241,TLM,BATTERY,ON_BATTERY,TRUE
+241,TLM,BATTERY,ON_BATTERY,FALSE
+```
+
+### `BATTERY,CHARGE_CURRENT_A`
+
+Reports charge current in amps.
+
+Value type:
+- floating-point number
+
+Examples:
+
+```text
+242,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+242,TLM,BATTERY,CHARGE_CURRENT_A,0.125
+```
+
+### `BATTERY,CHARGE_VOLTAGE_V`
+
+Reports charge voltage in volts.
+
+Value type:
+- floating-point number
+
+Examples:
+
+```text
+243,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+243,TLM,BATTERY,CHARGE_VOLTAGE_V,3.950
+```
+
+### `BATTERY,CHARGE_PERCENT_P`
+
+Reports approximate battery charge percentage.
+
+Value type:
+- integer percentage
+
+Examples:
+
+```text
+244,TLM,BATTERY,CHARGE_PERCENT_P,87
+244,TLM,BATTERY,CHARGE_PERCENT_P,42
+```
+
+---
+
 ## Telemetry Parameter Reference
 
 This table is intended for a ground-station developer or future parser implementation.
 
-| Target      | Parameter    | Meaning                               | Value Type       | Example                          |
-| ----------- | ------------ | ------------------------------------- | ---------------- | -------------------------------- |
-| `LED`       | `ENABLE`     | Whether LED operation is permitted    | `TRUE` / `FALSE` | `140,TLM,LED,ENABLE,FALSE`       |
-| `LED`       | `STATE`      | Current LED output state              | `ON` / `OFF`     | `140,TLM,LED,STATE,OFF`          |
-| `TELEMETRY` | `ENABLE`     | Whether periodic telemetry is enabled | `TRUE` / `FALSE` | `140,TLM,TELEMETRY,ENABLE,TRUE`  |
-| `TELEMETRY` | `INTERVAL_S` | Telemetry interval in seconds         | unsigned integer | `140,TLM,TELEMETRY,INTERVAL_S,5` |
+| Target | Parameter | Meaning | Value Type | Example |
+|---|---|---|---|---|
+| `LED` | `ENABLE` | Whether LED operation is permitted | `TRUE` / `FALSE` | `140,TLM,LED,ENABLE,FALSE` |
+| `LED` | `STATE` | Current LED output state | `ON` / `OFF` | `140,TLM,LED,STATE,OFF` |
+| `TELEMETRY` | `ENABLE` | Whether periodic telemetry is enabled | `TRUE` / `FALSE` | `140,TLM,TELEMETRY,ENABLE,TRUE` |
+| `TELEMETRY` | `INTERVAL_S` | Telemetry interval in seconds | unsigned integer | `140,TLM,TELEMETRY,INTERVAL_S,5` |
+| `BATTERY` | `AVAILABLE` | Whether battery hardware is present | `TRUE` / `FALSE` | `140,TLM,BATTERY,AVAILABLE,TRUE` |
+| `BATTERY` | `ON_BATTERY` | Whether the system is running from battery | `TRUE` / `FALSE` | `140,TLM,BATTERY,ON_BATTERY,FALSE` |
+| `BATTERY` | `CHARGE_CURRENT_A` | Charge current in amps | float | `140,TLM,BATTERY,CHARGE_CURRENT_A,0.500` |
+| `BATTERY` | `CHARGE_VOLTAGE_V` | Charge voltage in volts | float | `140,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200` |
+| `BATTERY` | `CHARGE_PERCENT_P` | Approximate battery percentage | integer | `140,TLM,BATTERY,CHARGE_PERCENT_P,87` |
 
 ---
 
@@ -178,7 +272,7 @@ A ground station should parse telemetry as:
 - `TYPE` = must equal `TLM`
 - `TARGET` = subsystem key
 - `PARAMETER` = attribute key
-- `VALUE` = symbolic or numeric value
+- `VALUE` = symbolic, integer, or floating-point value
 
 Recommended internal keying model:
 
@@ -200,6 +294,11 @@ or, if keeping history:
 | `LED,STATE` | on/off icon or status badge |
 | `TELEMETRY,ENABLE` | stream active indicator |
 | `TELEMETRY,INTERVAL_S` | numeric display |
+| `BATTERY,AVAILABLE` | battery present indicator |
+| `BATTERY,ON_BATTERY` | running on battery indicator |
+| `BATTERY,CHARGE_CURRENT_A` | numeric current display |
+| `BATTERY,CHARGE_VOLTAGE_V` | numeric voltage display |
+| `BATTERY,CHARGE_PERCENT_P` | battery percentage display / gauge |
 
 ---
 
@@ -220,10 +319,13 @@ A parser should:
 ```text
 100,TLM,LED,ENABLE,FALSE
 100,TLM,LED,STATE,OFF
-105,TLM,LED,ENABLE,TRUE
-105,TLM,LED,STATE,ON
 110,TLM,TELEMETRY,ENABLE,TRUE
 110,TLM,TELEMETRY,INTERVAL_S,5
+120,TLM,BATTERY,AVAILABLE,TRUE
+120,TLM,BATTERY,ON_BATTERY,FALSE
+120,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+120,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+120,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
 
 ### Suggested Serial Studio widget set
@@ -235,6 +337,11 @@ For the current project, useful widgets would be:
 - LED state
 - telemetry enabled
 - telemetry interval seconds
+- battery available
+- on battery
+- charge current
+- charge voltage
+- charge percentage
 - last ACK
 - last ERR
 
