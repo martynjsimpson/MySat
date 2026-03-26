@@ -37,4 +37,15 @@ void sendTelemetryULong(const char *target, const char *parameter, unsigned long
   Serial.println(value);
 }
 
+void sendTelemetryFloat(const char *target, const char *parameter, float value, int decimals = 3) {
+  Serial.print(getTimestamp());
+  Serial.print(",TLM,");
+  Serial.print(target);
+  Serial.print(",");
+  Serial.print(parameter);
+  Serial.print(",");
+
+  Serial.println(value, decimals);
+}
+
 #endif
