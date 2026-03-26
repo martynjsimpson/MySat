@@ -1,3 +1,5 @@
+# Protocol.md
+
 # MySat Communication Protocol
 
 ## Purpose
@@ -5,6 +7,9 @@
 This document defines the command and response protocol used by the MySat Arduino-based CubeSat simulator.
 
 The protocol is currently implemented over a serial connection for development and test, but it is designed to be transport-agnostic so the same logical protocol can later be carried over RF.
+
+---
+
 ## Design Goals
 
 The protocol is designed to be:
@@ -14,6 +19,9 @@ The protocol is designed to be:
 - structured enough to scale beyond the LED demo
 - readable in logs and serial consoles
 - suitable for a future ground-station parser
+
+---
+
 ## Command Structure
 
 Commands sent **to the device** use a fixed four-field comma-separated structure:
@@ -45,6 +53,7 @@ SET,TELEMETRY,ENABLE,FALSE
 SET,TELEMETRY,INTERVAL_S,5
 GET,LED,NONE,NONE
 GET,TELEMETRY,NONE,NONE
+GET,BATTERY,NONE,NONE
 PING,NONE,NONE,NONE
 ```
 
@@ -141,6 +150,11 @@ Examples:
 40,TLM,LED,STATE,OFF
 40,TLM,TELEMETRY,ENABLE,TRUE
 40,TLM,TELEMETRY,INTERVAL_S,5
+40,TLM,BATTERY,AVAILABLE,TRUE
+40,TLM,BATTERY,ON_BATTERY,FALSE
+40,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+40,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+40,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
 
 ---
@@ -172,6 +186,7 @@ Examples:
 |---|---|
 | `LED` | Built-in LED subsystem for development and protocol testing |
 | `TELEMETRY` | Telemetry stream control/configuration target |
+| `BATTERY` | Battery / PMIC telemetry target |
 | `NONE` | Placeholder target when not applicable |
 
 ### Reserved targets
@@ -200,6 +215,16 @@ Examples:
 | `STATE` | Current state of a target |
 | `INTERVAL_S` | Interval in seconds |
 | `NONE` | Placeholder parameter when not applicable |
+
+### Telemetry-only parameters currently emitted
+
+| Token | Meaning |
+|---|---|
+| `AVAILABLE` | Whether battery hardware is detected / available |
+| `ON_BATTERY` | Whether the system is currently running from battery |
+| `CHARGE_CURRENT_A` | Charge current in amps |
+| `CHARGE_VOLTAGE_V` | Charge voltage in volts |
+| `CHARGE_PERCENT_P` | Approximate battery charge percentage |
 
 ### Reserved parameters
 
@@ -256,6 +281,17 @@ In this case:
 - `PARAMETER` = `INTERVAL_S`
 - `VALUE` = numeric integer `5`
 
+Telemetry values may also be numeric or floating-point.
+
+Examples:
+
+```text
+40,TLM,TELEMETRY,INTERVAL_S,5
+40,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+40,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+40,TLM,BATTERY,CHARGE_PERCENT_P,87
+```
+
 ---
 
 ## Usage Guidance
@@ -289,6 +325,7 @@ Examples:
 ```text
 SET,LED,ENABLE,TRUE
 TLM,LED,ENABLE,FALSE
+TLM,BATTERY,AVAILABLE,TRUE
 ```
 
 ### When to use `ON` / `OFF`
@@ -311,6 +348,7 @@ Examples:
 ```text
 GET,LED,NONE,NONE
 GET,TELEMETRY,NONE,NONE
+GET,BATTERY,NONE,NONE
 PING,NONE,NONE,NONE
 ```
 
@@ -369,6 +407,24 @@ GET,TELEMETRY,NONE,NONE
 | `SET,TELEMETRY,INTERVAL_S,n` | Sets telemetry interval in seconds |
 | `GET,TELEMETRY,NONE,NONE` | Returns telemetry configuration/status |
 
+## BATTERY target
+
+The battery / PMIC subsystem is currently read-only from the command side.
+
+### Supported battery commands
+
+```text
+GET,BATTERY,NONE,NONE
+```
+
+### Battery rules
+
+| Command | Behaviour |
+|---|---|
+| `GET,BATTERY,NONE,NONE` | Returns current battery telemetry |
+
+Battery telemetry is also included in the periodic telemetry snapshot.
+
 ---
 
 ## Error Codes
@@ -399,6 +455,7 @@ SET,TELEMETRY,ENABLE,FALSE
 SET,TELEMETRY,INTERVAL_S,<integer>
 GET,LED,NONE,NONE
 GET,TELEMETRY,NONE,NONE
+GET,BATTERY,NONE,NONE
 PING,NONE,NONE,NONE
 ```
 
@@ -415,6 +472,7 @@ SET,LED,STATE,ON
 GET,LED,NONE,NONE
 SET,TELEMETRY,INTERVAL_S,10
 GET,TELEMETRY,NONE,NONE
+GET,BATTERY,NONE,NONE
 ```
 
 Possible responses:
@@ -428,4 +486,9 @@ Possible responses:
 4,ACK,TELEMETRY,INTERVAL_S
 5,TLM,TELEMETRY,ENABLE,TRUE
 5,TLM,TELEMETRY,INTERVAL_S,10
+6,TLM,BATTERY,AVAILABLE,TRUE
+6,TLM,BATTERY,ON_BATTERY,FALSE
+6,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+6,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+6,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
