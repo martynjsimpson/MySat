@@ -1,4 +1,8 @@
+#ifndef RTC_HELPER_H
+#define RTC_HELPER_H
+
 #include <RTCZero.h>
+
 RTCZero rtc;
 
 void setupRtc() {
@@ -9,3 +13,5 @@ void setupRtc() {
 unsigned long getTimestamp() {
   return rtc.getY2kEpoch();
 }
+
+#endif

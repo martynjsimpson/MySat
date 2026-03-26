@@ -1,6 +1,11 @@
+#ifndef LED_HELPER_H
+#define LED_HELPER_H
+
+#include <Arduino.h>
+
 const int LED_PIN = LED_BUILTIN;
 
-// initial states
+// Control policy state
 bool ledEnabled = false;
 
 void setupLed() {
@@ -12,40 +17,42 @@ void setLed(bool on) {
   digitalWrite(LED_PIN, on ? HIGH : LOW);
 }
 
-void handleSetLed(ValueType value) {
-  switch (value) {
-    case VALUE_ENABLE:
-      ledEnabled = true;
-      sendAck("LED","ENABLE");
-      break;
-
-    case VALUE_DISABLE:
-      ledEnabled = false;
-      setLed(false);
-      sendAck("LED","DISABLE");
-      break;
-
-    case VALUE_ON:
-      if (!ledEnabled) {
-        sendError("LED_DISABLED");
-        return;
+void handleSetLed(const Command &cmd) {
+  switch (cmd.parameter) {
+    case PARAM_ENABLE:
+      if (cmd.value == VALUE_TRUE) {
+        ledEnabled = true;
+        sendAck("LED", "ENABLE");
+      } else if (cmd.value == VALUE_FALSE) {
+        ledEnabled = false;
+        setLed(false);
+        sendAck("LED", "DISABLE");
+      } else {
+        sendError("BAD_VALUE");
       }
-      setLed(true);
-      sendAck("LED","ON");
       break;
 
-    case VALUE_OFF:
-      setLed(false);
-      sendAck("LED","OFF");
+    case PARAM_STATE:
+      if (cmd.value == VALUE_ON) {
+        if (!ledEnabled) {
+          sendError("LED_DISABLED");
+          return;
+        }
+        setLed(true);
+        sendAck("LED", "ON");
+      } else if (cmd.value == VALUE_OFF) {
+        setLed(false);
+        sendAck("LED", "OFF");
+      } else {
+        sendError("BAD_VALUE");
+      }
       break;
 
     default:
-      sendError("BAD_VALUE");
+      sendError("BAD_PARAMETER");
       break;
   }
 }
-
-
 
 void reportLedStatus() {
   int pinState = digitalRead(LED_PIN);
@@ -53,3 +60,5 @@ void reportLedStatus() {
   sendTelemetry("LED", "ENABLE", ledEnabled ? "TRUE" : "FALSE");
   sendTelemetry("LED", "STATE", pinState == HIGH ? "ON" : "OFF");
 }
+
+#endif

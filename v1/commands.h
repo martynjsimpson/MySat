@@ -1,3 +1,8 @@
+#ifndef COMMANDS_H
+#define COMMANDS_H
+
+#include <Arduino.h>
+
 enum CommandType {
   CMD_UNKNOWN = 0,
 
@@ -6,7 +11,7 @@ enum CommandType {
   CMD_GET,
   CMD_PING,
 
-  // RESERVED FUTURE
+  // Reserved future
   CMD_RESET,
   CMD_SAVE
 };
@@ -19,7 +24,7 @@ enum TargetType {
   TARGET_LED,
   TARGET_TELEMETRY,
 
-  // RESERVED FUTURE
+  // Reserved future
   TARGET_MODE,
   TARGET_STATUS,
   TARGET_RADIO,
@@ -31,6 +36,19 @@ enum TargetType {
   TARGET_UPTIME
 };
 
+enum ParameterType {
+  PARAM_UNKNOWN = 0,
+  PARAM_NONE,
+
+  // General command / telemetry parameters
+  PARAM_STATE,
+  PARAM_ENABLE,
+  PARAM_MODE,
+  PARAM_HEALTH,
+  PARAM_INTERVAL_S,
+  PARAM_SECONDS
+};
+
 enum ValueType {
   VALUE_UNKNOWN = 0,
 
@@ -38,8 +56,10 @@ enum ValueType {
   VALUE_ON,
   VALUE_OFF,
   VALUE_NONE,
+  VALUE_TRUE,
+  VALUE_FALSE,
 
-  // RESERVED FUTUTRE
+  // Reserved future
   VALUE_ENABLE,
   VALUE_DISABLE,
   VALUE_SAFE,
@@ -53,20 +73,13 @@ enum ValueType {
   VALUE_FAIL
 };
 
-enum ParameterType {
-  PARAM_UNKNOWN = 0,
-
-  // General telemetry parameters
-  PARAM_STATE,
-  PARAM_ENABLE,
-  PARAM_MODE,
-  PARAM_HEALTH,
-  PARAM_INTERVAL_S,
-  PARAM_SECONDS
-};
-
 struct Command {
   CommandType type;
   TargetType target;
+  ParameterType parameter;
   ValueType value;
+  unsigned long numericValue;
+  bool hasNumericValue;
 };
+
+#endif
