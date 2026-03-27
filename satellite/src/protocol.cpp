@@ -95,6 +95,8 @@ namespace
       return PARAM_HEALTH;
     if (strcmp(token, "INTERVAL_S") == 0)
       return PARAM_INTERVAL_S;
+    if (strcmp(token, "TELEMETRY") == 0)
+      return PARAM_TELEMETRY;
     if (strcmp(token, "SECONDS") == 0)
       return PARAM_SECONDS;
     if (strcmp(token, "COLOR") == 0)
@@ -171,6 +173,12 @@ namespace
 
   void handleSet(const Command &cmd)
   {
+    if (cmd.parameter == PARAM_TELEMETRY && cmd.target != TARGET_TELEMETRY)
+    {
+      handleSetTargetTelemetry(cmd);
+      return;
+    }
+
     switch (cmd.target)
     {
     case TARGET_LED:
@@ -315,11 +323,15 @@ void setupProtocol()
   Serial.println("Commands:");
   Serial.println("SET,LED,ENABLE,TRUE");
   Serial.println("SET,LED,ENABLE,FALSE");
+  Serial.println("SET,LED,TELEMETRY,ENABLE");
+  Serial.println("SET,LED,TELEMETRY,DISABLE");
   Serial.println("SET,LED,STATE,ON");
   Serial.println("SET,LED,STATE,OFF");
   Serial.println("SET,LED,COLOR,RED");
   Serial.println("SET,LED,COLOR,GREEN");
   Serial.println("SET,LED,COLOR,BLUE");
+  Serial.println("SET,BATTERY,TELEMETRY,ENABLE");
+  Serial.println("SET,BATTERY,TELEMETRY,DISABLE");
   Serial.println("SET,TELEMETRY,ENABLE,TRUE");
   Serial.println("SET,TELEMETRY,ENABLE,FALSE");
   Serial.println("SET,TELEMETRY,INTERVAL_S,5");

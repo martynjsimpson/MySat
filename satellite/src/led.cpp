@@ -6,6 +6,7 @@
 #include <utility/wifi_drv.h>
 
 #include "sender.h"
+#include "telemetry.h"
 
 namespace
 {
@@ -175,6 +176,7 @@ void handleSetLed(const Command &cmd)
 
 void reportLedStatus()
 {
+  sendTelemetry("LED", "TELEMETRY", isTargetTelemetryEnabled(TARGET_LED) ? "TRUE" : "FALSE");
   sendTelemetry("LED", "ENABLE", ledEnabled ? "TRUE" : "FALSE");
   sendTelemetry("LED", "STATE", ledStateOn ? "ON" : "OFF");
   sendTelemetry("LED", "COLOR", colorToToken(ledColor));

@@ -4,6 +4,7 @@
 #include <BQ24195.h>
 
 #include "sender.h"
+#include "telemetry.h"
 
 namespace {
 float rawADC = 0.0f;
@@ -47,6 +48,7 @@ void setupBattery() {
 void reportBatteryStatus() {
   updateBatteryValues();
 
+  sendTelemetry("BATTERY", "TELEMETRY", isTargetTelemetryEnabled(TARGET_BATTERY) ? "TRUE" : "FALSE");
   sendTelemetry("BATTERY", "AVAILABLE", PMIC.isBattConnected() ? "TRUE" : "FALSE");
   sendTelemetry("BATTERY", "ON_BATTERY", PMIC.canRunOnBattery() ? "TRUE" : "FALSE");
   sendTelemetryFloat("BATTERY", "CHARGE_CURRENT_A", PMIC.getChargeCurrent(), 3);

@@ -86,14 +86,18 @@ At present, the periodic snapshot includes:
 - telemetry configuration/status
 - battery / PMIC status
 
+If telemetry for an individual target is disabled, that target is omitted from periodic snapshots until it is re-enabled. Explicit `GET` commands can still return that target's full status, including its telemetry-enabled state.
+
 Typical snapshot:
 
 ```text
+00:03:20,TLM,LED,TELEMETRY,TRUE
 00:03:20,TLM,LED,ENABLE,TRUE
 00:03:20,TLM,LED,STATE,ON
 00:03:20,TLM,LED,COLOR,RED
 00:03:20,TLM,TELEMETRY,ENABLE,TRUE
 00:03:20,TLM,TELEMETRY,INTERVAL_S,5
+00:03:20,TLM,BATTERY,TELEMETRY,TRUE
 00:03:20,TLM,BATTERY,AVAILABLE,TRUE
 00:03:20,TLM,BATTERY,ON_BATTERY,FALSE
 00:03:20,TLM,BATTERY,CHARGE_CURRENT_A,0.500
@@ -120,6 +124,21 @@ Examples:
 ```text
 00:03:40,TLM,LED,ENABLE,TRUE
 00:03:40,TLM,LED,ENABLE,FALSE
+```
+
+### `LED,TELEMETRY`
+
+Reports whether LED data is included in periodic telemetry snapshots.
+
+Value type:
+- `TRUE`
+- `FALSE`
+
+Examples:
+
+```text
+00:03:40,TLM,LED,TELEMETRY,TRUE
+00:03:40,TLM,LED,TELEMETRY,FALSE
 ```
 
 ### `LED,STATE`
@@ -205,6 +224,21 @@ Examples:
 00:04:00,TLM,BATTERY,AVAILABLE,FALSE
 ```
 
+### `BATTERY,TELEMETRY`
+
+Reports whether battery data is included in periodic telemetry snapshots.
+
+Value type:
+- `TRUE`
+- `FALSE`
+
+Examples:
+
+```text
+00:04:00,TLM,BATTERY,TELEMETRY,TRUE
+00:04:00,TLM,BATTERY,TELEMETRY,FALSE
+```
+
 ### `BATTERY,ON_BATTERY`
 
 Reports whether the system is currently running from battery.
@@ -271,10 +305,12 @@ This table is intended for a ground-station developer or future parser implement
 | Target | Parameter | Meaning | Value Type | Example |
 |---|---|---|---|---|
 | `LED` | `ENABLE` | Whether LED operation is permitted | `TRUE` / `FALSE` | `00:02:20,TLM,LED,ENABLE,FALSE` |
+| `LED` | `TELEMETRY` | Whether LED data is included in periodic snapshots | `TRUE` / `FALSE` | `00:02:20,TLM,LED,TELEMETRY,TRUE` |
 | `LED` | `STATE` | Current LED output state | `ON` / `OFF` | `00:02:20,TLM,LED,STATE,OFF` |
 | `LED` | `COLOR` | Current selected LED color | `RED` / `GREEN` / `BLUE` | `00:02:20,TLM,LED,COLOR,GREEN` |
 | `TELEMETRY` | `ENABLE` | Whether periodic telemetry is enabled | `TRUE` / `FALSE` | `00:02:20,TLM,TELEMETRY,ENABLE,TRUE` |
 | `TELEMETRY` | `INTERVAL_S` | Telemetry interval in seconds | unsigned integer | `00:02:20,TLM,TELEMETRY,INTERVAL_S,5` |
+| `BATTERY` | `TELEMETRY` | Whether battery data is included in periodic snapshots | `TRUE` / `FALSE` | `00:02:20,TLM,BATTERY,TELEMETRY,TRUE` |
 | `BATTERY` | `AVAILABLE` | Whether battery hardware is present | `TRUE` / `FALSE` | `00:02:20,TLM,BATTERY,AVAILABLE,TRUE` |
 | `BATTERY` | `ON_BATTERY` | Whether the system is running from battery | `TRUE` / `FALSE` | `00:02:20,TLM,BATTERY,ON_BATTERY,FALSE` |
 | `BATTERY` | `CHARGE_CURRENT_A` | Charge current in amps | float | `00:02:20,TLM,BATTERY,CHARGE_CURRENT_A,0.500` |
@@ -310,10 +346,12 @@ or, if keeping history:
 | Telemetry | Suggested UI representation |
 |---|---|
 | `LED,ENABLE` | enabled/disabled icon or status badge |
+| `LED,TELEMETRY` | LED telemetry enabled indicator |
 | `LED,STATE` | on/off icon or status badge |
 | `LED,COLOR` | color label or swatch |
 | `TELEMETRY,ENABLE` | stream active indicator |
 | `TELEMETRY,INTERVAL_S` | numeric display |
+| `BATTERY,TELEMETRY` | battery telemetry enabled indicator |
 | `BATTERY,AVAILABLE` | battery present indicator |
 | `BATTERY,ON_BATTERY` | running on battery indicator |
 | `BATTERY,CHARGE_CURRENT_A` | numeric current display |
