@@ -26,6 +26,7 @@ enum TargetType
   TARGET_LED,
   TARGET_TELEMETRY,
   TARGET_BATTERY,
+  TARGET_RTC,
 
   // Reserved future
   TARGET_MODE,
@@ -51,6 +52,8 @@ enum ParameterType
   PARAM_HEALTH,
   PARAM_INTERVAL_S,
   PARAM_TELEMETRY,
+  PARAM_CURRENT_TIME,
+  PARAM_SYNC,
   PARAM_SECONDS,
   PARAM_COLOR
 };
@@ -89,6 +92,7 @@ struct Command
   TargetType target;
   ParameterType parameter;
   ValueType value;
+  const char *rawValueToken;
   unsigned long numericValue;
   bool hasNumericValue;
 };

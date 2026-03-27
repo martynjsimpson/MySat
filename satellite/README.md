@@ -31,14 +31,14 @@ platformio device monitor --environment mkrwifi1010
 - `include/telemetry.h` - periodic telemetry control and snapshot interface
 - `include/led.h` - LED subsystem interface
 - `include/pmic.h` - battery / PMIC telemetry interface
-- `include/rtc.h` - boot-relative timebase interface
+- `include/rtc.h` - RTC and device clock interface
 - `include/sender.h` - structured outbound message helpers
 - `src/main.cpp` - top-level `setup()` and `loop()`
 - `src/protocol.cpp` - command parsing and dispatch
 - `src/telemetry.cpp` - telemetry settings and periodic snapshot scheduling
 - `src/led.cpp` - LED control and LED telemetry
 - `src/pmic.cpp` - PMIC setup and battery telemetry
-- `src/rtc.cpp` - RTC setup and uptime source
+- `src/rtc.cpp` - RTC setup, ISO time formatting, and clock sync handling
 - `src/sender.cpp` - `ACK`, `ERR`, and `TLM` line emission
 
 ## Firmware architecture
@@ -48,7 +48,7 @@ The firmware currently follows a simple pattern:
 1. Receive a newline-terminated serial command.
 2. Parse `COMMAND,TARGET,PARAMETER,VALUE` into a typed `Command`.
 3. Dispatch to a target-specific handler.
-4. Emit structured `ACK`, `ERR`, or `TLM` lines with boot-relative timestamps.
+4. Emit structured `ACK`, `ERR`, or `TLM` lines with RTC-based ISO UTC timestamps.
 5. Periodically emit telemetry snapshots when enabled.
 
 ## Current subsystems
@@ -56,6 +56,7 @@ The firmware currently follows a simple pattern:
 - `LED` - controllable LED policy and state reporting
 - `TELEMETRY` - telemetry enable/disable and interval control
 - `BATTERY` - PMIC-backed battery telemetry reporting
+- `RTC` - current time and clock synchronisation state
 
 ## Documentation boundaries
 
