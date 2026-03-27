@@ -172,6 +172,7 @@ Examples:
 ```text
 SET,LED,STATE,ON
 SET,LED,ENABLE,TRUE
+SET,LED,COLOR,RED
 SET,TELEMETRY,INTERVAL_S,5
 GET,BATTERY,NONE,NONE
 ```
@@ -255,6 +256,7 @@ Use tokens consistently:
 
 - `ENABLE` / `TRUE` / `FALSE` for enablement and boolean control
 - `STATE` / `ON` / `OFF` for state-like outputs
+- `COLOR` / `RED` / `GREEN` / `BLUE` for color selection
 - `INTERVAL_S` for second-based intervals
 - explicit telemetry parameter names such as `AVAILABLE`, `ON_BATTERY`, `CHARGE_CURRENT_A`
 
@@ -277,6 +279,7 @@ Any protocol change should update documentation alongside code.
 ### LED subsystem
 - enable/disable control
 - on/off state control
+- color selection (`RED`, `GREEN`, `BLUE`)
 - telemetry reporting
 
 ### Telemetry subsystem
@@ -304,7 +307,8 @@ Any protocol change should update documentation alongside code.
 ### LED rules
 - LED cannot be turned on unless enabled
 - disabling LED also forces LED off
-- LED telemetry reports both enable state and output state
+- LED color can be selected with `SET,LED,COLOR,<RED|GREEN|BLUE>`
+- LED telemetry reports enable state, output state, and selected color
 
 ### Telemetry rules
 - periodic telemetry is enabled by default
