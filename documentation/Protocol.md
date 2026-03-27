@@ -121,17 +121,27 @@ Error lines indicate that a command was rejected, malformed, or invalid.
 Format:
 
 ```text
-TIME,ERR,ERROR_CODE
+TIME,ERR,ERROR_CODE[,ENCODED_COMMAND]
 ```
+
+If the error was triggered while handling an inbound command, the device may append a fourth field containing the original command line in percent-encoded form.
+
+Encoding rules:
+
+- commas are encoded as `%2C`
+- percent signs are encoded as `%25`
+- other non-alphanumeric separator characters are percent-encoded as needed
+
+This keeps the outbound message safely comma-delimited while still preserving the triggering input for logs or a ground station UI.
 
 Examples:
 
 ```text
 00:00:30,ERR,BAD_FORMAT
-00:00:31,ERR,BAD_VALUE
-00:00:32,ERR,BAD_PARAMETER
-00:00:33,ERR,UNKNOWN_TARGET
-00:00:34,ERR,LED_DISABLED
+00:00:31,ERR,BAD_VALUE,SET%2CLED%2CSTATE%2CBLINK
+00:00:32,ERR,BAD_PARAMETER,SET%2CLED%2CBRIGHTNESS%2C10
+00:00:33,ERR,UNKNOWN_TARGET,GET%2CRADIO%2CNONE%2CNONE
+00:00:34,ERR,LED_DISABLED,SET%2CLED%2CSTATE%2CON
 ```
 
 ### TLM

@@ -14,6 +14,7 @@ namespace
 {
   const size_t BUFFER_SIZE = 96;
   char inputBuffer[BUFFER_SIZE];
+  char rawCommandBuffer[BUFFER_SIZE];
   size_t inputPos = 0;
 
   bool isNumericToken(const char *token)
@@ -224,6 +225,10 @@ namespace
 
   void processCommand(char *line)
   {
+    strncpy(rawCommandBuffer, line, BUFFER_SIZE);
+    rawCommandBuffer[BUFFER_SIZE - 1] = '\0';
+    setErrorContext(rawCommandBuffer);
+
     char *cmdToken = strtok(line, ",");
     char *targetToken = strtok(nullptr, ",");
     char *parameterToken = strtok(nullptr, ",");
@@ -232,12 +237,14 @@ namespace
     if (cmdToken == nullptr || targetToken == nullptr || parameterToken == nullptr || valueToken == nullptr)
     {
       sendError("BAD_FORMAT");
+      clearErrorContext();
       return;
     }
 
     if (strtok(nullptr, ",") != nullptr)
     {
       sendError("BAD_FORMAT");
+      clearErrorContext();
       return;
     }
 
@@ -256,6 +263,7 @@ namespace
     }
 
     executeCommand(cmd);
+    clearErrorContext();
   }
 }
 
@@ -289,7 +297,10 @@ void readSerialCommands()
       }
       else
       {
+        inputBuffer[inputPos] = '\0';
+        setErrorContext(inputBuffer);
         sendError("OVERFLOW");
+        clearErrorContext();
         inputPos = 0;
       }
     }
