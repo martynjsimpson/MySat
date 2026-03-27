@@ -351,15 +351,12 @@
         "wires": [
             [
                 "353ea91c8195f24d",
-                "c86a724985a0b156",
                 "e801888fd08475bd",
                 "b8a99bc218fbe40e",
                 "bc470b80b14f8ffb",
                 "879d3a364ed6ee7f",
                 "0b2ea32d4b67bf0d",
                 "40b71589d101899b",
-                "2e944c48b4fb70c3",
-                "9470ae2e35566823",
                 "dad35d72a6b5f9d6",
                 "b30ce9edf5df543c",
                 "ce81e4884bf62a13",
@@ -412,24 +409,6 @@
         "x": 1140,
         "y": 320,
         "wires": []
-    },
-    {
-        "id": "c86a724985a0b156",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED Color",
-        "func": "msg.payload = { label: 'LED Color', value: msg.payload.ledColor || '' };\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 900,
-        "y": 700,
-        "wires": [
-            []
-        ]
     },
     {
         "id": "e801888fd08475bd",
@@ -1222,42 +1201,6 @@
             [
                 "9331f758d9c225ed"
             ]
-        ]
-    },
-    {
-        "id": "2e944c48b4fb70c3",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED Enable card",
-        "func": "msg.payload = { label: 'LED Enable', value: msg.payload.ledEnable || '' };\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 910,
-        "y": 620,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "9470ae2e35566823",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED State card",
-        "func": "msg.payload = { label: 'LED State', value: msg.payload.ledState || '' };\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 910,
-        "y": 660,
-        "wires": [
-            []
         ]
     },
     {
