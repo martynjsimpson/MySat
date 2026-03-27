@@ -8,27 +8,16 @@ namespace
 {
   const char *errorContext = nullptr;
 
-  void printTwoDigits(unsigned long value)
+  void printTimestampIso()
   {
-    if (value < 10)
+    char timestamp[21];
+    if (!getCurrentTimestampIso(timestamp, sizeof(timestamp)))
     {
-      Serial.print('0');
+      Serial.print("2000-01-01T00:00:00Z");
+      return;
     }
-    Serial.print(value);
-  }
 
-  void printTimestampHms()
-  {
-    const unsigned long totalSeconds = getTimestamp();
-    const unsigned long hours = totalSeconds / 3600;
-    const unsigned long minutes = (totalSeconds % 3600) / 60;
-    const unsigned long seconds = totalSeconds % 60;
-
-    printTwoDigits(hours);
-    Serial.print(':');
-    printTwoDigits(minutes);
-    Serial.print(':');
-    printTwoDigits(seconds);
+    Serial.print(timestamp);
   }
 
   bool isUnreservedContextChar(char c)
@@ -86,7 +75,7 @@ void clearErrorContext()
 
 void sendAck(const char *target, const char *value)
 {
-  printTimestampHms();
+  printTimestampIso();
   Serial.print(",ACK,");
   Serial.print(target);
   Serial.print(",");
@@ -95,7 +84,7 @@ void sendAck(const char *target, const char *value)
 
 void sendError(const char *errorCode)
 {
-  printTimestampHms();
+  printTimestampIso();
   Serial.print(",ERR,");
   Serial.print(errorCode);
 
@@ -110,7 +99,7 @@ void sendError(const char *errorCode)
 
 void sendTelemetry(const char *target, const char *parameter, const char *value)
 {
-  printTimestampHms();
+  printTimestampIso();
   Serial.print(",TLM,");
   Serial.print(target);
   Serial.print(",");
@@ -121,7 +110,7 @@ void sendTelemetry(const char *target, const char *parameter, const char *value)
 
 void sendTelemetryULong(const char *target, const char *parameter, unsigned long value)
 {
-  printTimestampHms();
+  printTimestampIso();
   Serial.print(",TLM,");
   Serial.print(target);
   Serial.print(",");
@@ -132,7 +121,7 @@ void sendTelemetryULong(const char *target, const char *parameter, unsigned long
 
 void sendTelemetryFloat(const char *target, const char *parameter, float value, int decimals)
 {
-  printTimestampHms();
+  printTimestampIso();
   Serial.print(",TLM,");
   Serial.print(target);
   Serial.print(",");

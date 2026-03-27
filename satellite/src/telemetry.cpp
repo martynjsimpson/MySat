@@ -7,6 +7,7 @@
 
 namespace {
 bool telemetryEnabled = true;
+bool rtcTelemetryEnabled = true;
 bool ledTelemetryEnabled = true;
 bool batteryTelemetryEnabled = true;
 unsigned long telemetryIntervalSeconds = 5;
@@ -14,6 +15,8 @@ unsigned long lastTelemetryTime = 0;
 
 bool *getTargetTelemetryFlag(TargetType target) {
   switch (target) {
+    case TARGET_RTC:
+      return &rtcTelemetryEnabled;
     case TARGET_LED:
       return &ledTelemetryEnabled;
     case TARGET_BATTERY:
@@ -25,6 +28,8 @@ bool *getTargetTelemetryFlag(TargetType target) {
 
 const char *targetToToken(TargetType target) {
   switch (target) {
+    case TARGET_RTC:
+      return "RTC";
     case TARGET_LED:
       return "LED";
     case TARGET_BATTERY:
@@ -34,22 +39,15 @@ const char *targetToToken(TargetType target) {
   }
 }
 
-void reportTargetTelemetrySetting(TargetType target) {
-  const char *targetToken = targetToToken(target);
-  if (targetToken == nullptr) {
-    return;
-  }
-
-  sendTelemetry(targetToken, "TELEMETRY", isTargetTelemetryEnabled(target) ? "TRUE" : "FALSE");
-}
 }
 
 void setupTelemetry() {
   telemetryEnabled = true;
+  rtcTelemetryEnabled = true;
   ledTelemetryEnabled = true;
   batteryTelemetryEnabled = true;
   telemetryIntervalSeconds = 5;
-  lastTelemetryTime = getTimestamp();
+  lastTelemetryTime = getUptimeSeconds();
 }
 
 bool isTargetTelemetryEnabled(TargetType target) {
@@ -108,11 +106,9 @@ void handleSetTargetTelemetry(const Command &cmd) {
   if (cmd.value == VALUE_ENABLE || cmd.value == VALUE_TRUE) {
     *flag = true;
     sendAck(targetToken, "TELEMETRY_ENABLE");
-    reportTargetTelemetrySetting(cmd.target);
   } else if (cmd.value == VALUE_DISABLE || cmd.value == VALUE_FALSE) {
     *flag = false;
     sendAck(targetToken, "TELEMETRY_DISABLE");
-    reportTargetTelemetrySetting(cmd.target);
   } else {
     sendError("BAD_VALUE");
   }
@@ -124,6 +120,9 @@ void reportTelemetryStatus() {
 }
 
 void sendTelemetrySnapshot() {
+  if (rtcTelemetryEnabled) {
+    reportRtcStatus();
+  }
   if (ledTelemetryEnabled) {
     reportLedStatus();
   }
@@ -138,7 +137,7 @@ void handlePeriodicTelemetry() {
     return;
   }
 
-  const unsigned long now = getTimestamp();
+  const unsigned long now = getUptimeSeconds();
 
   if ((now - lastTelemetryTime) >= telemetryIntervalSeconds) {
     lastTelemetryTime = now;

@@ -126,20 +126,6 @@
         "groupType": "default"
     },
     {
-        "id": "d46baa8b455b13df",
-        "type": "ui-group",
-        "name": "Telemetry",
-        "page": "3910494bd8aa444c",
-        "width": 6,
-        "height": "3",
-        "order": 1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
         "id": "f97e68d451736993",
         "type": "ui-page",
         "name": "Mission Control",
@@ -237,8 +223,8 @@
         "z": "3b521b08f4388c2f",
         "name": "",
         "serial": "7180565ad450ba58",
-        "x": 120,
-        "y": 160,
+        "x": 100,
+        "y": 40,
         "wires": [
             [
                 "e80ca2965e7ce828"
@@ -246,30 +232,12 @@
         ]
     },
     {
-        "id": "2c2f1fc0474d0d45",
-        "type": "debug",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 80,
-        "wires": []
-    },
-    {
         "id": "a407349444f312cf",
         "type": "serial out",
         "z": "3b521b08f4388c2f",
         "name": "",
         "serial": "7180565ad450ba58",
-        "x": 620,
+        "x": 720,
         "y": 640,
         "wires": []
     },
@@ -277,7 +245,7 @@
         "id": "e80ca2965e7ce828",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "Parser",
+        "name": "Main Parser",
         "func": "let line = String(msg.payload).trim();\nif (!line) return null;\n\nlet parts = line.split(\",\");\n\nif (parts.length < 2) return null;\n\nmsg.raw = line;\nmsg.time = parts[0];      // keep as text\nmsg.type = parts[1];\n\nif (msg.type === \"TLM\" && parts.length >= 5) {\n    msg.target = parts[2];\n    msg.parameter = parts[3];\n    msg.value = parts[4];\n}\nelse if (msg.type === \"ACK\" && parts.length >= 4) {\n    msg.target = parts[2];\n    msg.value = parts[3];\n}\nelse if (msg.type === \"ERR\" && parts.length >= 3) {\n    msg.error = parts[2];\n\n    if (parts.length >= 4) {\n        msg.errorContext = parts[3];\n        try {\n            msg.errorContextDecoded = decodeURIComponent(parts[3]);\n        } catch (err) {\n            msg.errorContextDecoded = parts[3];\n        }\n    }\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -285,12 +253,12 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 290,
-        "y": 160,
+        "x": 310,
+        "y": 40,
         "wires": [
             [
-                "2c2f1fc0474d0d45",
-                "50ef76a53201094c"
+                "50ef76a53201094c",
+                "aa985b330f623025"
             ]
         ]
     },
@@ -306,66 +274,46 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 450,
-        "y": 160,
+        "x": 530,
+        "y": 40,
         "wires": [
             [
-                "68a49d135b911182",
                 "af2be4cc68f6c30d",
                 "9919dab57debe661"
             ]
         ]
     },
     {
-        "id": "68a49d135b911182",
-        "type": "debug",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "name": "debug 2",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "state",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 800,
-        "y": 80,
-        "wires": []
-    },
-    {
         "id": "af2be4cc68f6c30d",
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"ENABLE\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    onBattery: getValue(\"BATTERY\", \"ON_BATTERY\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"ENABLE\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    onBattery: getValue(\"BATTERY\", \"ON_BATTERY\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 630,
-        "y": 160,
+        "x": 750,
+        "y": 120,
         "wires": [
             [
                 "353ea91c8195f24d",
-                "c86a724985a0b156",
                 "e801888fd08475bd",
                 "b8a99bc218fbe40e",
                 "bc470b80b14f8ffb",
                 "879d3a364ed6ee7f",
                 "0b2ea32d4b67bf0d",
                 "40b71589d101899b",
-                "2e944c48b4fb70c3",
-                "9470ae2e35566823",
                 "dad35d72a6b5f9d6",
                 "b30ce9edf5df543c",
                 "ce81e4884bf62a13",
                 "05128a24ed57fb61",
                 "cbf9be1a32b5b38a",
-                "f085d816c4e62e09"
+                "f085d816c4e62e09",
+                "7b54df25ad4ef61f",
+                "c720218d514f0575"
             ]
         ]
     },
@@ -373,7 +321,7 @@
         "id": "353ea91c8195f24d",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "extract Time",
+        "name": "extract Last TLM",
         "func": "msg.payload = msg.payload.time || \"\"; return msg;",
         "outputs": 1,
         "timeout": 0,
@@ -381,8 +329,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 870,
-        "y": 320,
+        "x": 1030,
+        "y": 420,
         "wires": [
             [
                 "aa35e6502e80f6ca"
@@ -409,27 +357,9 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1140,
-        "y": 320,
+        "x": 1280,
+        "y": 420,
         "wires": []
-    },
-    {
-        "id": "c86a724985a0b156",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED Color",
-        "func": "msg.payload = { label: 'LED Color', value: msg.payload.ledColor || '' };\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 900,
-        "y": 700,
-        "wires": [
-            []
-        ]
     },
     {
         "id": "e801888fd08475bd",
@@ -443,37 +373,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 920,
+        "x": 1060,
         "y": 740,
         "wires": [
-            [
-                "9006214b265e3fc3"
-            ]
+            []
         ]
-    },
-    {
-        "id": "9006214b265e3fc3",
-        "type": "ui-text",
-        "z": "3b521b08f4388c2f",
-        "group": "d46baa8b455b13df",
-        "order": 2,
-        "width": "3",
-        "height": "2",
-        "name": "",
-        "label": "Telemetry Enable",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#717171",
-        "wrapText": false,
-        "className": "",
-        "value": "payload",
-        "valueType": "msg",
-        "x": 1180,
-        "y": 740,
-        "wires": []
     },
     {
         "id": "b8a99bc218fbe40e",
@@ -487,37 +391,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 930,
+        "x": 1070,
         "y": 780,
         "wires": [
-            [
-                "9fbf45d672f57260"
-            ]
+            []
         ]
-    },
-    {
-        "id": "9fbf45d672f57260",
-        "type": "ui-text",
-        "z": "3b521b08f4388c2f",
-        "group": "d46baa8b455b13df",
-        "order": 1,
-        "width": "3",
-        "height": "2",
-        "name": "",
-        "label": "Telemetry Interval (s)",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#717171",
-        "wrapText": false,
-        "className": "",
-        "value": "payload",
-        "valueType": "msg",
-        "x": 1190,
-        "y": 780,
-        "wires": []
     },
     {
         "id": "bc470b80b14f8ffb",
@@ -531,7 +409,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 920,
+        "x": 1060,
         "y": 900,
         "wires": [
             [
@@ -559,7 +437,7 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1180,
+        "x": 1320,
         "y": 900,
         "wires": []
     },
@@ -575,7 +453,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 920,
+        "x": 1060,
         "y": 940,
         "wires": [
             [
@@ -603,7 +481,7 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1180,
+        "x": 1320,
         "y": 940,
         "wires": []
     },
@@ -619,8 +497,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 890,
-        "y": 360,
+        "x": 1030,
+        "y": 460,
         "wires": [
             [
                 "6d5439a9dd0319e8"
@@ -647,8 +525,8 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1140,
-        "y": 360,
+        "x": 1280,
+        "y": 460,
         "wires": []
     },
     {
@@ -663,8 +541,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 890,
-        "y": 400,
+        "x": 1030,
+        "y": 500,
         "wires": [
             [
                 "4a17bc77ddbdb063"
@@ -691,38 +569,9 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1140,
-        "y": 400,
+        "x": 1280,
+        "y": 500,
         "wires": []
-    },
-    {
-        "id": "287e3768f084c933",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "Ping",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 150,
-        "y": 400,
-        "wires": [
-            [
-                "9331f758d9c225ed"
-            ]
-        ]
     },
     {
         "id": "9331f758d9c225ed",
@@ -745,35 +594,6 @@
         ]
     },
     {
-        "id": "9cc1961053df35bd",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "Get LED",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 140,
-        "y": 500,
-        "wires": [
-            [
-                "705d00e7e4f34d52"
-            ]
-        ]
-    },
-    {
         "id": "705d00e7e4f34d52",
         "type": "function",
         "z": "3b521b08f4388c2f",
@@ -786,39 +606,10 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 480,
+        "y": 440,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "96a17b7f77e2b4b3",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "Get Battery",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 150,
-        "y": 1660,
-        "wires": [
-            [
-                "e4b26bb90d0f220e"
             ]
         ]
     },
@@ -835,39 +626,10 @@
         "finalize": "",
         "libs": [],
         "x": 350,
-        "y": 1660,
+        "y": 1320,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "53d228e978fc412d",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED Enable",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 130,
-        "y": 580,
-        "wires": [
-            [
-                "40a56bcaa8abc94f"
             ]
         ]
     },
@@ -884,39 +646,10 @@
         "finalize": "",
         "libs": [],
         "x": 350,
-        "y": 560,
+        "y": 480,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "7ef53d0b8404b54d",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED Disable",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 130,
-        "y": 660,
-        "wires": [
-            [
-                "9c4c9523287dbc60"
             ]
         ]
     },
@@ -933,39 +666,10 @@
         "finalize": "",
         "libs": [],
         "x": 350,
-        "y": 640,
+        "y": 520,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "5ae6e2c53c33d859",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED ON",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 140,
-        "y": 740,
-        "wires": [
-            [
-                "097e0d32dd4bc1f9"
             ]
         ]
     },
@@ -982,39 +686,10 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 720,
+        "y": 560,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "c26e927e078d8b40",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED OFF",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 140,
-        "y": 820,
-        "wires": [
-            [
-                "49f5d0774b720662"
             ]
         ]
     },
@@ -1031,39 +706,10 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 800,
+        "y": 600,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "214669be8aab39ec",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "TLM Enable",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 130,
-        "y": 1320,
-        "wires": [
-            [
-                "b5d62154f09edf79"
             ]
         ]
     },
@@ -1080,39 +726,10 @@
         "finalize": "",
         "libs": [],
         "x": 350,
-        "y": 1300,
+        "y": 860,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "cad5c1fa383e6ed2",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "TLM Disable",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 130,
-        "y": 1400,
-        "wires": [
-            [
-                "59a0bb862787b1a6"
             ]
         ]
     },
@@ -1129,39 +746,10 @@
         "finalize": "",
         "libs": [],
         "x": 350,
-        "y": 1380,
+        "y": 900,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "91faa8985233f574",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "TLM Interval 10",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 120,
-        "y": 1480,
-        "wires": [
-            [
-                "e328bd37e42d09ce"
             ]
         ]
     },
@@ -1178,7 +766,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 1480,
+        "y": 940,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1217,47 +805,11 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 150,
-        "y": 360,
+        "y": 380,
         "wires": [
             [
                 "9331f758d9c225ed"
             ]
-        ]
-    },
-    {
-        "id": "2e944c48b4fb70c3",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED Enable card",
-        "func": "msg.payload = { label: 'LED Enable', value: msg.payload.ledEnable || '' };\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 910,
-        "y": 620,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "9470ae2e35566823",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED State card",
-        "func": "msg.payload = { label: 'LED State', value: msg.payload.ledState || '' };\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 910,
-        "y": 660,
-        "wires": [
-            []
         ]
     },
     {
@@ -1272,7 +824,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 910,
+        "x": 1050,
         "y": 820,
         "wires": [
             [
@@ -1298,7 +850,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1160,
+        "x": 1300,
         "y": 820,
         "wires": [
             []
@@ -1316,7 +868,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 910,
+        "x": 1050,
         "y": 860,
         "wires": [
             [
@@ -1342,7 +894,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1160,
+        "x": 1300,
         "y": 860,
         "wires": [
             []
@@ -1360,7 +912,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 920,
+        "x": 1060,
         "y": 980,
         "wires": [
             [
@@ -1400,7 +952,7 @@
         "min": 0,
         "max": "100",
         "className": "",
-        "x": 1170,
+        "x": 1310,
         "y": 980,
         "wires": [
             []
@@ -1427,39 +979,10 @@
         "mobileBreakpointType": "defaults",
         "action": "replace",
         "className": "",
-        "x": 870,
-        "y": 140,
+        "x": 1250,
+        "y": 120,
         "wires": [
             []
-        ]
-    },
-    {
-        "id": "db2b8c505293e4d8",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED RED",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 140,
-        "y": 900,
-        "wires": [
-            [
-                "09db1906c0e09412"
-            ]
         ]
     },
     {
@@ -1475,39 +998,10 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 880,
+        "y": 640,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "f0735bbaea98145c",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED GREEN",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 130,
-        "y": 980,
-        "wires": [
-            [
-                "3344e17230a6d9f7"
             ]
         ]
     },
@@ -1524,39 +1018,10 @@
         "finalize": "",
         "libs": [],
         "x": 350,
-        "y": 960,
+        "y": 680,
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "4241c6630b70b819",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED BLUE",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 140,
-        "y": 1060,
-        "wires": [
-            [
-                "e595103df12ca554"
             ]
         ]
     },
@@ -1573,7 +1038,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 1040,
+        "y": 720,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1601,7 +1066,7 @@
         "mobileBreakpointType": "defaults",
         "action": "replace",
         "className": "",
-        "x": 1090,
+        "x": 1270,
         "y": 200,
         "wires": [
             []
@@ -1619,7 +1084,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 870,
+        "x": 1010,
         "y": 200,
         "wires": [
             [
@@ -1659,7 +1124,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 140,
-        "y": 460,
+        "y": 440,
         "wires": [
             [
                 "705d00e7e4f34d52"
@@ -1698,7 +1163,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 540,
+        "y": 480,
         "wires": [
             [
                 "40a56bcaa8abc94f"
@@ -1737,7 +1202,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 620,
+        "y": 520,
         "wires": [
             [
                 "9c4c9523287dbc60"
@@ -1776,7 +1241,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 140,
-        "y": 700,
+        "y": 560,
         "wires": [
             [
                 "097e0d32dd4bc1f9"
@@ -1815,7 +1280,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 140,
-        "y": 780,
+        "y": 600,
         "wires": [
             [
                 "49f5d0774b720662"
@@ -1854,7 +1319,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 140,
-        "y": 860,
+        "y": 640,
         "wires": [
             [
                 "09db1906c0e09412"
@@ -1893,7 +1358,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 940,
+        "y": 680,
         "wires": [
             [
                 "3344e17230a6d9f7"
@@ -1932,22 +1397,12 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 140,
-        "y": 1020,
+        "y": 720,
         "wires": [
             [
                 "e595103df12ca554"
             ]
         ]
-    },
-    {
-        "id": "a12cb562b51d6fa7",
-        "type": "comment",
-        "z": "3b521b08f4388c2f",
-        "name": "",
-        "info": "Button Controls",
-        "x": 140,
-        "y": 320,
-        "wires": []
     },
     {
         "id": "c3c007d07dddcc83",
@@ -1981,7 +1436,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1280,
+        "y": 860,
         "wires": [
             [
                 "b5d62154f09edf79"
@@ -2020,7 +1475,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1360,
+        "y": 900,
         "wires": [
             [
                 "59a0bb862787b1a6"
@@ -2055,7 +1510,7 @@
         "iconInnerPosition": "inside",
         "spinner": "default",
         "x": 130,
-        "y": 1520,
+        "y": 980,
         "wires": [
             [
                 "283bee87f27680a3"
@@ -2094,7 +1549,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1440,
+        "y": 940,
         "wires": [
             [
                 "e328bd37e42d09ce"
@@ -2113,7 +1568,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 870,
+        "x": 1010,
         "y": 260,
         "wires": [
             [
@@ -2142,7 +1597,7 @@
         "mobileBreakpointType": "defaults",
         "action": "replace",
         "className": "",
-        "x": 1090,
+        "x": 1270,
         "y": 260,
         "wires": [
             []
@@ -2160,8 +1615,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 620,
-        "y": 220,
+        "x": 740,
+        "y": 40,
         "wires": [
             [
                 "7a2f7fe3e9362b46"
@@ -2189,8 +1644,8 @@
         "mobileBreakpointType": "defaults",
         "action": "append",
         "className": "",
-        "x": 640,
-        "y": 300,
+        "x": 1000,
+        "y": 40,
         "wires": [
             []
         ]
@@ -2208,38 +1663,9 @@
         "finalize": "",
         "libs": [],
         "x": 320,
-        "y": 1520,
+        "y": 980,
         "wires": [
             []
-        ]
-    },
-    {
-        "id": "61907a6f3c6002cf",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED TLM Enable",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 120,
-        "y": 1140,
-        "wires": [
-            [
-                "62553b58fa79262f"
-            ]
         ]
     },
     {
@@ -2255,7 +1681,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 1120,
+        "y": 760,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2294,39 +1720,10 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 110,
-        "y": 1100,
+        "y": 760,
         "wires": [
             [
                 "62553b58fa79262f"
-            ]
-        ]
-    },
-    {
-        "id": "ee2765cec97f5cdf",
-        "type": "inject",
-        "z": "3b521b08f4388c2f",
-        "name": "LED TLM Disable",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 120,
-        "y": 1220,
-        "wires": [
-            [
-                "893873e9865c78e7"
             ]
         ]
     },
@@ -2343,7 +1740,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 1200,
+        "y": 800,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2382,11 +1779,401 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 110,
-        "y": 1180,
+        "y": 800,
         "wires": [
             [
                 "893873e9865c78e7"
             ]
+        ]
+    },
+    {
+        "id": "7b54df25ad4ef61f",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract RTC Current Time",
+        "func": "msg.payload = msg.payload.rtcCurrentTime || \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 340,
+        "wires": [
+            [
+                "e8c0bffef462e56b"
+            ]
+        ]
+    },
+    {
+        "id": "e8c0bffef462e56b",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "0c10ce94c624bca1",
+        "order": 1,
+        "width": "3",
+        "height": 1,
+        "name": "",
+        "label": "RTC Time",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1280,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "c720218d514f0575",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract RTC Sync",
+        "func": "msg.payload = msg.payload.rtcSync || \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 380,
+        "wires": [
+            [
+                "bd735e5dcb4579f4"
+            ]
+        ]
+    },
+    {
+        "id": "bd735e5dcb4579f4",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "0c10ce94c624bca1",
+        "order": 2,
+        "width": "3",
+        "height": 1,
+        "name": "",
+        "label": "Clock Sync",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1290,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "33792257d24eb50f",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get RTC",
+        "func": "msg.payload = \"GET,RTC,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1040,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "df94cdc0a80f63c0",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "50860bfd06fffa7a",
+        "name": "",
+        "label": "Get RTC",
+        "order": 1,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 140,
+        "y": 1040,
+        "wires": [
+            [
+                "33792257d24eb50f"
+            ]
+        ]
+    },
+    {
+        "id": "d85c917cf73e1f60",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Sync RTC",
+        "func": "const iso = new Date().toISOString().replace(/\\.\\d{3}Z$/, \"Z\");\nmsg.payload = \"SET,RTC,CURRENT_TIME,\" + iso + \"\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1080,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "6dd04d34554401c8",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "50860bfd06fffa7a",
+        "name": "",
+        "label": "Sync RTC",
+        "order": 3,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 140,
+        "y": 1080,
+        "wires": [
+            [
+                "d85c917cf73e1f60"
+            ]
+        ]
+    },
+    {
+        "id": "ee79695364ecdd29",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "50860bfd06fffa7a",
+        "name": "",
+        "label": "Get Battery",
+        "order": 3,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 110,
+        "y": 1320,
+        "wires": [
+            [
+                "e4b26bb90d0f220e"
+            ]
+        ]
+    },
+    {
+        "id": "9d15a20c452e946c",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send RTC TLM Enable",
+        "func": "msg.payload = \"SET,RTC,TELEMETRY,ENABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1120,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "a34f43014263731c",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "50860bfd06fffa7a",
+        "name": "",
+        "label": "RTC TLM Enable",
+        "order": 3,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 110,
+        "y": 1120,
+        "wires": [
+            [
+                "9d15a20c452e946c"
+            ]
+        ]
+    },
+    {
+        "id": "1549be4bc8ec49fe",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send RTC TLM Disable",
+        "func": "msg.payload = \"SET,RTC,TELEMETRY,DISABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1160,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "6eb3a0a998e2f640",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "50860bfd06fffa7a",
+        "name": "",
+        "label": "RTC TLM Disable",
+        "order": 3,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 110,
+        "y": 1160,
+        "wires": [
+            [
+                "1549be4bc8ec49fe"
+            ]
+        ]
+    },
+    {
+        "id": "aa985b330f623025",
+        "type": "ui-table",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "name": "",
+        "label": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": "100",
+        "passthru": false,
+        "autocols": true,
+        "showSearch": true,
+        "deselect": true,
+        "selectionType": "none",
+        "columns": [],
+        "mobileBreakpoint": "sm",
+        "mobileBreakpointType": "defaults",
+        "action": "append",
+        "className": "",
+        "x": 670,
+        "y": 240,
+        "wires": [
+            []
         ]
     }
 ]

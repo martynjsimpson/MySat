@@ -7,6 +7,7 @@
 #include "commands.h"
 #include "led.h"
 #include "pmic.h"
+#include "rtc.h"
 #include "sender.h"
 #include "telemetry.h"
 
@@ -60,6 +61,8 @@ namespace
       return TARGET_TELEMETRY;
     if (strcmp(token, "BATTERY") == 0)
       return TARGET_BATTERY;
+    if (strcmp(token, "RTC") == 0)
+      return TARGET_RTC;
     if (strcmp(token, "MODE") == 0)
       return TARGET_MODE;
     if (strcmp(token, "STATUS") == 0)
@@ -97,6 +100,10 @@ namespace
       return PARAM_INTERVAL_S;
     if (strcmp(token, "TELEMETRY") == 0)
       return PARAM_TELEMETRY;
+    if (strcmp(token, "CURRENT_TIME") == 0)
+      return PARAM_CURRENT_TIME;
+    if (strcmp(token, "SYNC") == 0)
+      return PARAM_SYNC;
     if (strcmp(token, "SECONDS") == 0)
       return PARAM_SECONDS;
     if (strcmp(token, "COLOR") == 0)
@@ -145,24 +152,37 @@ namespace
 
   void handleGet(const Command &cmd)
   {
-    if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
-    {
-      sendError("BAD_FORMAT");
-      return;
-    }
-
     switch (cmd.target)
     {
     case TARGET_LED:
+      if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
+      {
+        sendError("BAD_FORMAT");
+        return;
+      }
       reportLedStatus();
       break;
 
     case TARGET_TELEMETRY:
+      if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
+      {
+        sendError("BAD_FORMAT");
+        return;
+      }
       reportTelemetryStatus();
       break;
 
     case TARGET_BATTERY:
+      if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
+      {
+        sendError("BAD_FORMAT");
+        return;
+      }
       reportBatteryStatus();
+      break;
+
+    case TARGET_RTC:
+      handleGetRtc(cmd);
       break;
 
     default:
@@ -187,6 +207,10 @@ namespace
 
     case TARGET_TELEMETRY:
       handleSetTelemetry(cmd);
+      break;
+
+    case TARGET_RTC:
+      handleSetRtc(cmd);
       break;
 
     default:
@@ -261,6 +285,7 @@ namespace
     cmd.target = parseTargetType(targetToken);
     cmd.parameter = parseParameterType(parameterToken);
     cmd.value = parseValueType(valueToken);
+    cmd.rawValueToken = valueToken;
     cmd.numericValue = 0;
     cmd.hasNumericValue = false;
 
@@ -332,11 +357,15 @@ void setupProtocol()
   Serial.println("SET,LED,COLOR,BLUE");
   Serial.println("SET,BATTERY,TELEMETRY,ENABLE");
   Serial.println("SET,BATTERY,TELEMETRY,DISABLE");
+  Serial.println("SET,RTC,TELEMETRY,ENABLE");
+  Serial.println("SET,RTC,TELEMETRY,DISABLE");
+  Serial.println("SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z");
   Serial.println("SET,TELEMETRY,ENABLE,TRUE");
   Serial.println("SET,TELEMETRY,ENABLE,FALSE");
   Serial.println("SET,TELEMETRY,INTERVAL_S,5");
   Serial.println("GET,LED,NONE,NONE");
   Serial.println("GET,TELEMETRY,NONE,NONE");
   Serial.println("GET,BATTERY,NONE,NONE");
+  Serial.println("GET,RTC,NONE,NONE");
   Serial.println("PING,NONE,NONE,NONE");
 }
