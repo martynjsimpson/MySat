@@ -20,7 +20,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 
 | Position | Field | Meaning |
 |---|---|---|
-| 1 | `TIME` | Elapsed seconds since device boot |
+| 1 | `TIME` | Uptime formatted as `hh:mm:ss` since device boot |
 | 2 | `TLM` | Message type identifier for telemetry |
 | 3 | `TARGET` | The subsystem or domain being reported |
 | 4 | `PARAMETER` | The property being reported |
@@ -29,16 +29,16 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 ### Example lines
 
 ```text
-140,TLM,LED,ENABLE,FALSE
-140,TLM,LED,STATE,OFF
-140,TLM,LED,COLOR,GREEN
-140,TLM,TELEMETRY,ENABLE,TRUE
-140,TLM,TELEMETRY,INTERVAL_S,5
-140,TLM,BATTERY,AVAILABLE,TRUE
-140,TLM,BATTERY,ON_BATTERY,FALSE
-140,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-140,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-140,TLM,BATTERY,CHARGE_PERCENT_P,87
+00:02:20,TLM,LED,ENABLE,FALSE
+00:02:20,TLM,LED,STATE,OFF
+00:02:20,TLM,LED,COLOR,GREEN
+00:02:20,TLM,TELEMETRY,ENABLE,TRUE
+00:02:20,TLM,TELEMETRY,INTERVAL_S,5
+00:02:20,TLM,BATTERY,AVAILABLE,TRUE
+00:02:20,TLM,BATTERY,ON_BATTERY,FALSE
+00:02:20,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+00:02:20,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+00:02:20,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
 
 ---
@@ -47,7 +47,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 
 `TIME` is:
 
-- integer seconds since boot
+- uptime formatted as `hh:mm:ss` since boot
 - shared by all messages emitted in the same second
 - not wall-clock time
 - not a real Unix epoch timestamp
@@ -59,15 +59,15 @@ Within a single timestamp, telemetry must not contain multiple conflicting value
 This is acceptable:
 
 ```text
-140,TLM,LED,ENABLE,FALSE
-140,TLM,LED,STATE,OFF
+00:02:20,TLM,LED,ENABLE,FALSE
+00:02:20,TLM,LED,STATE,OFF
 ```
 
 This is not acceptable:
 
 ```text
-140,TLM,LED,STATE,OFF
-140,TLM,LED,STATE,ON
+00:02:20,TLM,LED,STATE,OFF
+00:02:20,TLM,LED,STATE,ON
 ```
 
 because the ground station would not know which one is newer.
@@ -89,16 +89,16 @@ At present, the periodic snapshot includes:
 Typical snapshot:
 
 ```text
-200,TLM,LED,ENABLE,TRUE
-200,TLM,LED,STATE,ON
-200,TLM,LED,COLOR,RED
-200,TLM,TELEMETRY,ENABLE,TRUE
-200,TLM,TELEMETRY,INTERVAL_S,5
-200,TLM,BATTERY,AVAILABLE,TRUE
-200,TLM,BATTERY,ON_BATTERY,FALSE
-200,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-200,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-200,TLM,BATTERY,CHARGE_PERCENT_P,87
+00:03:20,TLM,LED,ENABLE,TRUE
+00:03:20,TLM,LED,STATE,ON
+00:03:20,TLM,LED,COLOR,RED
+00:03:20,TLM,TELEMETRY,ENABLE,TRUE
+00:03:20,TLM,TELEMETRY,INTERVAL_S,5
+00:03:20,TLM,BATTERY,AVAILABLE,TRUE
+00:03:20,TLM,BATTERY,ON_BATTERY,FALSE
+00:03:20,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+00:03:20,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+00:03:20,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
 
 ---
@@ -118,8 +118,8 @@ Value type:
 Examples:
 
 ```text
-220,TLM,LED,ENABLE,TRUE
-220,TLM,LED,ENABLE,FALSE
+00:03:40,TLM,LED,ENABLE,TRUE
+00:03:40,TLM,LED,ENABLE,FALSE
 ```
 
 ### `LED,STATE`
@@ -133,8 +133,8 @@ Value type:
 Examples:
 
 ```text
-221,TLM,LED,STATE,ON
-221,TLM,LED,STATE,OFF
+00:03:41,TLM,LED,STATE,ON
+00:03:41,TLM,LED,STATE,OFF
 ```
 
 ### `LED,COLOR`
@@ -149,8 +149,8 @@ Value type:
 Examples:
 
 ```text
-222,TLM,LED,COLOR,RED
-222,TLM,LED,COLOR,GREEN
+00:03:42,TLM,LED,COLOR,RED
+00:03:42,TLM,LED,COLOR,GREEN
 ```
 
 ---
@@ -168,8 +168,8 @@ Value type:
 Examples:
 
 ```text
-230,TLM,TELEMETRY,ENABLE,TRUE
-230,TLM,TELEMETRY,ENABLE,FALSE
+00:03:50,TLM,TELEMETRY,ENABLE,TRUE
+00:03:50,TLM,TELEMETRY,ENABLE,FALSE
 ```
 
 ### `TELEMETRY,INTERVAL_S`
@@ -182,8 +182,8 @@ Value type:
 Examples:
 
 ```text
-231,TLM,TELEMETRY,INTERVAL_S,5
-231,TLM,TELEMETRY,INTERVAL_S,10
+00:03:51,TLM,TELEMETRY,INTERVAL_S,5
+00:03:51,TLM,TELEMETRY,INTERVAL_S,10
 ```
 
 ---
@@ -201,8 +201,8 @@ Value type:
 Examples:
 
 ```text
-240,TLM,BATTERY,AVAILABLE,TRUE
-240,TLM,BATTERY,AVAILABLE,FALSE
+00:04:00,TLM,BATTERY,AVAILABLE,TRUE
+00:04:00,TLM,BATTERY,AVAILABLE,FALSE
 ```
 
 ### `BATTERY,ON_BATTERY`
@@ -216,8 +216,8 @@ Value type:
 Examples:
 
 ```text
-241,TLM,BATTERY,ON_BATTERY,TRUE
-241,TLM,BATTERY,ON_BATTERY,FALSE
+00:04:01,TLM,BATTERY,ON_BATTERY,TRUE
+00:04:01,TLM,BATTERY,ON_BATTERY,FALSE
 ```
 
 ### `BATTERY,CHARGE_CURRENT_A`
@@ -230,8 +230,8 @@ Value type:
 Examples:
 
 ```text
-242,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-242,TLM,BATTERY,CHARGE_CURRENT_A,0.125
+00:04:02,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+00:04:02,TLM,BATTERY,CHARGE_CURRENT_A,0.125
 ```
 
 ### `BATTERY,CHARGE_VOLTAGE_V`
@@ -244,8 +244,8 @@ Value type:
 Examples:
 
 ```text
-243,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-243,TLM,BATTERY,CHARGE_VOLTAGE_V,3.950
+00:04:03,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+00:04:03,TLM,BATTERY,CHARGE_VOLTAGE_V,3.950
 ```
 
 ### `BATTERY,CHARGE_PERCENT_P`
@@ -258,8 +258,8 @@ Value type:
 Examples:
 
 ```text
-244,TLM,BATTERY,CHARGE_PERCENT_P,87
-244,TLM,BATTERY,CHARGE_PERCENT_P,42
+00:04:04,TLM,BATTERY,CHARGE_PERCENT_P,87
+00:04:04,TLM,BATTERY,CHARGE_PERCENT_P,42
 ```
 
 ---
@@ -270,16 +270,16 @@ This table is intended for a ground-station developer or future parser implement
 
 | Target | Parameter | Meaning | Value Type | Example |
 |---|---|---|---|---|
-| `LED` | `ENABLE` | Whether LED operation is permitted | `TRUE` / `FALSE` | `140,TLM,LED,ENABLE,FALSE` |
-| `LED` | `STATE` | Current LED output state | `ON` / `OFF` | `140,TLM,LED,STATE,OFF` |
-| `LED` | `COLOR` | Current selected LED color | `RED` / `GREEN` / `BLUE` | `140,TLM,LED,COLOR,GREEN` |
-| `TELEMETRY` | `ENABLE` | Whether periodic telemetry is enabled | `TRUE` / `FALSE` | `140,TLM,TELEMETRY,ENABLE,TRUE` |
-| `TELEMETRY` | `INTERVAL_S` | Telemetry interval in seconds | unsigned integer | `140,TLM,TELEMETRY,INTERVAL_S,5` |
-| `BATTERY` | `AVAILABLE` | Whether battery hardware is present | `TRUE` / `FALSE` | `140,TLM,BATTERY,AVAILABLE,TRUE` |
-| `BATTERY` | `ON_BATTERY` | Whether the system is running from battery | `TRUE` / `FALSE` | `140,TLM,BATTERY,ON_BATTERY,FALSE` |
-| `BATTERY` | `CHARGE_CURRENT_A` | Charge current in amps | float | `140,TLM,BATTERY,CHARGE_CURRENT_A,0.500` |
-| `BATTERY` | `CHARGE_VOLTAGE_V` | Charge voltage in volts | float | `140,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200` |
-| `BATTERY` | `CHARGE_PERCENT_P` | Approximate battery percentage | integer | `140,TLM,BATTERY,CHARGE_PERCENT_P,87` |
+| `LED` | `ENABLE` | Whether LED operation is permitted | `TRUE` / `FALSE` | `00:02:20,TLM,LED,ENABLE,FALSE` |
+| `LED` | `STATE` | Current LED output state | `ON` / `OFF` | `00:02:20,TLM,LED,STATE,OFF` |
+| `LED` | `COLOR` | Current selected LED color | `RED` / `GREEN` / `BLUE` | `00:02:20,TLM,LED,COLOR,GREEN` |
+| `TELEMETRY` | `ENABLE` | Whether periodic telemetry is enabled | `TRUE` / `FALSE` | `00:02:20,TLM,TELEMETRY,ENABLE,TRUE` |
+| `TELEMETRY` | `INTERVAL_S` | Telemetry interval in seconds | unsigned integer | `00:02:20,TLM,TELEMETRY,INTERVAL_S,5` |
+| `BATTERY` | `AVAILABLE` | Whether battery hardware is present | `TRUE` / `FALSE` | `00:02:20,TLM,BATTERY,AVAILABLE,TRUE` |
+| `BATTERY` | `ON_BATTERY` | Whether the system is running from battery | `TRUE` / `FALSE` | `00:02:20,TLM,BATTERY,ON_BATTERY,FALSE` |
+| `BATTERY` | `CHARGE_CURRENT_A` | Charge current in amps | float | `00:02:20,TLM,BATTERY,CHARGE_CURRENT_A,0.500` |
+| `BATTERY` | `CHARGE_VOLTAGE_V` | Charge voltage in volts | float | `00:02:20,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200` |
+| `BATTERY` | `CHARGE_PERCENT_P` | Approximate battery percentage | integer | `00:02:20,TLM,BATTERY,CHARGE_PERCENT_P,87` |
 
 ---
 
@@ -287,7 +287,7 @@ This table is intended for a ground-station developer or future parser implement
 
 A ground station should parse telemetry as:
 
-- `TIME` = integer timestamp
+- `TIME` = `hh:mm:ss` uptime string
 - `TYPE` = must equal `TLM`
 - `TARGET` = subsystem key
 - `PARAMETER` = attribute key
@@ -337,16 +337,16 @@ A parser should:
 ### Example telemetry lines for testing a parser
 
 ```text
-100,TLM,LED,ENABLE,FALSE
-100,TLM,LED,STATE,OFF
-100,TLM,LED,COLOR,GREEN
-110,TLM,TELEMETRY,ENABLE,TRUE
-110,TLM,TELEMETRY,INTERVAL_S,5
-120,TLM,BATTERY,AVAILABLE,TRUE
-120,TLM,BATTERY,ON_BATTERY,FALSE
-120,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-120,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-120,TLM,BATTERY,CHARGE_PERCENT_P,87
+00:01:40,TLM,LED,ENABLE,FALSE
+00:01:40,TLM,LED,STATE,OFF
+00:01:40,TLM,LED,COLOR,GREEN
+00:01:50,TLM,TELEMETRY,ENABLE,TRUE
+00:01:50,TLM,TELEMETRY,INTERVAL_S,5
+00:02:00,TLM,BATTERY,AVAILABLE,TRUE
+00:02:00,TLM,BATTERY,ON_BATTERY,FALSE
+00:02:00,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+00:02:00,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+00:02:00,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
 
 ### Suggested Serial Studio widget set
@@ -385,8 +385,8 @@ These are not telemetry, but they use the same timestamp prefix format.
 Examples:
 
 ```text
-120,ACK,LED,ON
-121,ERR,LED_DISABLED
+00:02:00,ACK,LED,ON
+00:02:01,ERR,LED_DISABLED
 ```
 
 A ground station should treat these separately from telemetry.
@@ -400,10 +400,10 @@ The telemetry structure is intentionally reusable.
 Future examples may include:
 
 ```text
-300,TLM,POWER,MODE,LOW_POWER
-301,TLM,RADIO,STATE,OFF
-302,TLM,STATUS,HEALTH,OK
-303,TLM,UPTIME,SECONDS,303
+00:05:00,TLM,POWER,MODE,LOW_POWER
+00:05:01,TLM,RADIO,STATE,OFF
+00:05:02,TLM,STATUS,HEALTH,OK
+00:05:03,TLM,UPTIME,SECONDS,303
 ```
 
 This means the telemetry parser should not be hard-coded only for LED. It should support generic:

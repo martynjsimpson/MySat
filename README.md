@@ -132,6 +132,8 @@ Where `TYPE` is:
 - `ERR`
 - `TLM`
 
+`TIME` is boot-relative uptime formatted as `hh:mm:ss`.
+
 This separation is intentional and should be preserved.
 
 ## 3. Policy state vs hardware state
@@ -229,9 +231,9 @@ Responses should stay regular and never drift into natural-language output.
 Good:
 
 ```text
-20,ACK,LED,ON
-21,ERR,BAD_VALUE
-22,TLM,LED,STATE,OFF
+00:00:20,ACK,LED,ON
+00:00:21,ERR,BAD_VALUE
+00:00:22,TLM,LED,STATE,OFF
 ```
 
 Bad:
