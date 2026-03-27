@@ -1,0 +1,21 @@
+{
+  "name": "ground-station",
+  "version": "1.0.0",
+  "description": "Node-RED ground station prototype for MySat",
+  "private": true,
+  "scripts": {
+    "start": "node-red --userDir . --settings ./settings.js",
+    "start:safe": "node-red --userDir . --settings ./settings.js --safe"
+  },
+  "keywords": [
+    "node-red",
+    "ground-station",
+    "telemetry",
+    "cubesat"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "@flowfuse/node-red-dashboard": "^1.30.2",
+    "node-red-node-serialport": "^2.0.3"
+  }
+}

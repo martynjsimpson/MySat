@@ -1,10 +1,10 @@
-# Telemetry.md
-
 # MySat Telemetry Specification
 
 ## Purpose
 
 This document describes the outbound telemetry format used by MySat and provides practical guidance for decoding it in a future ground station or tools such as Serial Studio.
+
+This document builds on the shared message model defined in [Protocol.md](./Protocol.md) and focuses only on telemetry behavior.
 
 ---
 

@@ -1,0 +1,9 @@
+.DS_Store
+.config.*.json
+.sessions.json
+.config.users.json
+.node-red
+lib/
+node_modules/
+flows/*_cred.json
+flows/.flows.json.backup
