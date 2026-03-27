@@ -7,14 +7,58 @@
 
 namespace {
 bool telemetryEnabled = true;
+bool ledTelemetryEnabled = true;
+bool batteryTelemetryEnabled = true;
 unsigned long telemetryIntervalSeconds = 5;
 unsigned long lastTelemetryTime = 0;
+
+bool *getTargetTelemetryFlag(TargetType target) {
+  switch (target) {
+    case TARGET_LED:
+      return &ledTelemetryEnabled;
+    case TARGET_BATTERY:
+      return &batteryTelemetryEnabled;
+    default:
+      return nullptr;
+  }
+}
+
+const char *targetToToken(TargetType target) {
+  switch (target) {
+    case TARGET_LED:
+      return "LED";
+    case TARGET_BATTERY:
+      return "BATTERY";
+    default:
+      return nullptr;
+  }
+}
+
+void reportTargetTelemetrySetting(TargetType target) {
+  const char *targetToken = targetToToken(target);
+  if (targetToken == nullptr) {
+    return;
+  }
+
+  sendTelemetry(targetToken, "TELEMETRY", isTargetTelemetryEnabled(target) ? "TRUE" : "FALSE");
+}
 }
 
 void setupTelemetry() {
   telemetryEnabled = true;
+  ledTelemetryEnabled = true;
+  batteryTelemetryEnabled = true;
   telemetryIntervalSeconds = 5;
   lastTelemetryTime = getTimestamp();
+}
+
+bool isTargetTelemetryEnabled(TargetType target) {
+  bool *flag = getTargetTelemetryFlag(target);
+  if (flag == nullptr) {
+    return false;
+  }
+
+  return *flag;
 }
 
 void handleSetTelemetry(const Command &cmd) {
@@ -52,15 +96,41 @@ void handleSetTelemetry(const Command &cmd) {
   }
 }
 
+void handleSetTargetTelemetry(const Command &cmd) {
+  bool *flag = getTargetTelemetryFlag(cmd.target);
+  const char *targetToken = targetToToken(cmd.target);
+
+  if (flag == nullptr || targetToken == nullptr) {
+    sendError("UNKNOWN_TARGET");
+    return;
+  }
+
+  if (cmd.value == VALUE_ENABLE || cmd.value == VALUE_TRUE) {
+    *flag = true;
+    sendAck(targetToken, "TELEMETRY_ENABLE");
+    reportTargetTelemetrySetting(cmd.target);
+  } else if (cmd.value == VALUE_DISABLE || cmd.value == VALUE_FALSE) {
+    *flag = false;
+    sendAck(targetToken, "TELEMETRY_DISABLE");
+    reportTargetTelemetrySetting(cmd.target);
+  } else {
+    sendError("BAD_VALUE");
+  }
+}
+
 void reportTelemetryStatus() {
   sendTelemetry("TELEMETRY", "ENABLE", telemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
 }
 
 void sendTelemetrySnapshot() {
-  reportLedStatus();
+  if (ledTelemetryEnabled) {
+    reportLedStatus();
+  }
   reportTelemetryStatus();
-  reportBatteryStatus();
+  if (batteryTelemetryEnabled) {
+    reportBatteryStatus();
+  }
 }
 
 void handlePeriodicTelemetry() {

@@ -46,11 +46,15 @@ Each command is terminated by a newline.
 ```text
 SET,LED,ENABLE,TRUE
 SET,LED,ENABLE,FALSE
+SET,LED,TELEMETRY,ENABLE
+SET,LED,TELEMETRY,DISABLE
 SET,LED,STATE,ON
 SET,LED,STATE,OFF
 SET,TELEMETRY,ENABLE,TRUE
 SET,TELEMETRY,ENABLE,FALSE
 SET,TELEMETRY,INTERVAL_S,5
+SET,BATTERY,TELEMETRY,ENABLE
+SET,BATTERY,TELEMETRY,DISABLE
 GET,LED,NONE,NONE
 GET,TELEMETRY,NONE,NONE
 GET,BATTERY,NONE,NONE
@@ -158,10 +162,12 @@ Examples:
 
 ```text
 00:00:40,TLM,LED,ENABLE,FALSE
+00:00:40,TLM,LED,TELEMETRY,TRUE
 00:00:40,TLM,LED,STATE,OFF
 00:00:40,TLM,LED,COLOR,GREEN
 00:00:40,TLM,TELEMETRY,ENABLE,TRUE
 00:00:40,TLM,TELEMETRY,INTERVAL_S,5
+00:00:40,TLM,BATTERY,TELEMETRY,TRUE
 00:00:40,TLM,BATTERY,AVAILABLE,TRUE
 00:00:40,TLM,BATTERY,ON_BATTERY,FALSE
 00:00:40,TLM,BATTERY,CHARGE_CURRENT_A,0.500
@@ -224,6 +230,7 @@ Examples:
 | Token | Meaning |
 |---|---|
 | `ENABLE` | Whether a feature or subsystem is allowed to operate |
+| `TELEMETRY` | Whether periodic telemetry for a target is included in snapshots |
 | `STATE` | Current state of a target |
 | `COLOR` | Selected symbolic color for a target |
 | `INTERVAL_S` | Interval in seconds |
@@ -259,6 +266,8 @@ Values may be **symbolic** or **numeric**.
 |---|---|
 | `TRUE` | Boolean true / enabled condition |
 | `FALSE` | Boolean false / disabled condition |
+| `ENABLE` | Enable a telemetry-related setting |
+| `DISABLE` | Disable a telemetry-related setting |
 | `ON` | Powered or active output state |
 | `OFF` | Powered-down or inactive output state |
 | `RED` | Red color selection |
@@ -270,8 +279,6 @@ Values may be **symbolic** or **numeric**.
 
 | Token | Intended future meaning |
 |---|---|
-| `ENABLE` | Reserved symbolic state |
-| `DISABLE` | Reserved symbolic state |
 | `SAFE` | Safe mode |
 | `NORMAL` | Nominal operating mode |
 | `LOW_POWER` | Reduced power mode |
@@ -343,6 +350,18 @@ SET,LED,COLOR,RED
 TLM,LED,COLOR,GREEN
 ```
 
+### When to use `TELEMETRY`
+
+Use `TELEMETRY` when enabling or disabling periodic telemetry for an individual target.
+
+Examples:
+
+```text
+SET,LED,TELEMETRY,DISABLE
+SET,BATTERY,TELEMETRY,ENABLE
+TLM,LED,TELEMETRY,FALSE
+```
+
 ### When to use `TRUE` / `FALSE`
 
 Use `TRUE` / `FALSE` for boolean conditions.
@@ -395,6 +414,8 @@ The LED subsystem models two separate concepts:
 ```text
 SET,LED,ENABLE,TRUE
 SET,LED,ENABLE,FALSE
+SET,LED,TELEMETRY,ENABLE
+SET,LED,TELEMETRY,DISABLE
 SET,LED,STATE,ON
 SET,LED,STATE,OFF
 SET,LED,COLOR,RED
@@ -409,6 +430,8 @@ GET,LED,NONE,NONE
 |---|---|
 | `SET,LED,ENABLE,TRUE` | Allows LED operation |
 | `SET,LED,ENABLE,FALSE` | Disables LED operation and forces LED off |
+| `SET,LED,TELEMETRY,ENABLE` | Includes LED in periodic telemetry snapshots |
+| `SET,LED,TELEMETRY,DISABLE` | Omits LED from periodic telemetry snapshots |
 | `SET,LED,STATE,ON` | Turns LED on, but only if enabled |
 | `SET,LED,STATE,OFF` | Turns LED off |
 | `SET,LED,COLOR,RED` | Selects red color output |
@@ -421,6 +444,8 @@ The invalid state combination **disabled + on** should never occur.
 ## TELEMETRY target
 
 The telemetry subsystem currently controls periodic telemetry streaming.
+
+Subsystem telemetry can also be enabled or disabled per target using commands such as `SET,LED,TELEMETRY,DISABLE`.
 
 ### Supported telemetry commands
 
@@ -448,6 +473,8 @@ The battery / PMIC subsystem is currently read-only from the command side.
 
 ```text
 GET,BATTERY,NONE,NONE
+SET,BATTERY,TELEMETRY,ENABLE
+SET,BATTERY,TELEMETRY,DISABLE
 ```
 
 ### Battery rules
@@ -455,6 +482,8 @@ GET,BATTERY,NONE,NONE
 | Command | Behaviour |
 |---|---|
 | `GET,BATTERY,NONE,NONE` | Returns current battery telemetry |
+| `SET,BATTERY,TELEMETRY,ENABLE` | Includes battery data in periodic telemetry snapshots |
+| `SET,BATTERY,TELEMETRY,DISABLE` | Omits battery data from periodic telemetry snapshots |
 
 Battery telemetry is also included in the periodic telemetry snapshot.
 
@@ -481,11 +510,15 @@ Currently implemented:
 ```text
 SET,LED,ENABLE,TRUE
 SET,LED,ENABLE,FALSE
+SET,LED,TELEMETRY,ENABLE
+SET,LED,TELEMETRY,DISABLE
 SET,LED,STATE,ON
 SET,LED,STATE,OFF
 SET,LED,COLOR,RED
 SET,LED,COLOR,GREEN
 SET,LED,COLOR,BLUE
+SET,BATTERY,TELEMETRY,ENABLE
+SET,BATTERY,TELEMETRY,DISABLE
 SET,TELEMETRY,ENABLE,TRUE
 SET,TELEMETRY,ENABLE,FALSE
 SET,TELEMETRY,INTERVAL_S,<integer>
@@ -505,6 +538,7 @@ Commands sent to device:
 PING,NONE,NONE,NONE
 SET,LED,ENABLE,TRUE
 SET,LED,STATE,ON
+SET,LED,TELEMETRY,DISABLE
 SET,LED,COLOR,RED
 GET,LED,NONE,NONE
 SET,TELEMETRY,INTERVAL_S,10
@@ -518,16 +552,20 @@ Possible responses:
 00:00:00,ACK,PING,PONG
 00:00:01,ACK,LED,ENABLE
 00:00:02,ACK,LED,ON
-00:00:03,ACK,LED,RED
-00:00:04,TLM,LED,ENABLE,TRUE
-00:00:04,TLM,LED,STATE,ON
-00:00:04,TLM,LED,COLOR,RED
-00:00:05,ACK,TELEMETRY,INTERVAL_S
-00:00:06,TLM,TELEMETRY,ENABLE,TRUE
-00:00:06,TLM,TELEMETRY,INTERVAL_S,10
-00:00:07,TLM,BATTERY,AVAILABLE,TRUE
-00:00:07,TLM,BATTERY,ON_BATTERY,FALSE
-00:00:07,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-00:00:07,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-00:00:07,TLM,BATTERY,CHARGE_PERCENT_P,87
+00:00:03,ACK,LED,TELEMETRY_DISABLE
+00:00:03,TLM,LED,TELEMETRY,FALSE
+00:00:04,ACK,LED,RED
+00:00:05,TLM,LED,TELEMETRY,FALSE
+00:00:05,TLM,LED,ENABLE,TRUE
+00:00:05,TLM,LED,STATE,ON
+00:00:05,TLM,LED,COLOR,RED
+00:00:06,ACK,TELEMETRY,INTERVAL_S
+00:00:07,TLM,TELEMETRY,ENABLE,TRUE
+00:00:07,TLM,TELEMETRY,INTERVAL_S,10
+00:00:08,TLM,BATTERY,TELEMETRY,TRUE
+00:00:08,TLM,BATTERY,AVAILABLE,TRUE
+00:00:08,TLM,BATTERY,ON_BATTERY,FALSE
+00:00:08,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+00:00:08,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+00:00:08,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
