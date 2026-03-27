@@ -6,13 +6,11 @@
 #include "protocol.h"
 #include "telemetry.h"
 
-void setup() {
+void setup()
+{
   setupRtc();
 
   Serial.begin(115200);
-  // while (!Serial) {
-  //   ;
-  // }
 
   setupLed();
   setupBattery();
@@ -20,7 +18,8 @@ void setup() {
   setupProtocol();
 }
 
-void loop() {
+void loop()
+{
   readSerialCommands();
   handlePeriodicTelemetry();
 }

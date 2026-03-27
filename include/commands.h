@@ -3,7 +3,8 @@
 
 #include <Arduino.h>
 
-enum CommandType {
+enum CommandType
+{
   CMD_UNKNOWN = 0,
 
   // Implemented now
@@ -16,7 +17,8 @@ enum CommandType {
   CMD_SAVE
 };
 
-enum TargetType {
+enum TargetType
+{
   TARGET_UNKNOWN = 0,
   TARGET_NONE,
 
@@ -37,7 +39,8 @@ enum TargetType {
   TARGET_UPTIME
 };
 
-enum ParameterType {
+enum ParameterType
+{
   PARAM_UNKNOWN = 0,
   PARAM_NONE,
 
@@ -47,10 +50,12 @@ enum ParameterType {
   PARAM_MODE,
   PARAM_HEALTH,
   PARAM_INTERVAL_S,
-  PARAM_SECONDS
+  PARAM_SECONDS,
+  PARAM_COLOR
 };
 
-enum ValueType {
+enum ValueType
+{
   VALUE_UNKNOWN = 0,
 
   // Implemented now
@@ -71,10 +76,14 @@ enum ValueType {
 
   // Generic status values
   VALUE_OK,
-  VALUE_FAIL
+  VALUE_FAIL,
+  VALUE_RED,
+  VALUE_GREEN,
+  VALUE_BLUE
 };
 
-struct Command {
+struct Command
+{
   CommandType type;
   TargetType target;
   ParameterType parameter;
