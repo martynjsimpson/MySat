@@ -1,0 +1,1598 @@
+[
+    {
+        "id": "3b521b08f4388c2f",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5124fb12bde93c6f",
+        "type": "serial in",
+        "z": "3b521b08f4388c2f",
+        "name": "",
+        "serial": "7180565ad450ba58",
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "e80ca2965e7ce828"
+            ]
+        ]
+    },
+    {
+        "id": "2c2f1fc0474d0d45",
+        "type": "debug",
+        "z": "3b521b08f4388c2f",
+        "d": true,
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "c68d0d746f6d7161",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 280,
+        "wires": [
+            [
+                "e3954c2c73dcad8e"
+            ]
+        ]
+    },
+    {
+        "id": "e3954c2c73dcad8e",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "function 1",
+        "func": "msg.payload = \"SET,LED,ENABLE,TRUE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 280,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "a407349444f312cf",
+        "type": "serial out",
+        "z": "3b521b08f4388c2f",
+        "name": "",
+        "serial": "7180565ad450ba58",
+        "x": 600,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "e80ca2965e7ce828",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "Parser",
+        "func": "let line = String(msg.payload).trim();\nif (!line) return null;\n\nlet parts = line.split(\",\");\n\nif (parts.length < 2) return null;\n\nmsg.raw = line;\nmsg.time = parts[0];      // keep as text\nmsg.type = parts[1];\n\nif (msg.type === \"TLM\" && parts.length >= 5) {\n    msg.target = parts[2];\n    msg.parameter = parts[3];\n    msg.value = parts[4];\n}\nelse if (msg.type === \"ACK\" && parts.length >= 4) {\n    msg.target = parts[2];\n    msg.value = parts[3];\n}\nelse if (msg.type === \"ERR\" && parts.length >= 3) {\n    msg.error = parts[2];\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 160,
+        "wires": [
+            [
+                "2c2f1fc0474d0d45",
+                "50ef76a53201094c"
+            ]
+        ]
+    },
+    {
+        "id": "50ef76a53201094c",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "TLM Storage",
+        "func": "let state = flow.get(\"satState\") || {};\n\nif (!state.tlm) {\n    state.tlm = {};\n}\nif (!state.lastAck) {\n    state.lastAck = null;\n}\nif (!state.lastErr) {\n    state.lastErr = null;\n}\nif (!state.time) {\n    state.time = null;\n}\n\nif (msg.time) {\n    state.time = msg.time;\n}\n\nif (msg.type === \"TLM\") {\n    if (!msg.target || !msg.parameter) {\n        return null;\n    }\n\n    if (!state.tlm[msg.target]) {\n        state.tlm[msg.target] = {};\n    }\n\n    state.tlm[msg.target][msg.parameter] = {\n        value: msg.value,\n        time: msg.time\n    };\n}\nelse if (msg.type === \"ACK\") {\n    state.lastAck = {\n        target: msg.target || null,\n        value: msg.value || null,\n        time: msg.time || null\n    };\n}\nelse if (msg.type === \"ERR\") {\n    state.lastErr = {\n        error: msg.error || null,\n        time: msg.time || null\n    };\n}\n\nflow.set(\"satState\", state);\n\nmsg.state = state;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "68a49d135b911182",
+                "af2be4cc68f6c30d"
+            ]
+        ]
+    },
+    {
+        "id": "68a49d135b911182",
+        "type": "debug",
+        "z": "3b521b08f4388c2f",
+        "d": true,
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "state",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "af2be4cc68f6c30d",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "Flatten State",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"ENABLE\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    onBattery: getValue(\"BATTERY\", \"ON_BATTERY\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 160,
+        "wires": [
+            [
+                "353ea91c8195f24d",
+                "c86a724985a0b156",
+                "e801888fd08475bd",
+                "b8a99bc218fbe40e",
+                "bc470b80b14f8ffb",
+                "879d3a364ed6ee7f",
+                "0b2ea32d4b67bf0d",
+                "40b71589d101899b",
+                "2e944c48b4fb70c3",
+                "9470ae2e35566823",
+                "dad35d72a6b5f9d6",
+                "b30ce9edf5df543c",
+                "ce81e4884bf62a13",
+                "05128a24ed57fb61",
+                "cbf9be1a32b5b38a"
+            ]
+        ]
+    },
+    {
+        "id": "353ea91c8195f24d",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Time",
+        "func": "msg.payload = msg.payload.time || \"\"; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 280,
+        "wires": [
+            [
+                "aa35e6502e80f6ca"
+            ]
+        ]
+    },
+    {
+        "id": "aa35e6502e80f6ca",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "order": 3,
+        "width": "6",
+        "height": 1,
+        "name": "",
+        "label": "Current Time",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1150,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "c86a724985a0b156",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract LED Color",
+        "func": "msg.payload = { label: 'LED Color', value: msg.payload.ledColor || '' };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e801888fd08475bd",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Telemetry Enable",
+        "func": "msg.payload = msg.payload.telemetryEnable || \"\"; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 440,
+        "wires": [
+            [
+                "9006214b265e3fc3"
+            ]
+        ]
+    },
+    {
+        "id": "9006214b265e3fc3",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "d46baa8b455b13df",
+        "order": 2,
+        "width": "3",
+        "height": "2",
+        "name": "",
+        "label": "Telemetry Enable",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1170,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "b8a99bc218fbe40e",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Telemetry Interval (s)",
+        "func": "msg.payload = msg.payload.telemetryInterval || \"\"; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 480,
+        "wires": [
+            [
+                "9fbf45d672f57260"
+            ]
+        ]
+    },
+    {
+        "id": "9fbf45d672f57260",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "d46baa8b455b13df",
+        "order": 1,
+        "width": "3",
+        "height": "2",
+        "name": "",
+        "label": "Telemetry Interval (s)",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1180,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "bc470b80b14f8ffb",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Charge Current (A)",
+        "func": "msg.payload = msg.payload.chargeCurrentA || \"\"; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 600,
+        "wires": [
+            [
+                "591fda52697d738e"
+            ]
+        ]
+    },
+    {
+        "id": "591fda52697d738e",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "order": 6,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "Charge Current (A)",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1170,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "879d3a364ed6ee7f",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Charge Voltage (V)",
+        "func": "msg.payload = msg.payload.chargeVoltageV || \"\"; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 640,
+        "wires": [
+            [
+                "4e79dc84e1f17698"
+            ]
+        ]
+    },
+    {
+        "id": "4e79dc84e1f17698",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "order": 7,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "Charge Voltage (V)",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1170,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "0b2ea32d4b67bf0d",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Last ACK",
+        "func": "if (!msg.payload.lastAck) {\n    msg.payload = \"\";\n    return msg;\n}\nmsg.payload = [msg.payload.lastAck.time, msg.payload.lastAck.target, msg.payload.lastAck.value]\n    .filter(v => v !== null && v !== undefined && v !== \"\")\n    .join(\" | \");\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 720,
+        "wires": [
+            [
+                "6d5439a9dd0319e8"
+            ]
+        ]
+    },
+    {
+        "id": "6d5439a9dd0319e8",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "order": 9,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "Last ACK",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1140,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "40b71589d101899b",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Last ERR",
+        "func": "if (!msg.payload.lastErr) {\n    msg.payload = \"\";\n    return msg;\n}\nmsg.payload = [msg.payload.lastErr.time, msg.payload.lastErr.error]\n    .filter(v => v !== null && v !== undefined && v !== \"\")\n    .join(\" | \");\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 760,
+        "wires": [
+            [
+                "4a17bc77ddbdb063"
+            ]
+        ]
+    },
+    {
+        "id": "4a17bc77ddbdb063",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "order": 10,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "Last ERR",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1140,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "287e3768f084c933",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "Ping",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 420,
+        "wires": [
+            [
+                "9331f758d9c225ed"
+            ]
+        ]
+    },
+    {
+        "id": "9331f758d9c225ed",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Ping",
+        "func": "msg.payload = \"PING,NONE,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 420,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "9cc1961053df35bd",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "Get LED",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 460,
+        "wires": [
+            [
+                "705d00e7e4f34d52"
+            ]
+        ]
+    },
+    {
+        "id": "705d00e7e4f34d52",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get LED",
+        "func": "msg.payload = \"GET,LED,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 460,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "96a17b7f77e2b4b3",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "Get Battery",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 500,
+        "wires": [
+            [
+                "e4b26bb90d0f220e"
+            ]
+        ]
+    },
+    {
+        "id": "e4b26bb90d0f220e",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get Battery",
+        "func": "msg.payload = \"GET,BATTERY,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 500,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "53d228e978fc412d",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "LED Enable",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 880,
+        "wires": [
+            [
+                "40a56bcaa8abc94f"
+            ]
+        ]
+    },
+    {
+        "id": "40a56bcaa8abc94f",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send LED Enable",
+        "func": "msg.payload = \"SET,LED,ENABLE,TRUE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 880,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "7ef53d0b8404b54d",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "LED Disable",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 920,
+        "wires": [
+            [
+                "9c4c9523287dbc60"
+            ]
+        ]
+    },
+    {
+        "id": "9c4c9523287dbc60",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send LED Disable",
+        "func": "msg.payload = \"SET,LED,ENABLE,FALSE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 920,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "5ae6e2c53c33d859",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "LED ON",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 960,
+        "wires": [
+            [
+                "097e0d32dd4bc1f9"
+            ]
+        ]
+    },
+    {
+        "id": "097e0d32dd4bc1f9",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send LED ON",
+        "func": "msg.payload = \"SET,LED,STATE,ON\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 960,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "c26e927e078d8b40",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "LED OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 1000,
+        "wires": [
+            [
+                "49f5d0774b720662"
+            ]
+        ]
+    },
+    {
+        "id": "49f5d0774b720662",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send LED OFF",
+        "func": "msg.payload = \"SET,LED,STATE,OFF\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 1000,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "214669be8aab39ec",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "TLM Enable",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 700,
+        "wires": [
+            [
+                "b5d62154f09edf79"
+            ]
+        ]
+    },
+    {
+        "id": "b5d62154f09edf79",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send TLM Enable",
+        "func": "msg.payload = \"SET,TELEMETRY,ENABLE,TRUE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 700,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "cad5c1fa383e6ed2",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "TLM Disable",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 740,
+        "wires": [
+            [
+                "59a0bb862787b1a6"
+            ]
+        ]
+    },
+    {
+        "id": "59a0bb862787b1a6",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send TLM Disable",
+        "func": "msg.payload = \"SET,TELEMETRY,ENABLE,FALSE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 740,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "91faa8985233f574",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "TLM Interval 10",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 780,
+        "wires": [
+            [
+                "e328bd37e42d09ce"
+            ]
+        ]
+    },
+    {
+        "id": "e328bd37e42d09ce",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send TLM Interval 10",
+        "func": "msg.payload = \"SET,TELEMETRY,INTERVAL_S,10\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 780,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "76ba83bf503fa602",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "name": "",
+        "label": "Ping",
+        "order": 2,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 340,
+        "wires": [
+            [
+                "9331f758d9c225ed"
+            ]
+        ]
+    },
+    {
+        "id": "2e944c48b4fb70c3",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract LED Enable card",
+        "func": "msg.payload = { label: 'LED Enable', value: msg.payload.ledEnable || '' };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9470ae2e35566823",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract LED State card",
+        "func": "msg.payload = { label: 'LED State', value: msg.payload.ledState || '' };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dad35d72a6b5f9d6",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Battery Available card",
+        "func": "msg.payload = { label: 'Battery Available', value: msg.payload.batteryAvailable || '' };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 520,
+        "wires": [
+            [
+                "bfcf577fd7f82f7f"
+            ]
+        ]
+    },
+    {
+        "id": "bfcf577fd7f82f7f",
+        "type": "ui-template",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "page": "",
+        "ui": "",
+        "name": "Battery Available card",
+        "order": 4,
+        "width": 6,
+        "height": 2,
+        "head": "",
+        "format": "<template>\n  <v-card variant=\"tonal\">\n    <v-card-text class=\"d-flex align-center justify-space-between\">\n      <span>{{ msg.payload.label }}</span>\n      <v-chip\n        :color=\"msg.payload.value === 'TRUE' ? 'green' : 'grey'\"\n        variant=\"flat\"\n      >\n        {{ msg.payload.value || 'UNKNOWN' }}\n      </v-chip>\n    </v-card-text>\n  </v-card>\n</template>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1150,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b30ce9edf5df543c",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract On Battery card",
+        "func": "msg.payload = { label: 'On Battery', value: msg.payload.onBattery || '' };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 560,
+        "wires": [
+            [
+                "d5506d64e49831d9"
+            ]
+        ]
+    },
+    {
+        "id": "d5506d64e49831d9",
+        "type": "ui-template",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "page": "",
+        "ui": "",
+        "name": "On Battery card",
+        "order": 5,
+        "width": 6,
+        "height": 2,
+        "head": "",
+        "format": "<template>\n  <v-card variant=\"tonal\">\n    <v-card-text class=\"d-flex align-center justify-space-between\">\n      <span>{{ msg.payload.label }}</span>\n      <v-chip\n        :color=\"msg.payload.value === 'TRUE' ? 'green' : 'grey'\"\n        variant=\"flat\"\n      >\n        {{ msg.payload.value || 'UNKNOWN' }}\n      </v-chip>\n    </v-card-text>\n  </v-card>\n</template>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1150,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ce81e4884bf62a13",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract Charge Percent gauge",
+        "func": "msg.payload = Number(msg.payload.chargePercentP || 0);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 680,
+        "wires": [
+            [
+                "59e5d09d9ab69709"
+            ]
+        ]
+    },
+    {
+        "id": "59e5d09d9ab69709",
+        "type": "ui-gauge",
+        "z": "3b521b08f4388c2f",
+        "name": "Charge Percent Gauge",
+        "group": "27f54bb6a6a84aaa",
+        "order": 8,
+        "width": 6,
+        "height": 4,
+        "gtype": "gauge-half",
+        "title": "Charge Percent",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#d32f2f"
+            },
+            {
+                "from": "20",
+                "color": "#fbc02d"
+            },
+            {
+                "from": "50",
+                "color": "#388e3c"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "className": "",
+        "x": 1160,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "05128a24ed57fb61",
+        "type": "ui-table",
+        "z": "3b521b08f4388c2f",
+        "group": "27f54bb6a6a84aaa",
+        "name": "Last 10 TLM",
+        "label": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "maxrows": "10",
+        "passthru": false,
+        "autocols": true,
+        "showSearch": true,
+        "deselect": true,
+        "selectionType": "none",
+        "columns": [],
+        "mobileBreakpoint": "sm",
+        "mobileBreakpointType": "defaults",
+        "action": "replace",
+        "className": "",
+        "x": 870,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "db2b8c505293e4d8",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "LED RED",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 1040,
+        "wires": [
+            [
+                "09db1906c0e09412"
+            ]
+        ]
+    },
+    {
+        "id": "09db1906c0e09412",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send LED RED",
+        "func": "msg.payload = \"SET,LED,COLOR,RED\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 1040,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "f0735bbaea98145c",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "LED GREEN",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 1080,
+        "wires": [
+            [
+                "3344e17230a6d9f7"
+            ]
+        ]
+    },
+    {
+        "id": "3344e17230a6d9f7",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send LED GREEN",
+        "func": "msg.payload = \"SET,LED,COLOR,GREEN\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 1080,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "4241c6630b70b819",
+        "type": "inject",
+        "z": "3b521b08f4388c2f",
+        "name": "LED BLUE",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 1120,
+        "wires": [
+            [
+                "e595103df12ca554"
+            ]
+        ]
+    },
+    {
+        "id": "e595103df12ca554",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send LED OFF",
+        "func": "msg.payload = \"SET,LED,COLOR,BLUE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 1120,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "74bbce1b31f77c86",
+        "type": "ui-table",
+        "z": "3b521b08f4388c2f",
+        "group": "33c8b33051afe822",
+        "name": "",
+        "label": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": true,
+        "showSearch": true,
+        "deselect": true,
+        "selectionType": "none",
+        "columns": [],
+        "mobileBreakpoint": "sm",
+        "mobileBreakpointType": "defaults",
+        "action": "replace",
+        "className": "",
+        "x": 1090,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cbf9be1a32b5b38a",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "LED States",
+        "func": "msg.payload = [\n    {\n        enable: msg.payload.ledEnable || \"\",\n        state: msg.payload.ledState || \"\",\n        color: msg.payload.ledColor || \"\",\n        lastUpdated: msg.payload.time || \"\"\n    }\n];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 220,
+        "wires": [
+            [
+                "74bbce1b31f77c86"
+            ]
+        ]
+    },
+    {
+        "id": "7180565ad450ba58",
+        "type": "serial-port",
+        "name": "usbmodem2101",
+        "serialport": "/dev/tty.usbmodem2101",
+        "serialbaud": "115200",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
+    },
+    {
+        "id": "27f54bb6a6a84aaa",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "3910494bd8aa444c",
+        "width": 6,
+        "height": 1,
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "d46baa8b455b13df",
+        "type": "ui-group",
+        "name": "Telemetry",
+        "page": "3910494bd8aa444c",
+        "width": 6,
+        "height": "3",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "33c8b33051afe822",
+        "type": "ui-group",
+        "name": "LED System",
+        "page": "3910494bd8aa444c",
+        "width": 6,
+        "height": "3",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "3910494bd8aa444c",
+        "type": "ui-page",
+        "name": "Ground Station",
+        "ui": "d0f6c0df3d6bbbec",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "5b53033ae39ab468",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "d0f6c0df3d6bbbec",
+        "type": "ui-base",
+        "name": "MySat Ground Station",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "5b53033ae39ab468",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "8037b6b5da1c3e49",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-serialport": "2.0.3",
+            "@flowfuse/node-red-dashboard": "1.30.2"
+        }
+    }
+]

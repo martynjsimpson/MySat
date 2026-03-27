@@ -1,5 +1,3 @@
-# Protocol.md
-
 # MySat Communication Protocol
 
 ## Purpose
@@ -7,6 +5,8 @@
 This document defines the command and response protocol used by the MySat Arduino-based CubeSat simulator.
 
 The protocol is currently implemented over a serial connection for development and test, but it is designed to be transport-agnostic so the same logical protocol can later be carried over RF.
+
+Telemetry-specific field definitions and decoding guidance live in [Telemetry.md](./Telemetry.md).
 
 ---
 
