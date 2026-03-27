@@ -106,7 +106,7 @@
                 "cols": "12"
             }
         ],
-        "order": 1,
+        "order": 2,
         "className": "",
         "visible": true,
         "disabled": false
@@ -118,7 +118,7 @@
         "page": "3910494bd8aa444c",
         "width": 6,
         "height": 1,
-        "order": 4,
+        "order": 2,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -156,7 +156,7 @@
                 "cols": "12"
             }
         ],
-        "order": -1,
+        "order": 1,
         "className": "",
         "visible": "true",
         "disabled": "false"
@@ -168,7 +168,7 @@
         "page": "f97e68d451736993",
         "width": "3",
         "height": 1,
-        "order": -1,
+        "order": 1,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -182,7 +182,7 @@
         "page": "f97e68d451736993",
         "width": "9",
         "height": 1,
-        "order": -1,
+        "order": 2,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -196,7 +196,7 @@
         "page": "f97e68d451736993",
         "width": 6,
         "height": 1,
-        "order": -1,
+        "order": 3,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -210,7 +210,21 @@
         "page": "f97e68d451736993",
         "width": 6,
         "height": "3",
-        "order": 2,
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "5dcd967c7ef64a37",
+        "type": "ui-group",
+        "name": "Group 2",
+        "page": "3910494bd8aa444c",
+        "width": 6,
+        "height": "6",
+        "order": 1,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -238,8 +252,8 @@
         "z": "3b521b08f4388c2f",
         "name": "",
         "serial": "7180565ad450ba58",
-        "x": 720,
-        "y": 640,
+        "x": 780,
+        "y": 860,
         "wires": []
     },
     {
@@ -258,7 +272,8 @@
         "y": 40,
         "wires": [
             [
-                "50ef76a53201094c"
+                "50ef76a53201094c",
+                "a1ea5ba4421bd12a"
             ]
         ]
     },
@@ -275,7 +290,7 @@
         "finalize": "",
         "libs": [],
         "x": 530,
-        "y": 40,
+        "y": 100,
         "wires": [
             [
                 "af2be4cc68f6c30d",
@@ -296,7 +311,7 @@
         "finalize": "",
         "libs": [],
         "x": 750,
-        "y": 120,
+        "y": 180,
         "wires": [
             [
                 "353ea91c8195f24d",
@@ -330,7 +345,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 420,
+        "y": 480,
         "wires": [
             [
                 "aa35e6502e80f6ca"
@@ -358,7 +373,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 420,
+        "y": 480,
         "wires": []
     },
     {
@@ -374,7 +389,7 @@
         "finalize": "",
         "libs": [],
         "x": 1060,
-        "y": 740,
+        "y": 800,
         "wires": [
             []
         ]
@@ -392,7 +407,7 @@
         "finalize": "",
         "libs": [],
         "x": 1070,
-        "y": 780,
+        "y": 840,
         "wires": [
             []
         ]
@@ -410,7 +425,7 @@
         "finalize": "",
         "libs": [],
         "x": 1060,
-        "y": 900,
+        "y": 960,
         "wires": [
             [
                 "591fda52697d738e"
@@ -422,7 +437,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "27f54bb6a6a84aaa",
-        "order": 6,
+        "order": 4,
         "width": 6,
         "height": 1,
         "name": "",
@@ -438,7 +453,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1320,
-        "y": 900,
+        "y": 960,
         "wires": []
     },
     {
@@ -454,7 +469,7 @@
         "finalize": "",
         "libs": [],
         "x": 1060,
-        "y": 940,
+        "y": 1000,
         "wires": [
             [
                 "4e79dc84e1f17698"
@@ -466,7 +481,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "27f54bb6a6a84aaa",
-        "order": 7,
+        "order": 5,
         "width": 6,
         "height": 1,
         "name": "",
@@ -482,7 +497,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1320,
-        "y": 940,
+        "y": 1000,
         "wires": []
     },
     {
@@ -498,7 +513,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 460,
+        "y": 520,
         "wires": [
             [
                 "6d5439a9dd0319e8"
@@ -510,7 +525,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "0c10ce94c624bca1",
-        "order": 9,
+        "order": 4,
         "width": "3",
         "height": 1,
         "name": "",
@@ -526,7 +541,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 460,
+        "y": 520,
         "wires": []
     },
     {
@@ -542,7 +557,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 500,
+        "y": 560,
         "wires": [
             [
                 "4a17bc77ddbdb063"
@@ -554,7 +569,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "0c10ce94c624bca1",
-        "order": 10,
+        "order": 5,
         "width": "3",
         "height": 1,
         "name": "",
@@ -570,7 +585,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 500,
+        "y": 560,
         "wires": []
     },
     {
@@ -585,7 +600,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 320,
+        "x": 340,
         "y": 380,
         "wires": [
             [
@@ -605,7 +620,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
+        "x": 360,
         "y": 440,
         "wires": [
             [
@@ -625,8 +640,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
-        "y": 1320,
+        "x": 370,
+        "y": 1220,
         "wires": [
             [
                 "a407349444f312cf"
@@ -645,7 +660,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
+        "x": 370,
         "y": 480,
         "wires": [
             [
@@ -665,7 +680,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
+        "x": 370,
         "y": 520,
         "wires": [
             [
@@ -685,7 +700,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
+        "x": 360,
         "y": 560,
         "wires": [
             [
@@ -705,7 +720,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
+        "x": 360,
         "y": 600,
         "wires": [
             [
@@ -725,7 +740,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
+        "x": 370,
         "y": 860,
         "wires": [
             [
@@ -745,7 +760,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
+        "x": 370,
         "y": 900,
         "wires": [
             [
@@ -765,7 +780,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
+        "x": 380,
         "y": 940,
         "wires": [
             [
@@ -780,7 +795,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "Ping",
-        "order": 2,
+        "order": 1,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -804,7 +819,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
+        "x": 170,
         "y": 380,
         "wires": [
             [
@@ -825,7 +840,7 @@
         "finalize": "",
         "libs": [],
         "x": 1050,
-        "y": 820,
+        "y": 880,
         "wires": [
             [
                 "bfcf577fd7f82f7f"
@@ -840,7 +855,7 @@
         "page": "",
         "ui": "",
         "name": "Battery Available card",
-        "order": 4,
+        "order": 2,
         "width": 6,
         "height": 2,
         "head": "",
@@ -851,7 +866,7 @@
         "templateScope": "local",
         "className": "",
         "x": 1300,
-        "y": 820,
+        "y": 880,
         "wires": [
             []
         ]
@@ -869,7 +884,7 @@
         "finalize": "",
         "libs": [],
         "x": 1050,
-        "y": 860,
+        "y": 920,
         "wires": [
             [
                 "d5506d64e49831d9"
@@ -884,7 +899,7 @@
         "page": "",
         "ui": "",
         "name": "On Battery card",
-        "order": 5,
+        "order": 3,
         "width": 6,
         "height": 2,
         "head": "",
@@ -895,7 +910,7 @@
         "templateScope": "local",
         "className": "",
         "x": 1300,
-        "y": 860,
+        "y": 920,
         "wires": [
             []
         ]
@@ -913,7 +928,7 @@
         "finalize": "",
         "libs": [],
         "x": 1060,
-        "y": 980,
+        "y": 1040,
         "wires": [
             [
                 "59e5d09d9ab69709"
@@ -927,7 +942,7 @@
         "d": true,
         "name": "Charge Percent Gauge",
         "group": "27f54bb6a6a84aaa",
-        "order": 8,
+        "order": 6,
         "width": 6,
         "height": 4,
         "gtype": "gauge-half",
@@ -953,7 +968,7 @@
         "max": "100",
         "className": "",
         "x": 1310,
-        "y": 980,
+        "y": 1040,
         "wires": [
             []
         ]
@@ -979,8 +994,8 @@
         "mobileBreakpointType": "defaults",
         "action": "replace",
         "className": "",
-        "x": 1250,
-        "y": 120,
+        "x": 1290,
+        "y": 180,
         "wires": [
             []
         ]
@@ -997,7 +1012,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
+        "x": 360,
         "y": 640,
         "wires": [
             [
@@ -1017,7 +1032,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
+        "x": 370,
         "y": 680,
         "wires": [
             [
@@ -1037,7 +1052,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
+        "x": 360,
         "y": 720,
         "wires": [
             [
@@ -1052,7 +1067,7 @@
         "group": "33c8b33051afe822",
         "name": "",
         "label": "",
-        "order": 0,
+        "order": 1,
         "width": 0,
         "height": 0,
         "maxrows": 0,
@@ -1067,7 +1082,7 @@
         "action": "replace",
         "className": "",
         "x": 1270,
-        "y": 200,
+        "y": 240,
         "wires": [
             []
         ]
@@ -1085,7 +1100,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 200,
+        "y": 240,
         "wires": [
             [
                 "74bbce1b31f77c86"
@@ -1099,7 +1114,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "Get LED",
-        "order": 2,
+        "order": 6,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1123,7 +1138,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
+        "x": 160,
         "y": 440,
         "wires": [
             [
@@ -1138,7 +1153,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED Enable",
-        "order": 2,
+        "order": 7,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1162,7 +1177,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 130,
+        "x": 150,
         "y": 480,
         "wires": [
             [
@@ -1177,7 +1192,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED Disable",
-        "order": 2,
+        "order": 8,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1201,7 +1216,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 130,
+        "x": 150,
         "y": 520,
         "wires": [
             [
@@ -1216,7 +1231,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED On",
-        "order": 2,
+        "order": 9,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1240,7 +1255,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
+        "x": 160,
         "y": 560,
         "wires": [
             [
@@ -1255,7 +1270,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED Off",
-        "order": 2,
+        "order": 10,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1279,7 +1294,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
+        "x": 160,
         "y": 600,
         "wires": [
             [
@@ -1294,7 +1309,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED Red",
-        "order": 2,
+        "order": 11,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1318,7 +1333,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
+        "x": 160,
         "y": 640,
         "wires": [
             [
@@ -1333,7 +1348,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED Green",
-        "order": 2,
+        "order": 12,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1357,7 +1372,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 130,
+        "x": 150,
         "y": 680,
         "wires": [
             [
@@ -1372,7 +1387,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED Blue",
-        "order": 2,
+        "order": 13,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1396,7 +1411,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
+        "x": 160,
         "y": 720,
         "wires": [
             [
@@ -1411,7 +1426,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "TLM Enable",
-        "order": 2,
+        "order": 17,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1435,7 +1450,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 130,
+        "x": 150,
         "y": 860,
         "wires": [
             [
@@ -1450,7 +1465,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "TLM Disable",
-        "order": 2,
+        "order": 20,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1474,7 +1489,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 130,
+        "x": 150,
         "y": 900,
         "wires": [
             [
@@ -1489,7 +1504,7 @@
         "group": "50860bfd06fffa7a",
         "name": "tlmInterval",
         "label": "TLM Interval",
-        "order": 0,
+        "order": 22,
         "width": 0,
         "height": 0,
         "topic": "topic",
@@ -1509,7 +1524,7 @@
         "iconPosition": "left",
         "iconInnerPosition": "inside",
         "spinner": "default",
-        "x": 130,
+        "x": 150,
         "y": 980,
         "wires": [
             [
@@ -1524,7 +1539,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "TLM Interval",
-        "order": 2,
+        "order": 21,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1548,7 +1563,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 130,
+        "x": 150,
         "y": 940,
         "wires": [
             [
@@ -1569,7 +1584,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 260,
+        "y": 300,
         "wires": [
             [
                 "e87734e6605d5f4d"
@@ -1583,7 +1598,7 @@
         "group": "87c6d1cd17eff6d5",
         "name": "",
         "label": "",
-        "order": 0,
+        "order": 2,
         "width": 0,
         "height": 0,
         "maxrows": 0,
@@ -1598,7 +1613,7 @@
         "action": "replace",
         "className": "",
         "x": 1270,
-        "y": 260,
+        "y": 300,
         "wires": [
             []
         ]
@@ -1616,7 +1631,7 @@
         "finalize": "",
         "libs": [],
         "x": 740,
-        "y": 40,
+        "y": 100,
         "wires": [
             [
                 "7a2f7fe3e9362b46"
@@ -1630,7 +1645,7 @@
         "group": "87c6d1cd17eff6d5",
         "name": "",
         "label": "Error Log",
-        "order": 0,
+        "order": 1,
         "width": 0,
         "height": 0,
         "maxrows": "10",
@@ -1645,7 +1660,7 @@
         "action": "append",
         "className": "",
         "x": 1000,
-        "y": 40,
+        "y": 100,
         "wires": [
             []
         ]
@@ -1662,7 +1677,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 320,
+        "x": 340,
         "y": 980,
         "wires": [
             []
@@ -1680,7 +1695,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
+        "x": 380,
         "y": 760,
         "wires": [
             [
@@ -1695,7 +1710,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED TLM Enable",
-        "order": 2,
+        "order": 15,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1719,7 +1734,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 110,
+        "x": 130,
         "y": 760,
         "wires": [
             [
@@ -1739,7 +1754,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
+        "x": 380,
         "y": 800,
         "wires": [
             [
@@ -1754,7 +1769,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "LED TLM Disable",
-        "order": 2,
+        "order": 14,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1778,7 +1793,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 110,
+        "x": 130,
         "y": 800,
         "wires": [
             [
@@ -1799,7 +1814,7 @@
         "finalize": "",
         "libs": [],
         "x": 1050,
-        "y": 340,
+        "y": 400,
         "wires": [
             [
                 "e8c0bffef462e56b"
@@ -1827,7 +1842,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 340,
+        "y": 400,
         "wires": []
     },
     {
@@ -1843,7 +1858,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 380,
+        "y": 440,
         "wires": [
             [
                 "bd735e5dcb4579f4"
@@ -1871,7 +1886,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1290,
-        "y": 380,
+        "y": 440,
         "wires": []
     },
     {
@@ -1886,7 +1901,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
+        "x": 360,
         "y": 1040,
         "wires": [
             [
@@ -1901,7 +1916,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "Get RTC",
-        "order": 1,
+        "order": 3,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1925,7 +1940,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
+        "x": 160,
         "y": 1040,
         "wires": [
             [
@@ -1945,7 +1960,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
+        "x": 360,
         "y": 1080,
         "wires": [
             [
@@ -1960,7 +1975,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "Sync RTC",
-        "order": 3,
+        "order": 2,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1984,7 +1999,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
+        "x": 160,
         "y": 1080,
         "wires": [
             [
@@ -1999,7 +2014,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "Get Battery",
-        "order": 3,
+        "order": 16,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -2023,8 +2038,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 110,
-        "y": 1320,
+        "x": 150,
+        "y": 1220,
         "wires": [
             [
                 "e4b26bb90d0f220e"
@@ -2043,7 +2058,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
+        "x": 380,
         "y": 1120,
         "wires": [
             [
@@ -2058,7 +2073,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "RTC TLM Enable",
-        "order": 3,
+        "order": 4,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -2082,7 +2097,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 110,
+        "x": 130,
         "y": 1120,
         "wires": [
             [
@@ -2102,7 +2117,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 370,
+        "x": 390,
         "y": 1160,
         "wires": [
             [
@@ -2117,7 +2132,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "RTC TLM Disable",
-        "order": 3,
+        "order": 5,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -2141,7 +2156,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 110,
+        "x": 130,
         "y": 1160,
         "wires": [
             [
@@ -2150,36 +2165,10 @@
         ]
     },
     {
-        "id": "aa985b330f623025",
-        "type": "ui-table",
-        "z": "3b521b08f4388c2f",
-        "group": "27f54bb6a6a84aaa",
-        "name": "",
-        "label": "",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "maxrows": "100",
-        "passthru": false,
-        "autocols": true,
-        "showSearch": true,
-        "deselect": true,
-        "selectionType": "none",
-        "columns": [],
-        "mobileBreakpoint": "sm",
-        "mobileBreakpointType": "defaults",
-        "action": "append",
-        "className": "",
-        "x": 670,
-        "y": 240,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "4aa096b064148427",
         "type": "debug",
         "z": "3b521b08f4388c2f",
+        "d": true,
         "name": "debug 1",
         "active": true,
         "tosidebar": true,
@@ -2191,5 +2180,167 @@
         "x": 300,
         "y": 120,
         "wires": []
+    },
+    {
+        "id": "a1ea5ba4421bd12a",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "Packet Log",
+        "func": "let packetLog = flow.get(\"packetLog\") || [];\n\npacketLog.unshift({\n    time: msg.time || \"\",\n    packetType: msg.type || \"\",\n    target: msg.target || \"\",\n    parameter: msg.parameter || \"\",\n    value: msg.value || msg.error || \"\",\n    raw: msg.raw || \"\"\n});\n\npacketLog = packetLog.slice(0, 25);\nflow.set(\"packetLog\", packetLog);\n\nreturn {\n    payload: {\n        rows: packetLog\n    }\n};",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 40,
+        "wires": [
+            [
+                "1a31ee3e2f5fbd84"
+            ]
+        ]
+    },
+    {
+        "id": "1a31ee3e2f5fbd84",
+        "type": "ui-template",
+        "z": "3b521b08f4388c2f",
+        "group": "87c6d1cd17eff6d5",
+        "page": "",
+        "ui": "",
+        "name": "PacketLogTemplateWidget",
+        "order": 3,
+        "width": "6",
+        "height": "8",
+        "head": "",
+        "format": "<template>\n  <v-card variant=\"tonal\" class=\"packet-log-card\">\n    <v-card-title>Packet Log</v-card-title>\n    <v-card-text>\n      <div v-if=\"!(msg.payload && msg.payload.rows && msg.payload.rows.length)\" class=\"packet-log-empty\">\n        No packets received yet.\n      </div>\n      <div v-else class=\"packet-log-list\">\n        <div\n          v-for=\"(row, index) in msg.payload.rows\"\n          :key=\"index\"\n          class=\"packet-log-row\"\n        >\n          <div class=\"packet-log-raw\">{{ row.raw || '-' }}</div>\n        </div>\n      </div>\n    </v-card-text>\n  </v-card>\n</template>\n\n<style>\n  .packet-log-card {\n    height: 100%;\n  }\n\n  .packet-log-list {\n    display: flex;\n    flex-direction: column;\n    gap: 0.5rem;\n    max-height: 26rem;\n    overflow-y: auto;\n    font-family: monospace;\n  }\n\n  .packet-log-row {\n    padding: 0.5rem 0.75rem;\n    border-radius: 0.5rem;\n    background: rgba(0, 0, 0, 0.04);\n  }\n\n  .packet-log-raw {\n    white-space: pre-wrap;\n    word-break: break-word;\n    font-size: 0.85rem;\n  }\n\n  .packet-log-empty {\n    color: rgba(0, 0, 0, 0.6);\n  }\n</style>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 800,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2be552e6b24cceb2",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Battery TLM Enable",
+        "func": "msg.payload = \"SET,BATTERY,TELEMETRY,ENABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 1260,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "2692c008f64faffb",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "50860bfd06fffa7a",
+        "name": "",
+        "label": "Batt TLM Enable",
+        "order": 18,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 1260,
+        "wires": [
+            [
+                "2be552e6b24cceb2"
+            ]
+        ]
+    },
+    {
+        "id": "f4a1656cb87162e3",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send RTC TLM Disable",
+        "func": "msg.payload = \"SET,BATTERY,TELEMETRY,DISABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 1300,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "e378cf0c2b6b2054",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "50860bfd06fffa7a",
+        "name": "",
+        "label": "Batt TLM Disable",
+        "order": 19,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 1300,
+        "wires": [
+            [
+                "f4a1656cb87162e3"
+            ]
+        ]
     }
 ]
