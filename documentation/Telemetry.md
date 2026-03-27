@@ -31,6 +31,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 ```text
 140,TLM,LED,ENABLE,FALSE
 140,TLM,LED,STATE,OFF
+140,TLM,LED,COLOR,GREEN
 140,TLM,TELEMETRY,ENABLE,TRUE
 140,TLM,TELEMETRY,INTERVAL_S,5
 140,TLM,BATTERY,AVAILABLE,TRUE
@@ -90,6 +91,7 @@ Typical snapshot:
 ```text
 200,TLM,LED,ENABLE,TRUE
 200,TLM,LED,STATE,ON
+200,TLM,LED,COLOR,RED
 200,TLM,TELEMETRY,ENABLE,TRUE
 200,TLM,TELEMETRY,INTERVAL_S,5
 200,TLM,BATTERY,AVAILABLE,TRUE
@@ -133,6 +135,22 @@ Examples:
 ```text
 221,TLM,LED,STATE,ON
 221,TLM,LED,STATE,OFF
+```
+
+### `LED,COLOR`
+
+Reports the currently selected LED color token.
+
+Value type:
+- `RED`
+- `GREEN`
+- `BLUE`
+
+Examples:
+
+```text
+222,TLM,LED,COLOR,RED
+222,TLM,LED,COLOR,GREEN
 ```
 
 ---
@@ -254,6 +272,7 @@ This table is intended for a ground-station developer or future parser implement
 |---|---|---|---|---|
 | `LED` | `ENABLE` | Whether LED operation is permitted | `TRUE` / `FALSE` | `140,TLM,LED,ENABLE,FALSE` |
 | `LED` | `STATE` | Current LED output state | `ON` / `OFF` | `140,TLM,LED,STATE,OFF` |
+| `LED` | `COLOR` | Current selected LED color | `RED` / `GREEN` / `BLUE` | `140,TLM,LED,COLOR,GREEN` |
 | `TELEMETRY` | `ENABLE` | Whether periodic telemetry is enabled | `TRUE` / `FALSE` | `140,TLM,TELEMETRY,ENABLE,TRUE` |
 | `TELEMETRY` | `INTERVAL_S` | Telemetry interval in seconds | unsigned integer | `140,TLM,TELEMETRY,INTERVAL_S,5` |
 | `BATTERY` | `AVAILABLE` | Whether battery hardware is present | `TRUE` / `FALSE` | `140,TLM,BATTERY,AVAILABLE,TRUE` |
@@ -292,6 +311,7 @@ or, if keeping history:
 |---|---|
 | `LED,ENABLE` | enabled/disabled icon or status badge |
 | `LED,STATE` | on/off icon or status badge |
+| `LED,COLOR` | color label or swatch |
 | `TELEMETRY,ENABLE` | stream active indicator |
 | `TELEMETRY,INTERVAL_S` | numeric display |
 | `BATTERY,AVAILABLE` | battery present indicator |
@@ -319,6 +339,7 @@ A parser should:
 ```text
 100,TLM,LED,ENABLE,FALSE
 100,TLM,LED,STATE,OFF
+100,TLM,LED,COLOR,GREEN
 110,TLM,TELEMETRY,ENABLE,TRUE
 110,TLM,TELEMETRY,INTERVAL_S,5
 120,TLM,BATTERY,AVAILABLE,TRUE
@@ -335,6 +356,7 @@ For the current project, useful widgets would be:
 - last timestamp
 - LED enabled
 - LED state
+- LED color
 - telemetry enabled
 - telemetry interval seconds
 - battery available

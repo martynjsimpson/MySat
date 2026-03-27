@@ -109,6 +109,7 @@ Examples:
 ```text
 12,ACK,LED,ENABLE
 13,ACK,LED,ON
+14,ACK,LED,RED
 20,ACK,TELEMETRY,INTERVAL_S
 25,ACK,PING,PONG
 ```
@@ -148,6 +149,7 @@ Examples:
 ```text
 40,TLM,LED,ENABLE,FALSE
 40,TLM,LED,STATE,OFF
+40,TLM,LED,COLOR,GREEN
 40,TLM,TELEMETRY,ENABLE,TRUE
 40,TLM,TELEMETRY,INTERVAL_S,5
 40,TLM,BATTERY,AVAILABLE,TRUE
@@ -213,6 +215,7 @@ Examples:
 |---|---|
 | `ENABLE` | Whether a feature or subsystem is allowed to operate |
 | `STATE` | Current state of a target |
+| `COLOR` | Selected symbolic color for a target |
 | `INTERVAL_S` | Interval in seconds |
 | `NONE` | Placeholder parameter when not applicable |
 
@@ -248,6 +251,9 @@ Values may be **symbolic** or **numeric**.
 | `FALSE` | Boolean false / disabled condition |
 | `ON` | Powered or active output state |
 | `OFF` | Powered-down or inactive output state |
+| `RED` | Red color selection |
+| `GREEN` | Green color selection |
+| `BLUE` | Blue color selection |
 | `NONE` | Placeholder value |
 
 ### Reserved symbolic values
@@ -316,6 +322,17 @@ SET,LED,STATE,ON
 TLM,LED,STATE,OFF
 ```
 
+### When to use `COLOR`
+
+Use `COLOR` when controlling or reporting a selected color.
+
+Examples:
+
+```text
+SET,LED,COLOR,RED
+TLM,LED,COLOR,GREEN
+```
+
 ### When to use `TRUE` / `FALSE`
 
 Use `TRUE` / `FALSE` for boolean conditions.
@@ -370,6 +387,9 @@ SET,LED,ENABLE,TRUE
 SET,LED,ENABLE,FALSE
 SET,LED,STATE,ON
 SET,LED,STATE,OFF
+SET,LED,COLOR,RED
+SET,LED,COLOR,GREEN
+SET,LED,COLOR,BLUE
 GET,LED,NONE,NONE
 ```
 
@@ -381,6 +401,9 @@ GET,LED,NONE,NONE
 | `SET,LED,ENABLE,FALSE` | Disables LED operation and forces LED off |
 | `SET,LED,STATE,ON` | Turns LED on, but only if enabled |
 | `SET,LED,STATE,OFF` | Turns LED off |
+| `SET,LED,COLOR,RED` | Selects red color output |
+| `SET,LED,COLOR,GREEN` | Selects green color output |
+| `SET,LED,COLOR,BLUE` | Selects blue color output |
 | `GET,LED,NONE,NONE` | Returns current LED telemetry |
 
 The invalid state combination **disabled + on** should never occur.
@@ -450,6 +473,9 @@ SET,LED,ENABLE,TRUE
 SET,LED,ENABLE,FALSE
 SET,LED,STATE,ON
 SET,LED,STATE,OFF
+SET,LED,COLOR,RED
+SET,LED,COLOR,GREEN
+SET,LED,COLOR,BLUE
 SET,TELEMETRY,ENABLE,TRUE
 SET,TELEMETRY,ENABLE,FALSE
 SET,TELEMETRY,INTERVAL_S,<integer>
@@ -469,6 +495,7 @@ Commands sent to device:
 PING,NONE,NONE,NONE
 SET,LED,ENABLE,TRUE
 SET,LED,STATE,ON
+SET,LED,COLOR,RED
 GET,LED,NONE,NONE
 SET,TELEMETRY,INTERVAL_S,10
 GET,TELEMETRY,NONE,NONE
@@ -481,14 +508,16 @@ Possible responses:
 0,ACK,PING,PONG
 1,ACK,LED,ENABLE
 2,ACK,LED,ON
-3,TLM,LED,ENABLE,TRUE
-3,TLM,LED,STATE,ON
-4,ACK,TELEMETRY,INTERVAL_S
-5,TLM,TELEMETRY,ENABLE,TRUE
-5,TLM,TELEMETRY,INTERVAL_S,10
-6,TLM,BATTERY,AVAILABLE,TRUE
-6,TLM,BATTERY,ON_BATTERY,FALSE
-6,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-6,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-6,TLM,BATTERY,CHARGE_PERCENT_P,87
+3,ACK,LED,RED
+4,TLM,LED,ENABLE,TRUE
+4,TLM,LED,STATE,ON
+4,TLM,LED,COLOR,RED
+5,ACK,TELEMETRY,INTERVAL_S
+6,TLM,TELEMETRY,ENABLE,TRUE
+6,TLM,TELEMETRY,INTERVAL_S,10
+7,TLM,BATTERY,AVAILABLE,TRUE
+7,TLM,BATTERY,ON_BATTERY,FALSE
+7,TLM,BATTERY,CHARGE_CURRENT_A,0.500
+7,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
+7,TLM,BATTERY,CHARGE_PERCENT_P,87
 ```
