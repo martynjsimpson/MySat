@@ -32,6 +32,14 @@ Today the system is serial-first:
 
 The satellite firmware now has a transport abstraction in place so the current serial transport can later be replaced with a radio-backed transport without rewriting the higher-level command and telemetry flow.
 
+In the current firmware this split looks like:
+
+- `transport.h` defines the transport-facing byte and print operations
+- `transport_serial.cpp` implements those operations using `Serial`
+- `protocol.cpp` consumes the transport for inbound command bytes
+- `sender.cpp` consumes the transport for outbound protocol messages
+- `protocol_dispatch.cpp` uses the transport flush path before reset
+
 ## Working Agreement
 
 When changes span more than one runtime part:

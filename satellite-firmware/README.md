@@ -33,16 +33,17 @@ platformio device monitor --environment mkrwifi1010
 - `include/gps.h` - GPS subsystem interface
 - `include/led.h` - LED subsystem interface
 - `include/pmic.h` - battery subsystem interface
-- `include/protocol.h` - serial command reader interface
+- `include/protocol.h` - inbound command buffering and line-framing interface
 - `include/rtc.h` - RTC interface
 - `include/sender.h` - outbound `ACK`, `ERR`, and `TLM` helpers
 - `include/status.h` - status heartbeat interface
 - `include/telemetry.h` - telemetry control and scheduler interface
+- `include/transport.h` - transport abstraction used by protocol and sender code
 
 ### Source Files
 
 - `src/main.cpp` - top-level `setup()` and `loop()`
-- `src/protocol.cpp` - serial command buffering and line framing
+- `src/protocol.cpp` - inbound command buffering and newline framing
 - `src/protocol_parser.cpp` - token parsing and `Command` construction
 - `src/protocol_dispatch.cpp` - command execution and target dispatch
 - `src/telemetry_config.cpp` - telemetry flags, interval, and telemetry control target
@@ -56,6 +57,7 @@ platformio device monitor --environment mkrwifi1010
 - `src/rtc_sync.cpp` - RTC GPS sync behavior
 - `src/status.cpp` - startup and heartbeat reporting
 - `src/sender.cpp` - wire-format message emission
+- `src/transport_serial.cpp` - current serial-backed transport implementation
 
 ## Current Targets
 
@@ -74,3 +76,14 @@ The current GPS implementation is configured for the MKR GPS connected over the 
 - Generic telemetry rules live in [../documentation/Telemetry.md](../documentation/Telemetry.md).
 - Target-specific command and telemetry reference lives in [../documentation/targets/](../documentation/targets).
 - This README stays focused on firmware structure and build workflow.
+
+## Transport Layer
+
+The firmware is still serial-first today, but command and response I/O no longer call `Serial` directly throughout the codebase.
+
+- `setupTransport()` is called early in `setup()` to initialize the active link.
+- `protocol.cpp` reads inbound bytes through `transportAvailable()` and `transportRead()`.
+- `sender.cpp` emits `ACK`, `ERR`, and `TLM` messages through `transportWrite(...)` helpers.
+- `protocol_dispatch.cpp` uses `transportFlush()` before reset so the reboot acknowledgement has a chance to leave the device.
+
+At the moment the transport implementation is `src/transport_serial.cpp`, which simply forwards these operations to `Serial`. The point of the abstraction is to let us swap the underlying link later, such as a radio transport, without rewriting the higher-level parser, dispatcher, sender, or telemetry logic.

@@ -14,7 +14,6 @@ void setup()
 {
   setupRtc();
   setupTransport();
-
   setupLed();
   setupBattery();
   setupGps();
