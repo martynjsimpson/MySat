@@ -52,6 +52,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.1278000
 2026-03-27T12:02:20Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:02:20Z,TLM,GPS,SPEED_KPH,12.40
+2026-03-27T12:02:20Z,TLM,GPS,SATELLITES_N,9
 ```
 
 ---
@@ -130,6 +131,7 @@ Typical snapshot:
 2026-03-27T12:03:20Z,TLM,GPS,LONGITUDE_D,-0.1278000
 2026-03-27T12:03:20Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:03:20Z,TLM,GPS,SPEED_KPH,12.40
+2026-03-27T12:03:20Z,TLM,GPS,SATELLITES_N,9
 ```
 
 ---
@@ -406,6 +408,8 @@ Examples:
 
 ## GPS target
 
+The current firmware initializes the MKR GPS using the I2C cable connection path rather than shield mode.
+
 ### `GPS,TELEMETRY`
 
 Reports whether GPS data is included in periodic telemetry snapshots.
@@ -507,6 +511,20 @@ Examples:
 2026-03-27T12:04:12Z,TLM,GPS,SPEED_KPH,0.00
 ```
 
+### `GPS,SATELLITES_N`
+
+Reports how many satellites the GPS receiver can currently see.
+
+Value type:
+- unsigned integer
+
+Examples:
+
+```text
+2026-03-27T12:04:13Z,TLM,GPS,SATELLITES_N,9
+2026-03-27T12:04:13Z,TLM,GPS,SATELLITES_N,0
+```
+
 ---
 
 ## Telemetry Parameter Reference
@@ -539,6 +557,7 @@ This table is intended for a ground-station developer or future parser implement
 | `GPS` | `LONGITUDE_D` | GPS longitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.1278000` |
 | `GPS` | `ALTITUDE_M` | GPS altitude in meters | float | `2026-03-27T12:02:20Z,TLM,GPS,ALTITUDE_M,35.20` |
 | `GPS` | `SPEED_KPH` | GPS speed in kilometers per hour | float | `2026-03-27T12:02:20Z,TLM,GPS,SPEED_KPH,12.40` |
+| `GPS` | `SATELLITES_N` | Number of satellites currently visible to the GPS receiver | unsigned integer | `2026-03-27T12:02:20Z,TLM,GPS,SATELLITES_N,9` |
 
 ---
 
@@ -592,6 +611,7 @@ or, if keeping history:
 | `GPS,LONGITUDE_D` | longitude display |
 | `GPS,ALTITUDE_M` | altitude display |
 | `GPS,SPEED_KPH` | speed display |
+| `GPS,SATELLITES_N` | visible satellite count display |
 
 ---
 
@@ -633,6 +653,7 @@ A parser should:
 2026-03-27T12:02:10Z,TLM,GPS,LONGITUDE_D,-0.1278000
 2026-03-27T12:02:10Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:02:10Z,TLM,GPS,SPEED_KPH,12.40
+2026-03-27T12:02:10Z,TLM,GPS,SATELLITES_N,9
 ```
 
 ### Suggested Serial Studio widget set
@@ -662,6 +683,7 @@ For the current project, useful widgets would be:
 - longitude
 - altitude
 - speed
+- visible satellites
 - last ACK
 - last ERR
 

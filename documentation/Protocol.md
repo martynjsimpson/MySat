@@ -198,6 +198,7 @@ Examples:
 2026-03-27T12:00:40Z,TLM,GPS,LONGITUDE_D,-0.1278000
 2026-03-27T12:00:40Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:00:40Z,TLM,GPS,SPEED_KPH,12.40
+2026-03-27T12:00:40Z,TLM,GPS,SATELLITES_N,9
 ```
 
 ---
@@ -279,6 +280,7 @@ Examples:
 | `LONGITUDE_D` | GPS longitude in decimal degrees |
 | `ALTITUDE_M` | GPS altitude in meters |
 | `SPEED_KPH` | GPS speed in kilometers per hour |
+| `SATELLITES_N` | Number of satellites currently visible to the GPS receiver |
 
 ### Reserved parameters
 
@@ -547,6 +549,8 @@ Battery telemetry is also included in the periodic telemetry snapshot.
 
 The GPS subsystem reports position, altitude, speed, and whether a usable fix is currently available.
 
+The current implementation initializes the MKR GPS over the I2C cable connection path used by the standard Arduino example sketch.
+
 ### Supported GPS commands
 
 ```text
@@ -567,7 +571,7 @@ SET,GPS,TELEMETRY,DISABLE
 | `SET,GPS,TELEMETRY,ENABLE` | Includes GPS data in periodic telemetry snapshots |
 | `SET,GPS,TELEMETRY,DISABLE` | Omits GPS data from periodic telemetry snapshots |
 
-`GPS,AVAILABLE` indicates whether a recent valid fix is available. When GPS is disabled or no recent fix is available, positional values are reported as zero.
+`GPS,AVAILABLE` indicates whether a recent valid fix is available. When GPS is disabled or no recent fix is available, positional values are reported as zero. `GPS,SATELLITES_N` reports the receiver's current visible satellite count.
 
 ## STATUS target
 
@@ -723,4 +727,5 @@ Possible responses:
 2026-03-27T12:00:04Z,TLM,GPS,LONGITUDE_D,-0.1278000
 2026-03-27T12:00:04Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:00:04Z,TLM,GPS,SPEED_KPH,12.40
+2026-03-27T12:00:04Z,TLM,GPS,SATELLITES_N,9
 ```
