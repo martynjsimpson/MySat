@@ -64,6 +64,8 @@ The firmware currently follows a simple pattern:
 - `GPS` - GPS enable/control and position telemetry reporting
 - `RTC` - current time and clock synchronisation state
 
+The current GPS implementation is configured for the MKR GPS connected over the I2C cable path.
+
 ## Documentation boundaries
 
 - Protocol definition belongs in [../documentation/Protocol.md](../documentation/Protocol.md).

@@ -16,6 +16,7 @@ namespace
   float longitudeDeg = 0.0f;
   float altitudeM = 0.0f;
   float speedKph = 0.0f;
+  int satellitesVisible = 0;
   unsigned long lastFixMillis = 0;
 
   const unsigned long gpsFixTimeoutMs = 10000;
@@ -26,13 +27,15 @@ namespace
     longitudeDeg = 0.0f;
     altitudeM = 0.0f;
     speedKph = 0.0f;
+    satellitesVisible = 0;
   }
 }
 
 void setupGps()
 {
   gpsEnabled = true;
-  gpsInitialized = GPS.begin(GPS_MODE_SHIELD);
+  // The MKR GPS is connected via the I2C cable, matching the working Arduino example.
+  gpsInitialized = GPS.begin();
   gpsFixAvailable = false;
   lastFixMillis = 0;
   clearGpsValues();
@@ -53,6 +56,7 @@ void updateGps()
     longitudeDeg = GPS.longitude();
     altitudeM = GPS.altitude();
     speedKph = GPS.speed();
+    satellitesVisible = GPS.satellites();
     lastFixMillis = millis();
     gpsFixAvailable = true;
     return;
@@ -106,4 +110,5 @@ void reportGpsStatus()
   sendTelemetryFloat("GPS", "LONGITUDE_D", gpsFixAvailable ? longitudeDeg : 0.0f, 7);
   sendTelemetryFloat("GPS", "ALTITUDE_M", gpsFixAvailable ? altitudeM : 0.0f, 2);
   sendTelemetryFloat("GPS", "SPEED_KPH", gpsFixAvailable ? speedKph : 0.0f, 2);
+  sendTelemetryULong("GPS", "SATELLITES_N", gpsFixAvailable ? static_cast<unsigned long>(satellitesVisible) : 0);
 }
