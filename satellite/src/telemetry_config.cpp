@@ -1,11 +1,7 @@
 #include "telemetry.h"
 
-#include "gps.h"
-#include "led.h"
-#include "pmic.h"
-#include "rtc.h"
+#include "config.h"
 #include "sender.h"
-#include "status.h"
 
 namespace
 {
@@ -16,7 +12,6 @@ namespace
   bool batteryTelemetryEnabled;
   bool gpsTelemetryEnabled;
   unsigned long telemetryIntervalSeconds;
-  unsigned long lastTelemetryTime = 0;
 
   bool *getTargetTelemetryFlag(TargetType target)
   {
@@ -55,19 +50,17 @@ namespace
       return nullptr;
     }
   }
-
 }
 
 void setupTelemetry()
 {
-  telemetryEnabled = true;
-  telemetryTelemetryEnabled = false;
-  rtcTelemetryEnabled = false;
-  ledTelemetryEnabled = false;
-  batteryTelemetryEnabled = false;
-  gpsTelemetryEnabled = false;
-  telemetryIntervalSeconds = 5;
-  lastTelemetryTime = getUptimeSeconds();
+  telemetryEnabled = Config::Telemetry::defaultTelemetryEnabled;
+  telemetryTelemetryEnabled = Config::Telemetry::defaultReportTelemetry;
+  rtcTelemetryEnabled = Config::Telemetry::defaultReportRtc;
+  ledTelemetryEnabled = Config::Telemetry::defaultReportLed;
+  batteryTelemetryEnabled = Config::Telemetry::defaultReportBattery;
+  gpsTelemetryEnabled = Config::Telemetry::defaultReportGps;
+  telemetryIntervalSeconds = Config::Telemetry::defaultIntervalSeconds;
 }
 
 void handleGetTelemetry(const Command &cmd)
@@ -141,7 +134,8 @@ void handleSetTelemetry(const Command &cmd)
       return;
     }
 
-    if (cmd.numericValue < 1 || cmd.numericValue > 3600)
+    if (cmd.numericValue < Config::Telemetry::minIntervalSeconds ||
+        cmd.numericValue > Config::Telemetry::maxIntervalSeconds)
     {
       sendError("BAD_VALUE");
       return;
@@ -191,50 +185,12 @@ void reportTelemetryStatus()
   sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
 }
 
-void resetTelemetrySchedule()
+bool isTelemetryEnabledInternal()
 {
-  lastTelemetryTime = getUptimeSeconds();
+  return telemetryEnabled;
 }
 
-void sendTelemetrySnapshot()
+unsigned long getTelemetryIntervalSecondsInternal()
 {
-  reportStatusHeartbeat(true);
-  if (rtcTelemetryEnabled)
-  {
-    reportRtcStatus();
-  }
-  if (ledTelemetryEnabled)
-  {
-    reportLedStatus();
-  }
-  if (telemetryTelemetryEnabled)
-  {
-    reportTelemetryStatus();
-  }
-  if (batteryTelemetryEnabled)
-  {
-    reportBatteryStatus();
-  }
-  if (gpsTelemetryEnabled)
-  {
-    reportGpsStatus();
-  }
-}
-
-void handlePeriodicTelemetry()
-{
-  const unsigned long now = getUptimeSeconds();
-
-  if ((now - lastTelemetryTime) >= telemetryIntervalSeconds)
-  {
-    lastTelemetryTime = now;
-
-    if (!telemetryEnabled)
-    {
-      reportStatusHeartbeat(true);
-      return;
-    }
-
-    sendTelemetrySnapshot();
-  }
+  return telemetryIntervalSeconds;
 }

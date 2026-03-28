@@ -18,12 +18,14 @@ The project currently uses a structured serial protocol first, with the intent t
 
 - [satellite/README.md](./satellite/README.md) - firmware build, structure, and subsystem notes
 - [ground-station/README.md](./ground-station/README.md) - Node-RED setup and runtime notes
-- [documentation/README.md](./documentation/README.md) - documentation index and ownership
-- [documentation/Protocol.md](./documentation/Protocol.md) - command and response protocol
-- [documentation/Telemetry.md](./documentation/Telemetry.md) - telemetry snapshot and decoding rules
+- [documentation/README.md](./documentation/README.md) - documentation index and target reference map
+- [documentation/Protocol.md](./documentation/Protocol.md) - generic command and response protocol
+- [documentation/Telemetry.md](./documentation/Telemetry.md) - generic telemetry framing and snapshot rules
+- [documentation/targets/](./documentation/targets) - target-specific command and telemetry reference pages
 
 ## Current direction
 
 - The firmware remains the system of record for protocol behavior.
 - The ground station is now a source-controlled Node-RED project under `ground-station/`.
 - Shared wire-format rules should live in `documentation/`, not be repeated in multiple READMEs.
+- Target-specific commands and fields should be documented on their own pages under `documentation/targets/`.
