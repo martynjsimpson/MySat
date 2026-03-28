@@ -1,10 +1,11 @@
 #include <Arduino.h>
 
+#include "config.h"
 #include "gps.h"
-#include "rtc.h"
 #include "led.h"
 #include "pmic.h"
 #include "protocol.h"
+#include "rtc.h"
 #include "status.h"
 #include "telemetry.h"
 
@@ -20,7 +21,7 @@ void setup()
   setupStatus();
   setupTelemetry();
   setupProtocol();
-  delay(6000);
+  delay(Config::Main::serialStartupDelayMs);
   reportStatusStarted();
   reportStatusHeartbeat(false);
   resetTelemetrySchedule();

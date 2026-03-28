@@ -3,120 +3,87 @@
 #include <Arduino.h>
 #include <Arduino_MKRGPS.h>
 
-#include "commands.h"
+#include "config.h"
+#include "gps_internal.h"
 #include "sender.h"
-#include "telemetry.h"
 
 namespace
 {
-  bool gpsEnabled;
-  bool gpsFixAvailable;
-  bool gpsInitialized;
-  float latitudeDeg = 0.0f;
-  float longitudeDeg = 0.0f;
-  float altitudeM = 0.0f;
-  float speedKph = 0.0f;
-  int satellitesVisible = 0;
-  unsigned long lastFixMillis = 0;
-  unsigned long gpsEpochSeconds = 0;
-  bool gpsTimeAvailable = false;
-
-  const unsigned long gpsFixTimeoutMs = 10000;
-  const float stationarySpeedThresholdKph = 1.0f;
-  const int gpsCoordinateDecimalPlaces = 5; // 1 = ~11 km, 2 = ~1.1 km, 3 = ~110m, 4 = ~11m, 5 = ~1.1m, 6 = ~11cm, 7 = ~1.1cm. >5 = jitter
+  GpsState gpsState = {
+      Config::Gps::defaultEnabled,
+      false,
+      false,
+      false,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0,
+      0,
+      0};
 
   void clearGpsValues()
   {
-    latitudeDeg = 0.0f;
-    longitudeDeg = 0.0f;
-    altitudeM = 0.0f;
-    speedKph = 0.0f;
-    satellitesVisible = 0;
-    gpsEpochSeconds = 0;
-    gpsTimeAvailable = false;
+    gpsState.latitudeDeg = 0.0f;
+    gpsState.longitudeDeg = 0.0f;
+    gpsState.altitudeM = 0.0f;
+    gpsState.speedKph = 0.0f;
+    gpsState.satellitesVisible = 0;
+    gpsState.epochSeconds = 0;
+    gpsState.timeAvailable = false;
   }
+}
 
-  void reportGpsTelemetryStatus()
-  {
-    sendTelemetry("GPS", "TELEMETRY", isTargetTelemetryEnabled(TARGET_GPS) ? "TRUE" : "FALSE");
-  }
+const GpsState &getGpsState()
+{
+  return gpsState;
+}
 
-  void reportGpsEnableStatus()
-  {
-    sendTelemetry("GPS", "ENABLE", gpsEnabled ? "TRUE" : "FALSE");
-  }
-
-  void reportGpsAvailability()
-  {
-    sendTelemetry("GPS", "AVAILABLE", gpsFixAvailable ? "TRUE" : "FALSE");
-  }
-
-  void reportGpsLatitude()
-  {
-    sendTelemetryFloat("GPS", "LATITUDE_D", gpsFixAvailable ? latitudeDeg : 0.0f, gpsCoordinateDecimalPlaces);
-  }
-
-  void reportGpsLongitude()
-  {
-    sendTelemetryFloat("GPS", "LONGITUDE_D", gpsFixAvailable ? longitudeDeg : 0.0f, gpsCoordinateDecimalPlaces);
-  }
-
-  void reportGpsAltitude()
-  {
-    sendTelemetryFloat("GPS", "ALTITUDE_M", gpsFixAvailable ? altitudeM : 0.0f, 2);
-  }
-
-  void reportGpsSpeed()
-  {
-    sendTelemetryFloat("GPS", "SPEED_KPH", gpsFixAvailable ? speedKph : 0.0f, 2);
-  }
-
-  void reportGpsSatellites()
-  {
-    sendTelemetryULong("GPS", "SATELLITES_N", gpsFixAvailable ? static_cast<unsigned long>(satellitesVisible) : 0);
-  }
+int getGpsCoordinateDecimalPlaces()
+{
+  return Config::Gps::coordinateDecimalPlaces;
 }
 
 void setupGps()
 {
-  gpsEnabled = true;
+  gpsState.enabled = Config::Gps::defaultEnabled;
   // The MKR GPS is connected via the I2C cable, matching the working Arduino example.
-  gpsInitialized = GPS.begin();
-  gpsFixAvailable = false;
-  lastFixMillis = 0;
+  gpsState.initialized = GPS.begin();
+  gpsState.fixAvailable = false;
+  gpsState.lastFixMillis = 0;
   clearGpsValues();
 }
 
 void updateGps()
 {
-  if (!gpsEnabled || !gpsInitialized)
+  if (!gpsState.enabled || !gpsState.initialized)
   {
-    gpsFixAvailable = false;
+    gpsState.fixAvailable = false;
     clearGpsValues();
     return;
   }
 
   if (GPS.available())
   {
-    latitudeDeg = GPS.latitude();
-    longitudeDeg = GPS.longitude();
-    altitudeM = GPS.altitude();
-    speedKph = GPS.speed();
-    if (speedKph < stationarySpeedThresholdKph)
+    gpsState.latitudeDeg = GPS.latitude();
+    gpsState.longitudeDeg = GPS.longitude();
+    gpsState.altitudeM = GPS.altitude();
+    gpsState.speedKph = GPS.speed();
+    if (gpsState.speedKph < Config::Gps::stationarySpeedThresholdKph)
     {
-      speedKph = 0.0f;
+      gpsState.speedKph = 0.0f;
     }
-    satellitesVisible = GPS.satellites();
-    gpsEpochSeconds = GPS.getTime();
-    gpsTimeAvailable = (gpsEpochSeconds != 0);
-    lastFixMillis = millis();
-    gpsFixAvailable = true;
+    gpsState.satellitesVisible = GPS.satellites();
+    gpsState.epochSeconds = GPS.getTime();
+    gpsState.timeAvailable = (gpsState.epochSeconds != 0);
+    gpsState.lastFixMillis = millis();
+    gpsState.fixAvailable = true;
     return;
   }
 
-  if (gpsFixAvailable && (millis() - lastFixMillis) > gpsFixTimeoutMs)
+  if (gpsState.fixAvailable && (millis() - gpsState.lastFixMillis) > Config::Gps::fixTimeoutMs)
   {
-    gpsFixAvailable = false;
+    gpsState.fixAvailable = false;
     clearGpsValues();
   }
 }
@@ -125,12 +92,12 @@ bool getGpsTimeUnix(unsigned long &epochSeconds)
 {
   updateGps();
 
-  if (!gpsTimeAvailable)
+  if (!gpsState.timeAvailable)
   {
     return false;
   }
 
-  epochSeconds = gpsEpochSeconds;
+  epochSeconds = gpsState.epochSeconds;
   return true;
 }
 
@@ -141,14 +108,14 @@ void handleSetGps(const Command &cmd)
   case PARAM_ENABLE:
     if (cmd.value == VALUE_TRUE)
     {
-      gpsEnabled = true;
+      gpsState.enabled = true;
       sendAck("GPS", "ENABLE");
     }
     else if (cmd.value == VALUE_FALSE)
     {
-      gpsEnabled = false;
-      gpsFixAvailable = false;
-      lastFixMillis = 0;
+      gpsState.enabled = false;
+      gpsState.fixAvailable = false;
+      gpsState.lastFixMillis = 0;
       clearGpsValues();
       sendAck("GPS", "DISABLE");
     }
@@ -162,72 +129,4 @@ void handleSetGps(const Command &cmd)
     sendError("BAD_PARAMETER");
     break;
   }
-}
-
-void handleGetGps(const Command &cmd)
-{
-  if (cmd.value != VALUE_NONE)
-  {
-    sendError("BAD_FORMAT");
-    return;
-  }
-
-  updateGps();
-
-  switch (cmd.parameter)
-  {
-  case PARAM_NONE:
-    reportGpsStatus();
-    break;
-
-  case PARAM_TELEMETRY:
-    reportGpsTelemetryStatus();
-    break;
-
-  case PARAM_ENABLE:
-    reportGpsEnableStatus();
-    break;
-
-  case PARAM_AVAILABLE:
-    reportGpsAvailability();
-    break;
-
-  case PARAM_LATITUDE_D:
-    reportGpsLatitude();
-    break;
-
-  case PARAM_LONGITUDE_D:
-    reportGpsLongitude();
-    break;
-
-  case PARAM_ALTITUDE_M:
-    reportGpsAltitude();
-    break;
-
-  case PARAM_SPEED_KPH:
-    reportGpsSpeed();
-    break;
-
-  case PARAM_SATELLITES_N:
-    reportGpsSatellites();
-    break;
-
-  default:
-    sendError("BAD_PARAMETER");
-    break;
-  }
-}
-
-void reportGpsStatus()
-{
-  updateGps();
-
-  reportGpsTelemetryStatus();
-  reportGpsEnableStatus();
-  reportGpsAvailability();
-  reportGpsLatitude();
-  reportGpsLongitude();
-  reportGpsAltitude();
-  reportGpsSpeed();
-  reportGpsSatellites();
 }

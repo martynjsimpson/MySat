@@ -1,10 +1,12 @@
 #include "led.h"
 
 #include <Arduino.h>
+#include <string.h>
 
 #include <WiFiNINA.h>
 #include <utility/wifi_drv.h>
 
+#include "config.h"
 #include "sender.h"
 #include "telemetry.h"
 
@@ -16,8 +18,8 @@ namespace
   const int RGB_GREEN_PIN = 26;
   const int RGB_BLUE_PIN = 27;
 
-  bool ledEnabled = false;
-  bool ledStateOn = false;
+  bool ledEnabled = Config::Led::defaultEnabled;
+  bool ledStateOn = Config::Led::defaultStateOn;
 
   enum LedColor
   {
@@ -26,7 +28,20 @@ namespace
     LED_COLOR_BLUE
   };
 
-  LedColor ledColor = LED_COLOR_GREEN;
+  LedColor defaultLedColor()
+  {
+    if (strcmp(Config::Led::defaultColor, "RED") == 0)
+    {
+      return LED_COLOR_RED;
+    }
+    if (strcmp(Config::Led::defaultColor, "BLUE") == 0)
+    {
+      return LED_COLOR_BLUE;
+    }
+    return LED_COLOR_GREEN;
+  }
+
+  LedColor ledColor = defaultLedColor();
 
   void setLed(bool on)
   {
@@ -110,9 +125,9 @@ void setupLed()
   WiFiDrv::pinMode(RGB_GREEN_PIN, OUTPUT); // define GREEN LED
   WiFiDrv::pinMode(RGB_BLUE_PIN, OUTPUT);  // define BLUE LED
 
-  ledEnabled = false;
-  ledStateOn = false;
-  ledColor = LED_COLOR_GREEN;
+  ledEnabled = Config::Led::defaultEnabled;
+  ledStateOn = Config::Led::defaultStateOn;
+  ledColor = defaultLedColor();
   applyLedOutput();
 }
 

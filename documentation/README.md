@@ -1,17 +1,34 @@
 # Documentation
 
-This directory contains the shared specifications used by both the firmware and the ground station.
+This directory contains the shared documentation for the firmware and ground station.
 
-## Document ownership
+## Core Documents
 
-- [Protocol.md](./Protocol.md) owns the wire protocol:
-  command format, response format, tokens, and message types.
-- [Telemetry.md](./Telemetry.md) owns telemetry-specific behavior:
-  telemetry snapshots, telemetry fields, and decoding guidance for a ground station.
+- [Protocol.md](./Protocol.md) defines the generic command and response protocol.
+- [Telemetry.md](./Telemetry.md) defines generic telemetry framing and snapshot behavior.
 
-## Documentation rules
+## Target Reference
 
-- High-level repo navigation belongs in the root [README.md](../README.md).
-- Firmware build and code structure belong in [../satellite/README.md](../satellite/README.md).
-- Ground-station setup and runtime notes belong in [../ground-station/README.md](../ground-station/README.md).
-- Shared protocol rules should be documented here once and referenced from elsewhere.
+Each implemented target has its own reference page with the same structure:
+
+- overview
+- implemented commands
+- telemetry fields
+- behavior notes
+
+Implemented target pages:
+
+- [LED](./targets/LED.md)
+- [TELEMETRY target](./targets/TELEMETRY_TARGET.md)
+- [BATTERY](./targets/BATTERY.md)
+- [GPS](./targets/GPS.md)
+- [RTC](./targets/RTC.md)
+- [STATUS](./targets/STATUS.md)
+
+## Boundaries
+
+- generic protocol rules belong in `Protocol.md`
+- generic telemetry rules belong in `Telemetry.md`
+- target-specific command and field reference belongs in `documentation/targets/`
+- firmware build and source layout belong in [../satellite/README.md](../satellite/README.md)
+- ground-station setup belongs in [../ground-station/README.md](../ground-station/README.md)

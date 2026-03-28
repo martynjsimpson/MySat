@@ -2,759 +2,94 @@
 
 ## Purpose
 
-This document describes the outbound telemetry format used by MySat and provides practical guidance for decoding it in a future ground station or tools such as Serial Studio.
+This document defines generic outbound telemetry behavior.
 
-This document builds on the shared message model defined in [Protocol.md](./Protocol.md) and focuses only on telemetry behavior.
+Target-specific telemetry fields are documented in:
 
----
+- [LED](./targets/LED.md)
+- [TELEMETRY target](./targets/TELEMETRY_TARGET.md)
+- [BATTERY](./targets/BATTERY.md)
+- [GPS](./targets/GPS.md)
+- [RTC](./targets/RTC.md)
+- [STATUS](./targets/STATUS.md)
 
 ## Telemetry Line Format
 
-All telemetry lines follow this structure:
+All telemetry lines use:
 
 ```text
 TIME,TLM,TARGET,PARAMETER,VALUE
 ```
 
-### Field meanings
+Field meanings:
 
 | Position | Field | Meaning |
 |---|---|---|
-| 1 | `TIME` | UTC timestamp formatted as `yyyy-mm-ddThh:mm:ssZ` |
-| 2 | `TLM` | Message type identifier for telemetry |
-| 3 | `TARGET` | The subsystem or domain being reported |
-| 4 | `PARAMETER` | The property being reported |
-| 5 | `VALUE` | The current value of that property |
-
-### Example lines
-
-```text
-2026-03-27T12:02:20Z,TLM,RTC,TELEMETRY,TRUE
-2026-03-27T12:02:20Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:02:20Z
-2026-03-27T12:02:20Z,TLM,RTC,SYNC,TRUE
-2026-03-27T12:02:20Z,TLM,LED,ENABLE,FALSE
-2026-03-27T12:02:20Z,TLM,LED,STATE,OFF
-2026-03-27T12:02:20Z,TLM,LED,COLOR,GREEN
-2026-03-27T12:02:20Z,TLM,STATUS,STARTED,TRUE
-2026-03-27T12:02:20Z,TLM,STATUS,HEARTBEAT_N,12
-2026-03-27T12:02:20Z,TLM,TELEMETRY,TELEMETRY,TRUE
-2026-03-27T12:02:20Z,TLM,TELEMETRY,ENABLE,TRUE
-2026-03-27T12:02:20Z,TLM,TELEMETRY,INTERVAL_S,5
-2026-03-27T12:02:20Z,TLM,BATTERY,TELEMETRY,TRUE
-2026-03-27T12:02:20Z,TLM,BATTERY,AVAILABLE,TRUE
-2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87
-2026-03-27T12:02:20Z,TLM,BATTERY,VOLTAGE_V,4.010
-2026-03-27T12:02:20Z,TLM,GPS,TELEMETRY,TRUE
-2026-03-27T12:02:20Z,TLM,GPS,ENABLE,TRUE
-2026-03-27T12:02:20Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:02:20Z,TLM,GPS,LATITUDE_D,48.85837
-2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.12780
-2026-03-27T12:02:20Z,TLM,GPS,ALTITUDE_M,35.20
-2026-03-27T12:02:20Z,TLM,GPS,SPEED_KPH,12.40
-2026-03-27T12:02:20Z,TLM,GPS,SATELLITES_N,9
-```
-
----
+| 1 | `TIME` | Device UTC timestamp |
+| 2 | `TLM` | Telemetry message type |
+| 3 | `TARGET` | Reported subsystem |
+| 4 | `PARAMETER` | Reported field |
+| 5 | `VALUE` | Current field value |
 
 ## Timestamp Rules
 
-`TIME` is:
+- telemetry timestamps come from the device RTC
+- timestamps may be wrong until the RTC is synchronised
+- multiple lines in the same snapshot can share the same timestamp
+- for a given timestamp, the firmware should not emit conflicting values for the same `TARGET` and `PARAMETER`
 
-- device UTC time formatted as `yyyy-mm-ddThh:mm:ssZ`
-- shared by all messages emitted in the same second
-- derived from the device RTC
-- potentially wrong until the RTC has been synchronised
+## Periodic Snapshot Rules
 
-### Important interpretation rule
+The telemetry scheduler emits periodic snapshots on the configured telemetry interval.
 
-Within a single timestamp, telemetry must not contain multiple conflicting values for the same `TARGET + PARAMETER` pair.
+When global telemetry is enabled:
 
-This is acceptable:
+- `STATUS,HEARTBEAT_N` is emitted every interval
+- enabled targets are appended to the same snapshot
+- a target omitted from periodic telemetry can still be queried with `GET`
 
-```text
-2026-03-27T12:02:20Z,TLM,LED,ENABLE,FALSE
-2026-03-27T12:02:20Z,TLM,LED,STATE,OFF
-```
+When global telemetry is disabled with `SET,TELEMETRY,ENABLE,FALSE`:
 
-This is not acceptable:
+- normal target snapshots stop
+- `STATUS,HEARTBEAT_N` still continues at the configured interval
 
-```text
-2026-03-27T12:02:20Z,TLM,LED,STATE,OFF
-2026-03-27T12:02:20Z,TLM,LED,STATE,ON
-```
+## One-Time Telemetry Events
 
-because the ground station would not know which one is newer.
+The firmware also emits one-time telemetry outside the periodic snapshot:
 
----
+- `STATUS,STARTED,TRUE` during startup
+- `RTC,SYNC,TRUE` when the RTC transitions from unsynchronised to synchronised
 
-## Telemetry Snapshot Concept
+These events are target-specific and described in their target pages.
 
-Periodic telemetry is emitted as a **snapshot**.
+## Target Inclusion Rules
 
-A telemetry snapshot is the set of telemetry lines emitted together at one timestamp to represent the current device state.
+- `STATUS` heartbeat is not per-target disableable
+- `LED`, `TELEMETRY`, `BATTERY`, `GPS`, and `RTC` can each be included or omitted from periodic snapshots independently
+- `GET,<target>,NONE,NONE` returns the full implemented telemetry set for that target
+- `GET,<target>,<parameter>,NONE` returns a single telemetry line for that field when supported
 
-At present, the periodic snapshot includes:
+## Value Conventions
 
-- status heartbeat counter
-- RTC time and sync state
-- LED status
-- telemetry configuration/status, if telemetry-target telemetry is enabled
-- battery / PMIC status
-- GPS status
+The current protocol uses a naming convention where the parameter name usually carries the unit or data type:
 
-If telemetry for an individual target is disabled, that target is omitted from periodic snapshots until it is re-enabled.
-
-For `LED`, `RTC`, `TELEMETRY`, `BATTERY`, and `GPS`, explicit `GET` commands still return current status even when that target is omitted from periodic snapshots. `GET,<target>,NONE,NONE` returns the full target snapshot, while `GET,<target>,<parameter>,NONE` returns just the requested telemetry line for supported parameters. `STATUS` is always included in periodic snapshots when global telemetry is enabled, and `GET,STATUS,HEARTBEAT_N,NONE` returns the current counter without incrementing it.
-
-Typical snapshot:
-
-```text
-2026-03-27T12:03:20Z,TLM,LED,TELEMETRY,TRUE
-2026-03-27T12:03:20Z,TLM,LED,ENABLE,TRUE
-2026-03-27T12:03:20Z,TLM,LED,STATE,ON
-2026-03-27T12:03:20Z,TLM,LED,COLOR,RED
-2026-03-27T12:03:20Z,TLM,STATUS,HEARTBEAT_N,13
-2026-03-27T12:03:20Z,TLM,TELEMETRY,TELEMETRY,TRUE
-2026-03-27T12:03:20Z,TLM,TELEMETRY,ENABLE,TRUE
-2026-03-27T12:03:20Z,TLM,TELEMETRY,INTERVAL_S,5
-2026-03-27T12:03:20Z,TLM,BATTERY,TELEMETRY,TRUE
-2026-03-27T12:03:20Z,TLM,BATTERY,AVAILABLE,TRUE
-2026-03-27T12:03:20Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-2026-03-27T12:03:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-2026-03-27T12:03:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87
-2026-03-27T12:03:20Z,TLM,BATTERY,VOLTAGE_V,4.010
-2026-03-27T12:03:20Z,TLM,GPS,TELEMETRY,TRUE
-2026-03-27T12:03:20Z,TLM,GPS,ENABLE,TRUE
-2026-03-27T12:03:20Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:03:20Z,TLM,GPS,LATITUDE_D,48.85837
-2026-03-27T12:03:20Z,TLM,GPS,LONGITUDE_D,-0.12780
-2026-03-27T12:03:20Z,TLM,GPS,ALTITUDE_M,35.20
-2026-03-27T12:03:20Z,TLM,GPS,SPEED_KPH,12.40
-2026-03-27T12:03:20Z,TLM,GPS,SATELLITES_N,9
-```
-
----
-
-## Current Targets and Parameters
-
-## STATUS target
-
-### `STATUS,STARTED`
-
-Reports that firmware setup completed successfully.
-
-Value type:
-- `TRUE`
-
-Examples:
-
-```text
-2026-03-27T12:03:18Z,TLM,STATUS,STARTED,TRUE
-```
-
-This is a one-time startup event emitted at the end of `setup()`, after the firmware first emits `STATUS,HEARTBEAT_N,0`. It is not part of the periodic telemetry snapshot and is not queryable via `GET`.
-
-### `STATUS,HEARTBEAT_N`
-
-Reports the heartbeat counter emitted with each periodic telemetry snapshot.
-
-Value type:
-- unsigned integer
-
-Examples:
-
-```text
-2026-03-27T12:03:19Z,TLM,STATUS,HEARTBEAT_N,12
-2026-03-27T12:03:20Z,TLM,STATUS,HEARTBEAT_N,13
-```
-
-The counter increments when a periodic snapshot is emitted. An explicit `GET,STATUS,HEARTBEAT_N,NONE` returns the current value without incrementing it.
-
-## LED target
-
-### `LED,ENABLE`
-
-Reports whether LED operation is currently permitted.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:03:40Z,TLM,LED,ENABLE,TRUE
-2026-03-27T12:03:40Z,TLM,LED,ENABLE,FALSE
-```
-
-### `LED,TELEMETRY`
-
-Reports whether LED data is included in periodic telemetry snapshots.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:03:40Z,TLM,LED,TELEMETRY,TRUE
-2026-03-27T12:03:40Z,TLM,LED,TELEMETRY,FALSE
-```
-
-### `LED,STATE`
-
-Reports whether the LED output is currently on or off.
-
-Value type:
-- `ON`
-- `OFF`
-
-Examples:
-
-```text
-2026-03-27T12:03:41Z,TLM,LED,STATE,ON
-2026-03-27T12:03:41Z,TLM,LED,STATE,OFF
-```
-
-### `LED,COLOR`
-
-Reports the currently selected LED color token.
-
-Value type:
-- `RED`
-- `GREEN`
-- `BLUE`
-
-Examples:
-
-```text
-2026-03-27T12:03:42Z,TLM,LED,COLOR,RED
-2026-03-27T12:03:42Z,TLM,LED,COLOR,GREEN
-```
-
----
-
-## RTC target
-### `RTC,TELEMETRY`
-
-Reports whether RTC data is included in periodic telemetry snapshots.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:03:42Z,TLM,RTC,TELEMETRY,TRUE
-2026-03-27T12:03:42Z,TLM,RTC,TELEMETRY,FALSE
-```
-
-### `RTC,CURRENT_TIME`
-
-Reports the device's current UTC time.
-
-Value type:
-- ISO 8601 UTC timestamp in the form `yyyy-mm-ddThh:mm:ssZ`
-
-Examples:
-
-```text
-2026-03-27T12:03:42Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:03:42Z
-2026-03-27T12:10:00Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:10:00Z
-```
-
-### `RTC,SYNC`
-
-Reports whether the device clock is considered in sync.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:03:42Z,TLM,RTC,SYNC,TRUE
-2000-01-01T00:00:05Z,TLM,RTC,SYNC,FALSE
-```
-
-This value becomes `TRUE` after a successful `SET,RTC,CURRENT_TIME,<iso8601-utc>` or `SET,RTC,SYNC,GPS`.
-
-When the RTC transitions from unsynchronized to synchronized, the firmware emits `TLM,RTC,SYNC,TRUE` immediately instead of waiting for the next periodic snapshot.
-
----
-
-## TELEMETRY target
-
-### `TELEMETRY,TELEMETRY`
-
-Reports whether telemetry-about-telemetry is included in periodic snapshots.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:03:49Z,TLM,TELEMETRY,TELEMETRY,TRUE
-2026-03-27T12:03:49Z,TLM,TELEMETRY,TELEMETRY,FALSE
-```
-
-### `TELEMETRY,ENABLE`
-
-Reports whether periodic telemetry streaming is enabled.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:03:50Z,TLM,TELEMETRY,ENABLE,TRUE
-2026-03-27T12:03:50Z,TLM,TELEMETRY,ENABLE,FALSE
-```
-
-### `TELEMETRY,INTERVAL_S`
-
-Reports the periodic telemetry interval in seconds.
-
-Value type:
-- unsigned integer
-
-Examples:
-
-```text
-2026-03-27T12:03:51Z,TLM,TELEMETRY,INTERVAL_S,5
-2026-03-27T12:03:51Z,TLM,TELEMETRY,INTERVAL_S,10
-```
-
----
-
-## BATTERY target
-
-### `BATTERY,AVAILABLE`
-
-Reports whether the battery is detected / available.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:04:00Z,TLM,BATTERY,AVAILABLE,TRUE
-2026-03-27T12:04:00Z,TLM,BATTERY,AVAILABLE,FALSE
-```
-
-### `BATTERY,TELEMETRY`
-
-Reports whether battery data is included in periodic telemetry snapshots.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:04:00Z,TLM,BATTERY,TELEMETRY,TRUE
-2026-03-27T12:04:00Z,TLM,BATTERY,TELEMETRY,FALSE
-```
-
-### `BATTERY,CHARGE_CURRENT_A`
-
-Reports charge current in amps.
-
-Value type:
-- floating-point number
-
-Examples:
-
-```text
-2026-03-27T12:04:02Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-2026-03-27T12:04:02Z,TLM,BATTERY,CHARGE_CURRENT_A,0.125
-```
-
-### `BATTERY,CHARGE_VOLTAGE_V`
-
-Reports charge voltage in volts.
-
-Value type:
-- floating-point number
-
-Examples:
-
-```text
-2026-03-27T12:04:03Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-2026-03-27T12:04:03Z,TLM,BATTERY,CHARGE_VOLTAGE_V,3.950
-```
-
-### `BATTERY,CHARGE_PERCENT_P`
-
-Reports approximate battery charge percentage.
-
-Value type:
-- integer percentage
-
-Examples:
-
-```text
-2026-03-27T12:04:04Z,TLM,BATTERY,CHARGE_PERCENT_P,87
-2026-03-27T12:04:04Z,TLM,BATTERY,CHARGE_PERCENT_P,42
-```
-
-### `BATTERY,VOLTAGE_V`
-
-Reports measured battery voltage in volts.
-
-Value type:
-- floating-point number
-
-Examples:
-
-```text
-2026-03-27T12:04:05Z,TLM,BATTERY,VOLTAGE_V,4.010
-2026-03-27T12:04:05Z,TLM,BATTERY,VOLTAGE_V,3.720
-```
-
----
-
-## GPS target
-
-The current firmware initializes the MKR GPS using the I2C cable connection path rather than shield mode.
-
-### `GPS,TELEMETRY`
-
-Reports whether GPS data is included in periodic telemetry snapshots.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:04:06Z,TLM,GPS,TELEMETRY,TRUE
-2026-03-27T12:04:06Z,TLM,GPS,TELEMETRY,FALSE
-```
-
-### `GPS,ENABLE`
-
-Reports whether the GPS service is enabled.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:04:07Z,TLM,GPS,ENABLE,TRUE
-2026-03-27T12:04:07Z,TLM,GPS,ENABLE,FALSE
-```
-
-### `GPS,AVAILABLE`
-
-Reports whether a recent valid GPS fix is available.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:04:08Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:04:08Z,TLM,GPS,AVAILABLE,FALSE
-```
-
-### `GPS,LATITUDE_D`
-
-Reports GPS latitude in decimal degrees.
-
-Value type:
-- floating-point number
-
-Examples:
-
-```text
-2026-03-27T12:04:09Z,TLM,GPS,LATITUDE_D,48.85837
-2026-03-27T12:04:09Z,TLM,GPS,LATITUDE_D,0.00000
-```
-
-### `GPS,LONGITUDE_D`
-
-Reports GPS longitude in decimal degrees.
-
-Value type:
-- floating-point number
-
-Examples:
-
-```text
-2026-03-27T12:04:10Z,TLM,GPS,LONGITUDE_D,-0.12780
-2026-03-27T12:04:10Z,TLM,GPS,LONGITUDE_D,0.00000
-```
-
-### `GPS,ALTITUDE_M`
-
-Reports GPS altitude in meters.
-
-Value type:
-- floating-point number
-
-Examples:
-
-```text
-2026-03-27T12:04:11Z,TLM,GPS,ALTITUDE_M,35.20
-2026-03-27T12:04:11Z,TLM,GPS,ALTITUDE_M,0.00
-```
-
-### `GPS,SPEED_KPH`
-
-Reports GPS speed in kilometers per hour.
-
-The firmware applies a `1.0` kph deadband. Values below that threshold are reported as `0.00` to suppress stationary GPS jitter.
-
-Value type:
-- floating-point number
-
-Examples:
-
-```text
-2026-03-27T12:04:12Z,TLM,GPS,SPEED_KPH,12.40
-2026-03-27T12:04:12Z,TLM,GPS,SPEED_KPH,0.00
-```
-
-### `GPS,SATELLITES_N`
-
-Reports how many satellites the GPS receiver can currently see.
-
-Value type:
-- unsigned integer
-
-Examples:
-
-```text
-2026-03-27T12:04:13Z,TLM,GPS,SATELLITES_N,9
-2026-03-27T12:04:13Z,TLM,GPS,SATELLITES_N,0
-```
-
----
-
-## Telemetry Parameter Reference
-
-This table is intended for a ground-station developer or future parser implementation.
-
-| Target | Parameter | Meaning | Value Type | Example |
-|---|---|---|---|---|
-| `LED` | `ENABLE` | Whether LED operation is permitted | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,LED,ENABLE,FALSE` |
-| `LED` | `TELEMETRY` | Whether LED data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,LED,TELEMETRY,TRUE` |
-| `LED` | `STATE` | Current LED output state | `ON` / `OFF` | `2026-03-27T12:02:20Z,TLM,LED,STATE,OFF` |
-| `LED` | `COLOR` | Current selected LED color | `RED` / `GREEN` / `BLUE` | `2026-03-27T12:02:20Z,TLM,LED,COLOR,GREEN` |
-| `STATUS` | `STARTED` | One-time boot-complete event emitted at the end of `setup()` | `TRUE` | `2026-03-27T12:03:18Z,TLM,STATUS,STARTED,TRUE` |
-| `STATUS` | `HEARTBEAT_N` | Heartbeat counter incremented once per periodic snapshot | unsigned integer | `2026-03-27T12:02:20Z,TLM,STATUS,HEARTBEAT_N,12` |
-| `RTC` | `TELEMETRY` | Whether RTC data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,RTC,TELEMETRY,TRUE` |
-| `RTC` | `CURRENT_TIME` | Current device UTC time | ISO UTC string | `2026-03-27T12:02:20Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:02:20Z` |
-| `RTC` | `SYNC` | Whether the device clock is in sync | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,RTC,SYNC,TRUE` |
-| `TELEMETRY` | `TELEMETRY` | Whether telemetry-status data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,TELEMETRY,TELEMETRY,TRUE` |
-| `TELEMETRY` | `ENABLE` | Whether periodic telemetry is enabled | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,TELEMETRY,ENABLE,TRUE` |
-| `TELEMETRY` | `INTERVAL_S` | Telemetry interval in seconds | unsigned integer | `2026-03-27T12:02:20Z,TLM,TELEMETRY,INTERVAL_S,5` |
-| `BATTERY` | `TELEMETRY` | Whether battery data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,BATTERY,TELEMETRY,TRUE` |
-| `BATTERY` | `AVAILABLE` | Whether battery hardware is present | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,BATTERY,AVAILABLE,TRUE` |
-| `BATTERY` | `CHARGE_CURRENT_A` | Charge current in amps | float | `2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500` |
-| `BATTERY` | `CHARGE_VOLTAGE_V` | Charge voltage in volts | float | `2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200` |
-| `BATTERY` | `CHARGE_PERCENT_P` | Approximate battery percentage | integer | `2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87` |
-| `BATTERY` | `VOLTAGE_V` | Measured battery voltage in volts | float | `2026-03-27T12:02:20Z,TLM,BATTERY,VOLTAGE_V,4.010` |
-| `GPS` | `TELEMETRY` | Whether GPS data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,TELEMETRY,TRUE` |
-| `GPS` | `ENABLE` | Whether the GPS service is enabled | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,ENABLE,TRUE` |
-| `GPS` | `AVAILABLE` | Whether a recent valid GPS fix is available | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,AVAILABLE,TRUE` |
-| `GPS` | `LATITUDE_D` | GPS latitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LATITUDE_D,48.85837` |
-| `GPS` | `LONGITUDE_D` | GPS longitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.12780` |
-| `GPS` | `ALTITUDE_M` | GPS altitude in meters | float | `2026-03-27T12:02:20Z,TLM,GPS,ALTITUDE_M,35.20` |
-| `GPS` | `SPEED_KPH` | GPS speed in kilometers per hour | float | `2026-03-27T12:02:20Z,TLM,GPS,SPEED_KPH,12.40` |
-| `GPS` | `SATELLITES_N` | Number of satellites currently visible to the GPS receiver | unsigned integer | `2026-03-27T12:02:20Z,TLM,GPS,SATELLITES_N,9` |
-
----
-
-## Useful Ground-Station Decoding Rules
-
-A ground station should parse telemetry as:
-
-- `TIME` = ISO UTC timestamp string
-- `TYPE` = must equal `TLM`
-- `TARGET` = subsystem key
-- `PARAMETER` = attribute key
-- `VALUE` = symbolic, integer, or floating-point value
-
-Recommended internal keying model:
-
-```text
-(TARGET, PARAMETER) -> latest VALUE at TIME
-```
-
-or, if keeping history:
-
-```text
-(TIME, TARGET, PARAMETER, VALUE)
-```
-
-### Recommended UI mapping
-
-| Telemetry | Suggested UI representation |
+| Suffix | Meaning |
 |---|---|
-| `LED,ENABLE` | enabled/disabled icon or status badge |
-| `LED,TELEMETRY` | LED telemetry enabled indicator |
-| `LED,STATE` | on/off icon or status badge |
-| `LED,COLOR` | color label or swatch |
-| `STATUS,STARTED` | boot-complete event marker |
-| `STATUS,HEARTBEAT_N` | heartbeat counter and last-heartbeat freshness indicator |
-| `RTC,TELEMETRY` | RTC telemetry enabled indicator |
-| `RTC,CURRENT_TIME` | device time display |
-| `RTC,SYNC` | clock sync indicator |
-| `TELEMETRY,TELEMETRY` | telemetry-status enabled indicator |
-| `TELEMETRY,ENABLE` | stream active indicator |
-| `TELEMETRY,INTERVAL_S` | numeric display |
-| `BATTERY,TELEMETRY` | battery telemetry enabled indicator |
-| `BATTERY,AVAILABLE` | battery present indicator |
-| `BATTERY,CHARGE_CURRENT_A` | numeric current display |
-| `BATTERY,CHARGE_VOLTAGE_V` | numeric voltage display |
-| `BATTERY,CHARGE_PERCENT_P` | battery percentage display / gauge |
-| `BATTERY,VOLTAGE_V` | measured battery voltage display |
-| `GPS,TELEMETRY` | GPS telemetry enabled indicator |
-| `GPS,ENABLE` | GPS service enabled indicator |
-| `GPS,AVAILABLE` | GPS fix indicator |
-| `GPS,LATITUDE_D` | latitude display |
-| `GPS,LONGITUDE_D` | longitude display |
-| `GPS,ALTITUDE_M` | altitude display |
-| `GPS,SPEED_KPH` | speed display |
-| `GPS,SATELLITES_N` | visible satellite count display |
+| `_N` | count |
+| `_S` | seconds |
+| `_V` | volts |
+| `_A` | amps |
+| `_P` | percent |
+| `_D` | decimal degrees |
+| `_M` | metres |
+| `_KPH` | kilometres per hour |
 
----
-
-## Serial Studio Guidance
-
-Serial Studio will need a parser because the MySat protocol is not simple fixed-column numeric CSV.
-
-A parser should:
-
-1. split the incoming line on commas
-2. verify field 2 is `TLM`
-3. decode `TARGET`
-4. decode `PARAMETER`
-5. update the latest known state for widgets
-
-### Example telemetry lines for testing a parser
+## Examples
 
 ```text
-2026-03-27T12:01:40Z,TLM,RTC,TELEMETRY,TRUE
-2026-03-27T12:01:40Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:01:40Z
-2026-03-27T12:01:40Z,TLM,RTC,SYNC,TRUE
-2026-03-27T12:01:40Z,TLM,LED,ENABLE,FALSE
-2026-03-27T12:01:40Z,TLM,LED,STATE,OFF
-2026-03-27T12:01:40Z,TLM,LED,COLOR,GREEN
-2026-03-27T12:01:45Z,TLM,STATUS,STARTED,TRUE
-2026-03-27T12:01:50Z,TLM,STATUS,HEARTBEAT_N,7
-2026-03-27T12:01:50Z,TLM,TELEMETRY,TELEMETRY,TRUE
-2026-03-27T12:01:50Z,TLM,TELEMETRY,ENABLE,TRUE
-2026-03-27T12:01:50Z,TLM,TELEMETRY,INTERVAL_S,5
-2026-03-27T12:02:00Z,TLM,BATTERY,TELEMETRY,TRUE
-2026-03-27T12:02:00Z,TLM,BATTERY,AVAILABLE,TRUE
-2026-03-27T12:02:00Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500
-2026-03-27T12:02:00Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
-2026-03-27T12:02:00Z,TLM,BATTERY,CHARGE_PERCENT_P,87
-2026-03-27T12:02:00Z,TLM,BATTERY,VOLTAGE_V,4.010
-2026-03-27T12:02:10Z,TLM,GPS,TELEMETRY,TRUE
-2026-03-27T12:02:10Z,TLM,GPS,ENABLE,TRUE
-2026-03-27T12:02:10Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:02:10Z,TLM,GPS,LATITUDE_D,48.85837
-2026-03-27T12:02:10Z,TLM,GPS,LONGITUDE_D,-0.12780
-2026-03-27T12:02:10Z,TLM,GPS,ALTITUDE_M,35.20
-2026-03-27T12:02:10Z,TLM,GPS,SPEED_KPH,12.40
-2026-03-27T12:02:10Z,TLM,GPS,SATELLITES_N,9
+2026-03-27T12:00:00Z,TLM,STATUS,HEARTBEAT_N,12
+2026-03-27T12:00:00Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
+2026-03-27T12:00:00Z,TLM,LED,STATE,OFF
+2026-03-27T12:00:00Z,TLM,BATTERY,VOLTAGE_V,4.010
+2026-03-27T12:00:00Z,TLM,GPS,LATITUDE_D,48.85837
 ```
-
-### Suggested Serial Studio widget set
-
-For the current project, useful widgets would be:
-
-- last message timestamp
-- last heartbeat time
-- heartbeat counter
-- RTC current time
-- RTC sync state
-- LED enabled
-- LED state
-- LED color
-- telemetry telemetry enabled
-- telemetry enabled
-- telemetry interval seconds
-- battery telemetry enabled
-- battery available
-- charge current
-- charge voltage
-- charge percentage
-- battery voltage
-- GPS enabled
-- GPS fix available
-- latitude
-- longitude
-- altitude
-- speed
-- visible satellites
-- last ACK
-- last ERR
-
-### Suggested stateful parser behaviour
-
-Because telemetry arrives one line at a time, a parser should maintain the latest known values and update the UI state incrementally.
-
----
-
-## Relationship to Other Message Types
-
-The device also emits:
-
-- `ACK` messages
-- `ERR` messages
-
-These are not telemetry, but they use the same timestamp prefix format.
-
-Examples:
-
-```text
-2026-03-27T12:02:00Z,ACK,LED,ON
-2026-03-27T12:02:01Z,ERR,LED_DISABLED
-```
-
-A ground station should treat these separately from telemetry.
-
----
-
-## Future Growth
-
-The telemetry structure is intentionally reusable.
-
-Future examples may include:
-
-```text
-2026-03-27T12:05:00Z,TLM,POWER,MODE,LOW_POWER
-2026-03-27T12:05:01Z,TLM,RADIO,STATE,OFF
-2026-03-27T12:05:02Z,TLM,STATUS,HEALTH,OK
-2026-03-27T12:05:03Z,TLM,UPTIME,SECONDS,303
-```
-
-This means the telemetry parser should not be hard-coded only for LED. It should support generic:
-
-```text
-TIME,TLM,TARGET,PARAMETER,VALUE
-```
-
-with target/parameter-specific UI mapping layered on top.

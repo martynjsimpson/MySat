@@ -7,13 +7,13 @@ enum CommandType
 {
   CMD_UNKNOWN = 0,
 
-  // Implemented now
+  // Implemented
   CMD_SET,
   CMD_GET,
   CMD_PING,
-
-  // Reserved future
   CMD_RESET,
+
+  // Reserved
   CMD_SAVE
 };
 
@@ -22,16 +22,16 @@ enum TargetType
   TARGET_UNKNOWN = 0,
   TARGET_NONE,
 
-  // Implemented now
+  // Implemented
   TARGET_LED,
   TARGET_TELEMETRY,
   TARGET_BATTERY,
   TARGET_GPS,
   TARGET_RTC,
-
-  // Reserved future
-  TARGET_MODE,
   TARGET_STATUS,
+
+  // Reserved
+  TARGET_MODE,
   TARGET_RADIO,
   TARGET_POWER,
   TARGET_PAYLOAD,
@@ -46,17 +46,14 @@ enum ParameterType
   PARAM_UNKNOWN = 0,
   PARAM_NONE,
 
-  // General command / telemetry parameters
+  // Implemented
   PARAM_STATE,
   PARAM_ENABLE,
-  PARAM_MODE,
-  PARAM_HEALTH,
   PARAM_INTERVAL_S,
   PARAM_TELEMETRY,
   PARAM_CURRENT_TIME,
   PARAM_HEARTBEAT_N,
   PARAM_SYNC,
-  PARAM_SECONDS,
   PARAM_COLOR,
   PARAM_AVAILABLE,
   PARAM_CHARGE_CURRENT_A,
@@ -67,35 +64,38 @@ enum ParameterType
   PARAM_LONGITUDE_D,
   PARAM_ALTITUDE_M,
   PARAM_SPEED_KPH,
-  PARAM_SATELLITES_N
+  PARAM_SATELLITES_N,
+
+  // Reserved
+  PARAM_MODE,
+  PARAM_HEALTH,
+  PARAM_UPTIME_S
 };
 
 enum ValueType
 {
   VALUE_UNKNOWN = 0,
 
-  // Implemented now
+  // Implemented
   VALUE_ON,
   VALUE_OFF,
   VALUE_NONE,
   VALUE_TRUE,
   VALUE_FALSE,
-
-  // Reserved future
   VALUE_ENABLE,
   VALUE_DISABLE,
+  VALUE_RED,
+  VALUE_GREEN,
+  VALUE_BLUE,
+
+  // Reserved
   VALUE_SAFE,
   VALUE_NORMAL,
   VALUE_LOW_POWER,
   VALUE_ACTIVE,
   VALUE_IDLE,
-
-  // Generic status values
   VALUE_OK,
-  VALUE_FAIL,
-  VALUE_RED,
-  VALUE_GREEN,
-  VALUE_BLUE
+  VALUE_FAIL
 };
 
 struct Command
