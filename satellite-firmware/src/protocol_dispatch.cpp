@@ -10,6 +10,7 @@
 #include "sender.h"
 #include "status.h"
 #include "telemetry.h"
+#include "transport.h"
 
 namespace
 {
@@ -109,7 +110,7 @@ namespace
     }
 
     sendAck("RESET", "REBOOT");
-    Serial.flush();
+    transportFlush();
     delay(Config::Protocol::resetAckDelayMs);
     NVIC_SystemReset();
   }
