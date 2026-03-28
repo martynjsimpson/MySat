@@ -4,18 +4,17 @@
 #include "pmic.h"
 #include "rtc.h"
 #include "sender.h"
+#include "status.h"
 
 namespace
 {
   bool telemetryEnabled = true;
-  bool statusTelemetryEnabled = true;
-  bool telemetryTelemetryEnabled = true;
-  bool rtcTelemetryEnabled = true;
-  bool ledTelemetryEnabled = true;
+  bool telemetryTelemetryEnabled = false;
+  bool rtcTelemetryEnabled = false;
+  bool ledTelemetryEnabled = false;
   bool batteryTelemetryEnabled = true;
   unsigned long telemetryIntervalSeconds = 5;
   unsigned long lastTelemetryTime = 0;
-  unsigned long heartbeatCount = 0;
 
   bool *getTargetTelemetryFlag(TargetType target)
   {
@@ -56,14 +55,12 @@ namespace
 void setupTelemetry()
 {
   telemetryEnabled = true;
-  statusTelemetryEnabled = true;
   telemetryTelemetryEnabled = true;
   rtcTelemetryEnabled = true;
   ledTelemetryEnabled = true;
   batteryTelemetryEnabled = true;
   telemetryIntervalSeconds = 5;
   lastTelemetryTime = getUptimeSeconds();
-  heartbeatCount = 0;
 }
 
 bool isTargetTelemetryEnabled(TargetType target)
@@ -153,21 +150,6 @@ void reportTelemetryStatus()
   sendTelemetry("TELEMETRY", "TELEMETRY", telemetryTelemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetry("TELEMETRY", "ENABLE", telemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
-}
-
-void reportStatusHeartbeat(bool incrementHeartbeat)
-{
-  if (!statusTelemetryEnabled)
-  {
-    return;
-  }
-
-  if (incrementHeartbeat)
-  {
-    ++heartbeatCount;
-  }
-
-  sendTelemetryULong("STATUS", "HEARTBEAT_N", heartbeatCount);
 }
 
 void sendTelemetrySnapshot()

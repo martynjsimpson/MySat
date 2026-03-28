@@ -4,6 +4,7 @@
 #include "led.h"
 #include "pmic.h"
 #include "protocol.h"
+#include "status.h"
 #include "telemetry.h"
 
 void setup()
@@ -14,6 +15,7 @@ void setup()
 
   setupLed();
   setupBattery();
+  setupStatus();
   setupTelemetry();
   setupProtocol();
 }

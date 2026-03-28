@@ -9,6 +9,7 @@
 #include "pmic.h"
 #include "rtc.h"
 #include "sender.h"
+#include "status.h"
 #include "telemetry.h"
 
 namespace

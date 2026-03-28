@@ -80,7 +80,7 @@
         "type": "ui-page",
         "name": "Mission Control",
         "ui": "d0f6c0df3d6bbbec",
-        "path": "/page2",
+        "path": "/page1",
         "icon": "home",
         "layout": "grid",
         "theme": "5b53033ae39ab468",
