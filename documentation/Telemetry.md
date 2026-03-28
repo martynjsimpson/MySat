@@ -501,6 +501,8 @@ Examples:
 
 Reports GPS speed in kilometers per hour.
 
+The firmware applies a `1.0` kph deadband. Values below that threshold are reported as `0.00` to suppress stationary GPS jitter.
+
 Value type:
 - floating-point number
 

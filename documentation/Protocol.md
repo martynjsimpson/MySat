@@ -571,7 +571,7 @@ SET,GPS,TELEMETRY,DISABLE
 | `SET,GPS,TELEMETRY,ENABLE` | Includes GPS data in periodic telemetry snapshots |
 | `SET,GPS,TELEMETRY,DISABLE` | Omits GPS data from periodic telemetry snapshots |
 
-`GPS,AVAILABLE` indicates whether a recent valid fix is available. When GPS is disabled or no recent fix is available, positional values are reported as zero. `GPS,SATELLITES_N` reports the receiver's current visible satellite count.
+`GPS,AVAILABLE` indicates whether a recent valid fix is available. When GPS is disabled or no recent fix is available, positional values are reported as zero. `GPS,SATELLITES_N` reports the receiver's current visible satellite count. `GPS,SPEED_KPH` applies a small firmware deadband so values below `1.0` kph are reported as `0.00` to suppress stationary GPS jitter.
 
 ## STATUS target
 
