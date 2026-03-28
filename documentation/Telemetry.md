@@ -35,13 +35,15 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 2026-03-27T12:02:20Z,TLM,LED,ENABLE,FALSE
 2026-03-27T12:02:20Z,TLM,LED,STATE,OFF
 2026-03-27T12:02:20Z,TLM,LED,COLOR,GREEN
+2026-03-27T12:02:20Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:02:20Z,TLM,TELEMETRY,ENABLE,TRUE
 2026-03-27T12:02:20Z,TLM,TELEMETRY,INTERVAL_S,5
+2026-03-27T12:02:20Z,TLM,BATTERY,TELEMETRY,TRUE
 2026-03-27T12:02:20Z,TLM,BATTERY,AVAILABLE,TRUE
-2026-03-27T12:02:20Z,TLM,BATTERY,ON_BATTERY,FALSE
 2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500
 2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
 2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87
+2026-03-27T12:02:20Z,TLM,BATTERY,VOLTAGE_V,4.010
 ```
 
 ---
@@ -87,10 +89,12 @@ At present, the periodic snapshot includes:
 
 - RTC time and sync state
 - LED status
-- telemetry configuration/status
+- telemetry configuration/status, if telemetry-target telemetry is enabled
 - battery / PMIC status
 
-If telemetry for an individual target is disabled, that target is omitted from periodic snapshots until it is re-enabled. Explicit `GET` commands can still return that target's full status, including its telemetry-enabled state.
+If telemetry for an individual target is disabled, that target is omitted from periodic snapshots until it is re-enabled.
+
+For `LED`, `RTC`, and `TELEMETRY`, explicit `GET` commands still return current status even when that target is omitted from periodic snapshots. `BATTERY` currently uses the same gating for `GET` and periodic output, so `GET,BATTERY,NONE,NONE` emits no battery lines while battery telemetry is disabled.
 
 Typical snapshot:
 
@@ -99,14 +103,15 @@ Typical snapshot:
 2026-03-27T12:03:20Z,TLM,LED,ENABLE,TRUE
 2026-03-27T12:03:20Z,TLM,LED,STATE,ON
 2026-03-27T12:03:20Z,TLM,LED,COLOR,RED
+2026-03-27T12:03:20Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:03:20Z,TLM,TELEMETRY,ENABLE,TRUE
 2026-03-27T12:03:20Z,TLM,TELEMETRY,INTERVAL_S,5
 2026-03-27T12:03:20Z,TLM,BATTERY,TELEMETRY,TRUE
 2026-03-27T12:03:20Z,TLM,BATTERY,AVAILABLE,TRUE
-2026-03-27T12:03:20Z,TLM,BATTERY,ON_BATTERY,FALSE
 2026-03-27T12:03:20Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500
 2026-03-27T12:03:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
 2026-03-27T12:03:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87
+2026-03-27T12:03:20Z,TLM,BATTERY,VOLTAGE_V,4.010
 ```
 
 ---
@@ -227,6 +232,21 @@ Examples:
 
 ## TELEMETRY target
 
+### `TELEMETRY,TELEMETRY`
+
+Reports whether telemetry-about-telemetry is included in periodic snapshots.
+
+Value type:
+- `TRUE`
+- `FALSE`
+
+Examples:
+
+```text
+2026-03-27T12:03:49Z,TLM,TELEMETRY,TELEMETRY,TRUE
+2026-03-27T12:03:49Z,TLM,TELEMETRY,TELEMETRY,FALSE
+```
+
 ### `TELEMETRY,ENABLE`
 
 Reports whether periodic telemetry streaming is enabled.
@@ -290,21 +310,6 @@ Examples:
 2026-03-27T12:04:00Z,TLM,BATTERY,TELEMETRY,FALSE
 ```
 
-### `BATTERY,ON_BATTERY`
-
-Reports whether the system is currently running from battery.
-
-Value type:
-- `TRUE`
-- `FALSE`
-
-Examples:
-
-```text
-2026-03-27T12:04:01Z,TLM,BATTERY,ON_BATTERY,TRUE
-2026-03-27T12:04:01Z,TLM,BATTERY,ON_BATTERY,FALSE
-```
-
 ### `BATTERY,CHARGE_CURRENT_A`
 
 Reports charge current in amps.
@@ -347,6 +352,20 @@ Examples:
 2026-03-27T12:04:04Z,TLM,BATTERY,CHARGE_PERCENT_P,42
 ```
 
+### `BATTERY,VOLTAGE_V`
+
+Reports measured battery voltage in volts.
+
+Value type:
+- floating-point number
+
+Examples:
+
+```text
+2026-03-27T12:04:05Z,TLM,BATTERY,VOLTAGE_V,4.010
+2026-03-27T12:04:05Z,TLM,BATTERY,VOLTAGE_V,3.720
+```
+
 ---
 
 ## Telemetry Parameter Reference
@@ -362,14 +381,15 @@ This table is intended for a ground-station developer or future parser implement
 | `RTC` | `TELEMETRY` | Whether RTC data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,RTC,TELEMETRY,TRUE` |
 | `RTC` | `CURRENT_TIME` | Current device UTC time | ISO UTC string | `2026-03-27T12:02:20Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:02:20Z` |
 | `RTC` | `SYNC` | Whether the device clock is in sync | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,RTC,SYNC,TRUE` |
+| `TELEMETRY` | `TELEMETRY` | Whether telemetry-status data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,TELEMETRY,TELEMETRY,TRUE` |
 | `TELEMETRY` | `ENABLE` | Whether periodic telemetry is enabled | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,TELEMETRY,ENABLE,TRUE` |
 | `TELEMETRY` | `INTERVAL_S` | Telemetry interval in seconds | unsigned integer | `2026-03-27T12:02:20Z,TLM,TELEMETRY,INTERVAL_S,5` |
 | `BATTERY` | `TELEMETRY` | Whether battery data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,BATTERY,TELEMETRY,TRUE` |
 | `BATTERY` | `AVAILABLE` | Whether battery hardware is present | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,BATTERY,AVAILABLE,TRUE` |
-| `BATTERY` | `ON_BATTERY` | Whether the system is running from battery | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,BATTERY,ON_BATTERY,FALSE` |
 | `BATTERY` | `CHARGE_CURRENT_A` | Charge current in amps | float | `2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500` |
 | `BATTERY` | `CHARGE_VOLTAGE_V` | Charge voltage in volts | float | `2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200` |
 | `BATTERY` | `CHARGE_PERCENT_P` | Approximate battery percentage | integer | `2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87` |
+| `BATTERY` | `VOLTAGE_V` | Measured battery voltage in volts | float | `2026-03-27T12:02:20Z,TLM,BATTERY,VOLTAGE_V,4.010` |
 
 ---
 
@@ -406,14 +426,15 @@ or, if keeping history:
 | `RTC,TELEMETRY` | RTC telemetry enabled indicator |
 | `RTC,CURRENT_TIME` | device time display |
 | `RTC,SYNC` | clock sync indicator |
+| `TELEMETRY,TELEMETRY` | telemetry-status enabled indicator |
 | `TELEMETRY,ENABLE` | stream active indicator |
 | `TELEMETRY,INTERVAL_S` | numeric display |
 | `BATTERY,TELEMETRY` | battery telemetry enabled indicator |
 | `BATTERY,AVAILABLE` | battery present indicator |
-| `BATTERY,ON_BATTERY` | running on battery indicator |
 | `BATTERY,CHARGE_CURRENT_A` | numeric current display |
 | `BATTERY,CHARGE_VOLTAGE_V` | numeric voltage display |
 | `BATTERY,CHARGE_PERCENT_P` | battery percentage display / gauge |
+| `BATTERY,VOLTAGE_V` | measured battery voltage display |
 
 ---
 
@@ -438,13 +459,15 @@ A parser should:
 2026-03-27T12:01:40Z,TLM,LED,ENABLE,FALSE
 2026-03-27T12:01:40Z,TLM,LED,STATE,OFF
 2026-03-27T12:01:40Z,TLM,LED,COLOR,GREEN
+2026-03-27T12:01:50Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:01:50Z,TLM,TELEMETRY,ENABLE,TRUE
 2026-03-27T12:01:50Z,TLM,TELEMETRY,INTERVAL_S,5
+2026-03-27T12:02:00Z,TLM,BATTERY,TELEMETRY,TRUE
 2026-03-27T12:02:00Z,TLM,BATTERY,AVAILABLE,TRUE
-2026-03-27T12:02:00Z,TLM,BATTERY,ON_BATTERY,FALSE
 2026-03-27T12:02:00Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500
 2026-03-27T12:02:00Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
 2026-03-27T12:02:00Z,TLM,BATTERY,CHARGE_PERCENT_P,87
+2026-03-27T12:02:00Z,TLM,BATTERY,VOLTAGE_V,4.010
 ```
 
 ### Suggested Serial Studio widget set
@@ -457,13 +480,15 @@ For the current project, useful widgets would be:
 - LED enabled
 - LED state
 - LED color
+- telemetry telemetry enabled
 - telemetry enabled
 - telemetry interval seconds
+- battery telemetry enabled
 - battery available
-- on battery
 - charge current
 - charge voltage
 - charge percentage
+- battery voltage
 - last ACK
 - last ERR
 

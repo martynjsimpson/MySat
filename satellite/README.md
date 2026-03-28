@@ -54,7 +54,7 @@ The firmware currently follows a simple pattern:
 ## Current subsystems
 
 - `LED` - controllable LED policy and state reporting
-- `TELEMETRY` - telemetry enable/disable and interval control
+- `TELEMETRY` - telemetry master enable/disable, interval control, and telemetry-status reporting control
 - `BATTERY` - PMIC-backed battery telemetry reporting
 - `RTC` - current time and clock synchronisation state
 
