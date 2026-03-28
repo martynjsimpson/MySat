@@ -45,8 +45,8 @@
 .vscode
 
 node_modules/
-ground-station/.config.runtime.json.backup
-ground-station/.config.users.json.backup
-ground-station/.config.runtime.json.backup
+ground-station-dashboard/.config.runtime.json.backup
+ground-station-dashboard/.config.users.json.backup
+ground-station-dashboard/.config.runtime.json.backup
 
 .cache/
