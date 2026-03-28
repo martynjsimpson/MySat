@@ -35,6 +35,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 2026-03-27T12:02:20Z,TLM,LED,ENABLE,FALSE
 2026-03-27T12:02:20Z,TLM,LED,STATE,OFF
 2026-03-27T12:02:20Z,TLM,LED,COLOR,GREEN
+2026-03-27T12:02:20Z,TLM,STATUS,UPTIME_S,12
 2026-03-27T12:02:20Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:02:20Z,TLM,TELEMETRY,ENABLE,TRUE
 2026-03-27T12:02:20Z,TLM,TELEMETRY,INTERVAL_S,5
@@ -87,6 +88,7 @@ A telemetry snapshot is the set of telemetry lines emitted together at one times
 
 At present, the periodic snapshot includes:
 
+- status heartbeat counter
 - RTC time and sync state
 - LED status
 - telemetry configuration/status, if telemetry-target telemetry is enabled
@@ -94,7 +96,7 @@ At present, the periodic snapshot includes:
 
 If telemetry for an individual target is disabled, that target is omitted from periodic snapshots until it is re-enabled.
 
-For `LED`, `RTC`, and `TELEMETRY`, explicit `GET` commands still return current status even when that target is omitted from periodic snapshots. `BATTERY` currently uses the same gating for `GET` and periodic output, so `GET,BATTERY,NONE,NONE` emits no battery lines while battery telemetry is disabled.
+For `LED`, `RTC`, and `TELEMETRY`, explicit `GET` commands still return current status even when that target is omitted from periodic snapshots. `BATTERY` currently uses the same gating for `GET` and periodic output, so `GET,BATTERY,NONE,NONE` emits no battery lines while battery telemetry is disabled. `STATUS` is always included in periodic snapshots when global telemetry is enabled, and `GET,STATUS,UPTIME_S,NONE` returns the current counter without incrementing it.
 
 Typical snapshot:
 
@@ -103,6 +105,7 @@ Typical snapshot:
 2026-03-27T12:03:20Z,TLM,LED,ENABLE,TRUE
 2026-03-27T12:03:20Z,TLM,LED,STATE,ON
 2026-03-27T12:03:20Z,TLM,LED,COLOR,RED
+2026-03-27T12:03:20Z,TLM,STATUS,UPTIME_S,13
 2026-03-27T12:03:20Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:03:20Z,TLM,TELEMETRY,ENABLE,TRUE
 2026-03-27T12:03:20Z,TLM,TELEMETRY,INTERVAL_S,5
@@ -117,6 +120,24 @@ Typical snapshot:
 ---
 
 ## Current Targets and Parameters
+
+## STATUS target
+
+### `STATUS,UPTIME_S`
+
+Reports the heartbeat counter emitted with each periodic telemetry snapshot.
+
+Value type:
+- unsigned integer
+
+Examples:
+
+```text
+2026-03-27T12:03:19Z,TLM,STATUS,UPTIME_S,12
+2026-03-27T12:03:20Z,TLM,STATUS,UPTIME_S,13
+```
+
+The counter increments when a periodic snapshot is emitted. An explicit `GET,STATUS,UPTIME_S,NONE` returns the current value without incrementing it.
 
 ## LED target
 
@@ -378,6 +399,7 @@ This table is intended for a ground-station developer or future parser implement
 | `LED` | `TELEMETRY` | Whether LED data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,LED,TELEMETRY,TRUE` |
 | `LED` | `STATE` | Current LED output state | `ON` / `OFF` | `2026-03-27T12:02:20Z,TLM,LED,STATE,OFF` |
 | `LED` | `COLOR` | Current selected LED color | `RED` / `GREEN` / `BLUE` | `2026-03-27T12:02:20Z,TLM,LED,COLOR,GREEN` |
+| `STATUS` | `UPTIME_S` | Heartbeat counter incremented once per periodic snapshot | unsigned integer | `2026-03-27T12:02:20Z,TLM,STATUS,UPTIME_S,12` |
 | `RTC` | `TELEMETRY` | Whether RTC data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,RTC,TELEMETRY,TRUE` |
 | `RTC` | `CURRENT_TIME` | Current device UTC time | ISO UTC string | `2026-03-27T12:02:20Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:02:20Z` |
 | `RTC` | `SYNC` | Whether the device clock is in sync | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,RTC,SYNC,TRUE` |
@@ -423,6 +445,7 @@ or, if keeping history:
 | `LED,TELEMETRY` | LED telemetry enabled indicator |
 | `LED,STATE` | on/off icon or status badge |
 | `LED,COLOR` | color label or swatch |
+| `STATUS,UPTIME_S` | heartbeat counter and last-heartbeat freshness indicator |
 | `RTC,TELEMETRY` | RTC telemetry enabled indicator |
 | `RTC,CURRENT_TIME` | device time display |
 | `RTC,SYNC` | clock sync indicator |
@@ -459,6 +482,7 @@ A parser should:
 2026-03-27T12:01:40Z,TLM,LED,ENABLE,FALSE
 2026-03-27T12:01:40Z,TLM,LED,STATE,OFF
 2026-03-27T12:01:40Z,TLM,LED,COLOR,GREEN
+2026-03-27T12:01:50Z,TLM,STATUS,UPTIME_S,7
 2026-03-27T12:01:50Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:01:50Z,TLM,TELEMETRY,ENABLE,TRUE
 2026-03-27T12:01:50Z,TLM,TELEMETRY,INTERVAL_S,5
@@ -475,6 +499,8 @@ A parser should:
 For the current project, useful widgets would be:
 
 - last message timestamp
+- last heartbeat time
+- heartbeat counter
 - RTC current time
 - RTC sync state
 - LED enabled

@@ -5,17 +5,22 @@
 #include "rtc.h"
 #include "sender.h"
 
-namespace {
-bool telemetryEnabled = true;
-bool telemetryTelemetryEnabled = true;
-bool rtcTelemetryEnabled = true;
-bool ledTelemetryEnabled = true;
-bool batteryTelemetryEnabled = true;
-unsigned long telemetryIntervalSeconds = 5;
-unsigned long lastTelemetryTime = 0;
+namespace
+{
+  bool telemetryEnabled = true;
+  bool statusTelemetryEnabled = true;
+  bool telemetryTelemetryEnabled = true;
+  bool rtcTelemetryEnabled = true;
+  bool ledTelemetryEnabled = true;
+  bool batteryTelemetryEnabled = true;
+  unsigned long telemetryIntervalSeconds = 5;
+  unsigned long lastTelemetryTime = 0;
+  unsigned long heartbeatCount = 0;
 
-bool *getTargetTelemetryFlag(TargetType target) {
-  switch (target) {
+  bool *getTargetTelemetryFlag(TargetType target)
+  {
+    switch (target)
+    {
     case TARGET_TELEMETRY:
       return &telemetryTelemetryEnabled;
     case TARGET_RTC:
@@ -26,11 +31,13 @@ bool *getTargetTelemetryFlag(TargetType target) {
       return &batteryTelemetryEnabled;
     default:
       return nullptr;
+    }
   }
-}
 
-const char *targetToToken(TargetType target) {
-  switch (target) {
+  const char *targetToToken(TargetType target)
+  {
+    switch (target)
+    {
     case TARGET_TELEMETRY:
       return "TELEMETRY";
     case TARGET_RTC:
@@ -41,114 +48,160 @@ const char *targetToToken(TargetType target) {
       return "BATTERY";
     default:
       return nullptr;
+    }
   }
-}
 
 }
 
-void setupTelemetry() {
+void setupTelemetry()
+{
   telemetryEnabled = true;
+  statusTelemetryEnabled = true;
   telemetryTelemetryEnabled = true;
   rtcTelemetryEnabled = true;
   ledTelemetryEnabled = true;
   batteryTelemetryEnabled = true;
   telemetryIntervalSeconds = 5;
   lastTelemetryTime = getUptimeSeconds();
+  heartbeatCount = 0;
 }
 
-bool isTargetTelemetryEnabled(TargetType target) {
+bool isTargetTelemetryEnabled(TargetType target)
+{
   bool *flag = getTargetTelemetryFlag(target);
-  if (flag == nullptr) {
+  if (flag == nullptr)
+  {
     return false;
   }
 
   return *flag;
 }
 
-void handleSetTelemetry(const Command &cmd) {
-  switch (cmd.parameter) {
-    case PARAM_ENABLE:
-      if (cmd.value == VALUE_TRUE) {
-        telemetryEnabled = true;
-        sendAck("TELEMETRY", "ENABLE");
-      } else if (cmd.value == VALUE_FALSE) {
-        telemetryEnabled = false;
-        sendAck("TELEMETRY", "DISABLE");
-      } else {
-        sendError("BAD_VALUE");
-      }
-      break;
+void handleSetTelemetry(const Command &cmd)
+{
+  switch (cmd.parameter)
+  {
+  case PARAM_ENABLE:
+    if (cmd.value == VALUE_TRUE)
+    {
+      telemetryEnabled = true;
+      sendAck("TELEMETRY", "ENABLE");
+    }
+    else if (cmd.value == VALUE_FALSE)
+    {
+      telemetryEnabled = false;
+      sendAck("TELEMETRY", "DISABLE");
+    }
+    else
+    {
+      sendError("BAD_VALUE");
+    }
+    break;
 
-    case PARAM_INTERVAL_S:
-      if (!cmd.hasNumericValue) {
-        sendError("BAD_VALUE");
-        return;
-      }
+  case PARAM_INTERVAL_S:
+    if (!cmd.hasNumericValue)
+    {
+      sendError("BAD_VALUE");
+      return;
+    }
 
-      if (cmd.numericValue < 1 || cmd.numericValue > 3600) {
-        sendError("BAD_VALUE");
-        return;
-      }
+    if (cmd.numericValue < 1 || cmd.numericValue > 3600)
+    {
+      sendError("BAD_VALUE");
+      return;
+    }
 
-      telemetryIntervalSeconds = cmd.numericValue;
-      sendAck("TELEMETRY", "INTERVAL_S");
-      break;
+    telemetryIntervalSeconds = cmd.numericValue;
+    sendAck("TELEMETRY", "INTERVAL_S");
+    break;
 
-    default:
-      sendError("BAD_PARAMETER");
-      break;
+  default:
+    sendError("BAD_PARAMETER");
+    break;
   }
 }
 
-void handleSetTargetTelemetry(const Command &cmd) {
+void handleSetTargetTelemetry(const Command &cmd)
+{
   bool *flag = getTargetTelemetryFlag(cmd.target);
   const char *targetToken = targetToToken(cmd.target);
 
-  if (flag == nullptr || targetToken == nullptr) {
+  if (flag == nullptr || targetToken == nullptr)
+  {
     sendError("UNKNOWN_TARGET");
     return;
   }
 
-  if (cmd.value == VALUE_ENABLE || cmd.value == VALUE_TRUE) {
+  if (cmd.value == VALUE_ENABLE || cmd.value == VALUE_TRUE)
+  {
     *flag = true;
     sendAck(targetToken, "TELEMETRY_ENABLE");
-  } else if (cmd.value == VALUE_DISABLE || cmd.value == VALUE_FALSE) {
+  }
+  else if (cmd.value == VALUE_DISABLE || cmd.value == VALUE_FALSE)
+  {
     *flag = false;
     sendAck(targetToken, "TELEMETRY_DISABLE");
-  } else {
+  }
+  else
+  {
     sendError("BAD_VALUE");
   }
 }
 
-void reportTelemetryStatus() {
+void reportTelemetryStatus()
+{
   sendTelemetry("TELEMETRY", "TELEMETRY", telemetryTelemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetry("TELEMETRY", "ENABLE", telemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
 }
 
-void sendTelemetrySnapshot() {
-  if (rtcTelemetryEnabled) {
+void reportStatusHeartbeat(bool incrementHeartbeat)
+{
+  if (!statusTelemetryEnabled)
+  {
+    return;
+  }
+
+  if (incrementHeartbeat)
+  {
+    ++heartbeatCount;
+  }
+
+  sendTelemetryULong("STATUS", "UPTIME_S", heartbeatCount);
+}
+
+void sendTelemetrySnapshot()
+{
+  reportStatusHeartbeat(true);
+  if (rtcTelemetryEnabled)
+  {
     reportRtcStatus();
   }
-  if (ledTelemetryEnabled) {
+  if (ledTelemetryEnabled)
+  {
     reportLedStatus();
   }
-  if (telemetryTelemetryEnabled) {
+  if (telemetryTelemetryEnabled)
+  {
     reportTelemetryStatus();
   }
-  if (batteryTelemetryEnabled) {
+  if (batteryTelemetryEnabled)
+  {
     reportBatteryStatus();
   }
 }
 
-void handlePeriodicTelemetry() {
-  if (!telemetryEnabled) {
+void handlePeriodicTelemetry()
+{
+  if (!telemetryEnabled)
+  {
     return;
   }
 
   const unsigned long now = getUptimeSeconds();
 
-  if ((now - lastTelemetryTime) >= telemetryIntervalSeconds) {
+  if ((now - lastTelemetryTime) >= telemetryIntervalSeconds)
+  {
     lastTelemetryTime = now;
     sendTelemetrySnapshot();
   }

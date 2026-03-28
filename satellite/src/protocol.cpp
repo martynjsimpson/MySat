@@ -102,6 +102,8 @@ namespace
       return PARAM_TELEMETRY;
     if (strcmp(token, "CURRENT_TIME") == 0)
       return PARAM_CURRENT_TIME;
+    if (strcmp(token, "UPTIME_S") == 0)
+      return PARAM_UPTIME_S;
     if (strcmp(token, "SYNC") == 0)
       return PARAM_SYNC;
     if (strcmp(token, "SECONDS") == 0)
@@ -183,6 +185,15 @@ namespace
 
     case TARGET_RTC:
       handleGetRtc(cmd);
+      break;
+
+    case TARGET_STATUS:
+      if ((cmd.parameter != PARAM_NONE && cmd.parameter != PARAM_UPTIME_S) || cmd.value != VALUE_NONE)
+      {
+        sendError("BAD_FORMAT");
+        return;
+      }
+      reportStatusHeartbeat(false);
       break;
 
     default:
@@ -369,5 +380,6 @@ void setupProtocol()
   Serial.println("GET,TELEMETRY,NONE,NONE");
   Serial.println("GET,BATTERY,NONE,NONE");
   Serial.println("GET,RTC,NONE,NONE");
+  Serial.println("GET,STATUS,UPTIME_S,NONE");
   Serial.println("PING,NONE,NONE,NONE");
 }
