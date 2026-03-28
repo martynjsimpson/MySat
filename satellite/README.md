@@ -32,6 +32,7 @@ platformio device monitor --environment mkrwifi1010
 - `include/led.h` - LED subsystem interface
 - `include/pmic.h` - battery / PMIC telemetry interface
 - `include/rtc.h` - RTC and device clock interface
+- `include/status.h` - status heartbeat interface
 - `include/sender.h` - structured outbound message helpers
 - `src/main.cpp` - top-level `setup()` and `loop()`
 - `src/protocol.cpp` - command parsing and dispatch
@@ -39,6 +40,7 @@ platformio device monitor --environment mkrwifi1010
 - `src/led.cpp` - LED control and LED telemetry
 - `src/pmic.cpp` - PMIC setup and battery telemetry
 - `src/rtc.cpp` - RTC setup, ISO time formatting, and clock sync handling
+- `src/status.cpp` - status heartbeat state and reporting
 - `src/sender.cpp` - `ACK`, `ERR`, and `TLM` line emission
 
 ## Firmware architecture
