@@ -4,6 +4,7 @@ This directory contains the shared documentation for the firmware and ground sta
 
 ## Core Documents
 
+- [Architecture.md](./Architecture.md) defines the repo-level system boundaries and project layout.
 - [Protocol.md](./Protocol.md) defines the generic command and response protocol.
 - [Telemetry.md](./Telemetry.md) defines generic telemetry framing and snapshot behavior.
 
@@ -31,4 +32,5 @@ Implemented target pages:
 - generic telemetry rules belong in `Telemetry.md`
 - target-specific command and field reference belongs in `documentation/targets/`
 - firmware build and source layout belong in [../satellite-firmware/README.md](../satellite-firmware/README.md)
+- ground-station firmware build layout belongs in [../ground-station-firmware/platformio.ini](../ground-station-firmware/platformio.ini)
 - dashboard setup belongs in [../ground-station-dashboard/README.md](../ground-station-dashboard/README.md)

@@ -8,12 +8,12 @@
 #include "rtc.h"
 #include "status.h"
 #include "telemetry.h"
+#include "transport.h"
 
 void setup()
 {
   setupRtc();
-
-  Serial.begin(115200);
+  setupTransport();
 
   setupLed();
   setupBattery();
