@@ -30,6 +30,6 @@ void loop()
 {
   updateGps();
   handleRtcAutoSync();
-  readSerialCommands();
+  readIncomingCommands();
   handlePeriodicTelemetry();
 }

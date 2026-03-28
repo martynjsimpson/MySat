@@ -12,7 +12,7 @@ namespace
   size_t inputPos = 0;
 }
 
-void readSerialCommands()
+void readIncomingCommands()
 {
   while (transportAvailable() > 0)
   {

@@ -2,6 +2,6 @@
 #define PROTOCOL_HELPER_H
 
 void setupProtocol();
-void readSerialCommands();
+void readIncomingCommands();
 
 #endif
