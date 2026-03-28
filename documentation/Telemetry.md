@@ -45,6 +45,13 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
 2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87
 2026-03-27T12:02:20Z,TLM,BATTERY,VOLTAGE_V,4.010
+2026-03-27T12:02:20Z,TLM,GPS,TELEMETRY,TRUE
+2026-03-27T12:02:20Z,TLM,GPS,ENABLE,TRUE
+2026-03-27T12:02:20Z,TLM,GPS,AVAILABLE,TRUE
+2026-03-27T12:02:20Z,TLM,GPS,LATITUDE_D,51.5074000
+2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:02:20Z,TLM,GPS,ALTITUDE_M,35.20
+2026-03-27T12:02:20Z,TLM,GPS,SPEED_KPH,12.40
 ```
 
 ---
@@ -93,10 +100,11 @@ At present, the periodic snapshot includes:
 - LED status
 - telemetry configuration/status, if telemetry-target telemetry is enabled
 - battery / PMIC status
+- GPS status
 
 If telemetry for an individual target is disabled, that target is omitted from periodic snapshots until it is re-enabled.
 
-For `LED`, `RTC`, and `TELEMETRY`, explicit `GET` commands still return current status even when that target is omitted from periodic snapshots. `BATTERY` currently uses the same gating for `GET` and periodic output, so `GET,BATTERY,NONE,NONE` emits no battery lines while battery telemetry is disabled. `STATUS` is always included in periodic snapshots when global telemetry is enabled, and `GET,STATUS,HEARTBEAT_N,NONE` returns the current counter without incrementing it.
+For `LED`, `RTC`, `TELEMETRY`, `BATTERY`, and `GPS`, explicit `GET` commands still return current status even when that target is omitted from periodic snapshots. `STATUS` is always included in periodic snapshots when global telemetry is enabled, and `GET,STATUS,HEARTBEAT_N,NONE` returns the current counter without incrementing it.
 
 Typical snapshot:
 
@@ -115,6 +123,13 @@ Typical snapshot:
 2026-03-27T12:03:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
 2026-03-27T12:03:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87
 2026-03-27T12:03:20Z,TLM,BATTERY,VOLTAGE_V,4.010
+2026-03-27T12:03:20Z,TLM,GPS,TELEMETRY,TRUE
+2026-03-27T12:03:20Z,TLM,GPS,ENABLE,TRUE
+2026-03-27T12:03:20Z,TLM,GPS,AVAILABLE,TRUE
+2026-03-27T12:03:20Z,TLM,GPS,LATITUDE_D,51.5074000
+2026-03-27T12:03:20Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:03:20Z,TLM,GPS,ALTITUDE_M,35.20
+2026-03-27T12:03:20Z,TLM,GPS,SPEED_KPH,12.40
 ```
 
 ---
@@ -389,6 +404,111 @@ Examples:
 
 ---
 
+## GPS target
+
+### `GPS,TELEMETRY`
+
+Reports whether GPS data is included in periodic telemetry snapshots.
+
+Value type:
+- `TRUE`
+- `FALSE`
+
+Examples:
+
+```text
+2026-03-27T12:04:06Z,TLM,GPS,TELEMETRY,TRUE
+2026-03-27T12:04:06Z,TLM,GPS,TELEMETRY,FALSE
+```
+
+### `GPS,ENABLE`
+
+Reports whether the GPS service is enabled.
+
+Value type:
+- `TRUE`
+- `FALSE`
+
+Examples:
+
+```text
+2026-03-27T12:04:07Z,TLM,GPS,ENABLE,TRUE
+2026-03-27T12:04:07Z,TLM,GPS,ENABLE,FALSE
+```
+
+### `GPS,AVAILABLE`
+
+Reports whether a recent valid GPS fix is available.
+
+Value type:
+- `TRUE`
+- `FALSE`
+
+Examples:
+
+```text
+2026-03-27T12:04:08Z,TLM,GPS,AVAILABLE,TRUE
+2026-03-27T12:04:08Z,TLM,GPS,AVAILABLE,FALSE
+```
+
+### `GPS,LATITUDE_D`
+
+Reports GPS latitude in decimal degrees.
+
+Value type:
+- floating-point number
+
+Examples:
+
+```text
+2026-03-27T12:04:09Z,TLM,GPS,LATITUDE_D,51.5074000
+2026-03-27T12:04:09Z,TLM,GPS,LATITUDE_D,0.0000000
+```
+
+### `GPS,LONGITUDE_D`
+
+Reports GPS longitude in decimal degrees.
+
+Value type:
+- floating-point number
+
+Examples:
+
+```text
+2026-03-27T12:04:10Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:04:10Z,TLM,GPS,LONGITUDE_D,0.0000000
+```
+
+### `GPS,ALTITUDE_M`
+
+Reports GPS altitude in meters.
+
+Value type:
+- floating-point number
+
+Examples:
+
+```text
+2026-03-27T12:04:11Z,TLM,GPS,ALTITUDE_M,35.20
+2026-03-27T12:04:11Z,TLM,GPS,ALTITUDE_M,0.00
+```
+
+### `GPS,SPEED_KPH`
+
+Reports GPS speed in kilometers per hour.
+
+Value type:
+- floating-point number
+
+Examples:
+
+```text
+2026-03-27T12:04:12Z,TLM,GPS,SPEED_KPH,12.40
+2026-03-27T12:04:12Z,TLM,GPS,SPEED_KPH,0.00
+```
+
+---
+
 ## Telemetry Parameter Reference
 
 This table is intended for a ground-station developer or future parser implementation.
@@ -412,6 +532,13 @@ This table is intended for a ground-station developer or future parser implement
 | `BATTERY` | `CHARGE_VOLTAGE_V` | Charge voltage in volts | float | `2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200` |
 | `BATTERY` | `CHARGE_PERCENT_P` | Approximate battery percentage | integer | `2026-03-27T12:02:20Z,TLM,BATTERY,CHARGE_PERCENT_P,87` |
 | `BATTERY` | `VOLTAGE_V` | Measured battery voltage in volts | float | `2026-03-27T12:02:20Z,TLM,BATTERY,VOLTAGE_V,4.010` |
+| `GPS` | `TELEMETRY` | Whether GPS data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,TELEMETRY,TRUE` |
+| `GPS` | `ENABLE` | Whether the GPS service is enabled | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,ENABLE,TRUE` |
+| `GPS` | `AVAILABLE` | Whether a recent valid GPS fix is available | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,AVAILABLE,TRUE` |
+| `GPS` | `LATITUDE_D` | GPS latitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LATITUDE_D,51.5074000` |
+| `GPS` | `LONGITUDE_D` | GPS longitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.1278000` |
+| `GPS` | `ALTITUDE_M` | GPS altitude in meters | float | `2026-03-27T12:02:20Z,TLM,GPS,ALTITUDE_M,35.20` |
+| `GPS` | `SPEED_KPH` | GPS speed in kilometers per hour | float | `2026-03-27T12:02:20Z,TLM,GPS,SPEED_KPH,12.40` |
 
 ---
 
@@ -458,6 +585,13 @@ or, if keeping history:
 | `BATTERY,CHARGE_VOLTAGE_V` | numeric voltage display |
 | `BATTERY,CHARGE_PERCENT_P` | battery percentage display / gauge |
 | `BATTERY,VOLTAGE_V` | measured battery voltage display |
+| `GPS,TELEMETRY` | GPS telemetry enabled indicator |
+| `GPS,ENABLE` | GPS service enabled indicator |
+| `GPS,AVAILABLE` | GPS fix indicator |
+| `GPS,LATITUDE_D` | latitude display |
+| `GPS,LONGITUDE_D` | longitude display |
+| `GPS,ALTITUDE_M` | altitude display |
+| `GPS,SPEED_KPH` | speed display |
 
 ---
 
@@ -492,6 +626,13 @@ A parser should:
 2026-03-27T12:02:00Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
 2026-03-27T12:02:00Z,TLM,BATTERY,CHARGE_PERCENT_P,87
 2026-03-27T12:02:00Z,TLM,BATTERY,VOLTAGE_V,4.010
+2026-03-27T12:02:10Z,TLM,GPS,TELEMETRY,TRUE
+2026-03-27T12:02:10Z,TLM,GPS,ENABLE,TRUE
+2026-03-27T12:02:10Z,TLM,GPS,AVAILABLE,TRUE
+2026-03-27T12:02:10Z,TLM,GPS,LATITUDE_D,51.5074000
+2026-03-27T12:02:10Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:02:10Z,TLM,GPS,ALTITUDE_M,35.20
+2026-03-27T12:02:10Z,TLM,GPS,SPEED_KPH,12.40
 ```
 
 ### Suggested Serial Studio widget set
@@ -515,6 +656,12 @@ For the current project, useful widgets would be:
 - charge voltage
 - charge percentage
 - battery voltage
+- GPS enabled
+- GPS fix available
+- latitude
+- longitude
+- altitude
+- speed
 - last ACK
 - last ERR
 

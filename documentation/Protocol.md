@@ -57,6 +57,10 @@ SET,TELEMETRY,TELEMETRY,DISABLE
 SET,TELEMETRY,INTERVAL_S,5
 SET,BATTERY,TELEMETRY,ENABLE
 SET,BATTERY,TELEMETRY,DISABLE
+SET,GPS,ENABLE,TRUE
+SET,GPS,ENABLE,FALSE
+SET,GPS,TELEMETRY,ENABLE
+SET,GPS,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
@@ -64,6 +68,7 @@ GET,STATUS,HEARTBEAT_N,NONE
 GET,LED,NONE,NONE
 GET,TELEMETRY,NONE,NONE
 GET,BATTERY,NONE,NONE
+GET,GPS,NONE,NONE
 GET,RTC,NONE,NONE
 GET,RTC,CURRENT_TIME,NONE
 GET,RTC,SYNC,NONE
@@ -186,6 +191,13 @@ Examples:
 2026-03-27T12:00:40Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
 2026-03-27T12:00:40Z,TLM,BATTERY,CHARGE_PERCENT_P,87
 2026-03-27T12:00:40Z,TLM,BATTERY,VOLTAGE_V,4.010
+2026-03-27T12:00:40Z,TLM,GPS,TELEMETRY,TRUE
+2026-03-27T12:00:40Z,TLM,GPS,ENABLE,TRUE
+2026-03-27T12:00:40Z,TLM,GPS,AVAILABLE,TRUE
+2026-03-27T12:00:40Z,TLM,GPS,LATITUDE_D,51.5074000
+2026-03-27T12:00:40Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:00:40Z,TLM,GPS,ALTITUDE_M,35.20
+2026-03-27T12:00:40Z,TLM,GPS,SPEED_KPH,12.40
 ```
 
 ---
@@ -218,6 +230,7 @@ Examples:
 | `LED` | Built-in LED subsystem for development and protocol testing |
 | `TELEMETRY` | Telemetry stream control/configuration target |
 | `BATTERY` | Battery / PMIC telemetry target |
+| `GPS` | GNSS / position telemetry target |
 | `RTC` | Real-time clock state and time synchronisation target |
 | `STATUS` | System status and non-disableable heartbeat target |
 | `NONE` | Placeholder target when not applicable |
@@ -262,6 +275,10 @@ Examples:
 | `CHARGE_VOLTAGE_V` | Charge voltage in volts |
 | `CHARGE_PERCENT_P` | Approximate battery charge percentage |
 | `VOLTAGE_V` | Measured battery voltage in volts |
+| `LATITUDE_D` | GPS latitude in decimal degrees |
+| `LONGITUDE_D` | GPS longitude in decimal degrees |
+| `ALTITUDE_M` | GPS altitude in meters |
+| `SPEED_KPH` | GPS speed in kilometers per hour |
 
 ### Reserved parameters
 
@@ -378,6 +395,7 @@ Examples:
 SET,LED,TELEMETRY,DISABLE
 SET,BATTERY,TELEMETRY,ENABLE
 SET,TELEMETRY,TELEMETRY,DISABLE
+SET,GPS,ENABLE,FALSE
 TLM,LED,TELEMETRY,FALSE
 GET,STATUS,HEARTBEAT_N,NONE
 ```
@@ -523,7 +541,33 @@ SET,BATTERY,TELEMETRY,DISABLE
 | `SET,BATTERY,TELEMETRY,ENABLE` | Includes battery data in periodic telemetry snapshots |
 | `SET,BATTERY,TELEMETRY,DISABLE` | Omits battery data from periodic telemetry snapshots |
 
-Battery telemetry is also included in the periodic telemetry snapshot. The current implementation uses the same reporting path for both snapshots and `GET,BATTERY`, so disabling battery telemetry also suppresses the `GET,BATTERY` response.
+Battery telemetry is also included in the periodic telemetry snapshot.
+
+## GPS target
+
+The GPS subsystem reports position, altitude, speed, and whether a usable fix is currently available.
+
+### Supported GPS commands
+
+```text
+GET,GPS,NONE,NONE
+SET,GPS,ENABLE,TRUE
+SET,GPS,ENABLE,FALSE
+SET,GPS,TELEMETRY,ENABLE
+SET,GPS,TELEMETRY,DISABLE
+```
+
+### GPS rules
+
+| Command | Behaviour |
+|---|---|
+| `GET,GPS,NONE,NONE` | Returns current GPS telemetry |
+| `SET,GPS,ENABLE,TRUE` | Enables GPS polling and telemetry values |
+| `SET,GPS,ENABLE,FALSE` | Disables GPS polling and clears reported fix values |
+| `SET,GPS,TELEMETRY,ENABLE` | Includes GPS data in periodic telemetry snapshots |
+| `SET,GPS,TELEMETRY,DISABLE` | Omits GPS data from periodic telemetry snapshots |
+
+`GPS,AVAILABLE` indicates whether a recent valid fix is available. When GPS is disabled or no recent fix is available, positional values are reported as zero.
 
 ## STATUS target
 
@@ -604,6 +648,10 @@ SET,LED,COLOR,GREEN
 SET,LED,COLOR,BLUE
 SET,BATTERY,TELEMETRY,ENABLE
 SET,BATTERY,TELEMETRY,DISABLE
+SET,GPS,ENABLE,TRUE
+SET,GPS,ENABLE,FALSE
+SET,GPS,TELEMETRY,ENABLE
+SET,GPS,TELEMETRY,DISABLE
 SET,TELEMETRY,TELEMETRY,ENABLE
 SET,TELEMETRY,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,ENABLE
@@ -616,6 +664,7 @@ SET,TELEMETRY,INTERVAL_S,<integer>
 GET,LED,NONE,NONE
 GET,TELEMETRY,NONE,NONE
 GET,BATTERY,NONE,NONE
+GET,GPS,NONE,NONE
 GET,RTC,NONE,NONE
 GET,RTC,CURRENT_TIME,NONE
 GET,RTC,SYNC,NONE
@@ -634,6 +683,7 @@ SET,LED,ENABLE,TRUE
 SET,LED,STATE,ON
 SET,LED,TELEMETRY,DISABLE
 SET,LED,COLOR,RED
+SET,GPS,ENABLE,TRUE
 SET,TELEMETRY,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
@@ -642,6 +692,7 @@ GET,LED,NONE,NONE
 SET,TELEMETRY,INTERVAL_S,10
 GET,TELEMETRY,NONE,NONE
 GET,BATTERY,NONE,NONE
+GET,GPS,NONE,NONE
 GET,RTC,NONE,NONE
 ```
 
@@ -665,4 +716,11 @@ Possible responses:
 2026-03-27T12:00:03Z,TLM,BATTERY,CHARGE_VOLTAGE_V,4.200
 2026-03-27T12:00:03Z,TLM,BATTERY,CHARGE_PERCENT_P,87
 2026-03-27T12:00:03Z,TLM,BATTERY,VOLTAGE_V,4.010
+2026-03-27T12:00:04Z,TLM,GPS,TELEMETRY,TRUE
+2026-03-27T12:00:04Z,TLM,GPS,ENABLE,TRUE
+2026-03-27T12:00:04Z,TLM,GPS,AVAILABLE,TRUE
+2026-03-27T12:00:04Z,TLM,GPS,LATITUDE_D,51.5074000
+2026-03-27T12:00:04Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:00:04Z,TLM,GPS,ALTITUDE_M,35.20
+2026-03-27T12:00:04Z,TLM,GPS,SPEED_KPH,12.40
 ```

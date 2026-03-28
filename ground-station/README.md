@@ -62,6 +62,7 @@ Dashboard paths from the current flow:
 
 - Editor default: `http://localhost:1880/`
 - Dashboard: `http://localhost:1880/dashboard/page1`
+- World Map: `http://localhost:1880/worldmap/`
 
 ## Notes
 

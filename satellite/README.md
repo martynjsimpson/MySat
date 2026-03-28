@@ -31,6 +31,7 @@ platformio device monitor --environment mkrwifi1010
 - `include/telemetry.h` - periodic telemetry control and snapshot interface
 - `include/led.h` - LED subsystem interface
 - `include/pmic.h` - battery / PMIC telemetry interface
+- `include/gps.h` - GPS subsystem interface
 - `include/rtc.h` - RTC and device clock interface
 - `include/status.h` - status heartbeat interface
 - `include/sender.h` - structured outbound message helpers
@@ -39,6 +40,7 @@ platformio device monitor --environment mkrwifi1010
 - `src/telemetry.cpp` - telemetry settings and periodic snapshot scheduling
 - `src/led.cpp` - LED control and LED telemetry
 - `src/pmic.cpp` - PMIC setup and battery telemetry
+- `src/gps.cpp` - GPS polling, control, and telemetry
 - `src/rtc.cpp` - RTC setup, ISO time formatting, and clock sync handling
 - `src/status.cpp` - status heartbeat state and reporting
 - `src/sender.cpp` - `ACK`, `ERR`, and `TLM` line emission
@@ -59,6 +61,7 @@ The firmware currently follows a simple pattern:
 - `STATUS` - non-disableable heartbeat counter reported with periodic snapshots
 - `TELEMETRY` - telemetry master enable/disable, interval control, and telemetry-status reporting control
 - `BATTERY` - PMIC-backed battery telemetry reporting
+- `GPS` - GPS enable/control and position telemetry reporting
 - `RTC` - current time and clock synchronisation state
 
 ## Documentation boundaries

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "commands.h"
+#include "gps.h"
 #include "led.h"
 #include "pmic.h"
 #include "rtc.h"
@@ -62,6 +63,8 @@ namespace
       return TARGET_TELEMETRY;
     if (strcmp(token, "BATTERY") == 0)
       return TARGET_BATTERY;
+    if (strcmp(token, "GPS") == 0)
+      return TARGET_GPS;
     if (strcmp(token, "RTC") == 0)
       return TARGET_RTC;
     if (strcmp(token, "MODE") == 0)
@@ -184,6 +187,15 @@ namespace
       reportBatteryStatus();
       break;
 
+    case TARGET_GPS:
+      if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
+      {
+        sendError("BAD_FORMAT");
+        return;
+      }
+      reportGpsStatus();
+      break;
+
     case TARGET_RTC:
       handleGetRtc(cmd);
       break;
@@ -215,6 +227,10 @@ namespace
     {
     case TARGET_LED:
       handleSetLed(cmd);
+      break;
+
+    case TARGET_GPS:
+      handleSetGps(cmd);
       break;
 
     case TARGET_TELEMETRY:
@@ -369,6 +385,9 @@ void setupProtocol()
   Serial.println("SET,LED,COLOR,BLUE");
   Serial.println("SET,BATTERY,TELEMETRY,ENABLE");
   Serial.println("SET,BATTERY,TELEMETRY,DISABLE");
+  Serial.println("SET,GPS,ENABLE,TRUE");
+  Serial.println("SET,GPS,ENABLE,FALSE");
+  Serial.println("GET,GPS,NONE,NONE");
   Serial.println("SET,TELEMETRY,TELEMETRY,ENABLE");
   Serial.println("SET,TELEMETRY,TELEMETRY,DISABLE");
   Serial.println("SET,RTC,TELEMETRY,ENABLE");
