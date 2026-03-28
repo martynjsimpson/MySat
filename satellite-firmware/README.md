@@ -2,7 +2,7 @@
 
 This directory contains the MySat firmware for the Arduino MKR WiFi 1010.
 
-The firmware is built with PlatformIO from the repository root. The root [platformio.ini](../platformio.ini) points PlatformIO at `satellite/src` and `satellite/include`.
+The firmware is built with PlatformIO from the repository root. The root [platformio.ini](../platformio.ini) includes separate environments for this firmware and the Arduino Mega 2560 ground-station firmware.
 
 ## Build and Run
 

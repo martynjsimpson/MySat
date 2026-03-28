@@ -30,5 +30,5 @@ Implemented target pages:
 - generic protocol rules belong in `Protocol.md`
 - generic telemetry rules belong in `Telemetry.md`
 - target-specific command and field reference belongs in `documentation/targets/`
-- firmware build and source layout belong in [../satellite/README.md](../satellite/README.md)
-- ground-station setup belongs in [../ground-station/README.md](../ground-station/README.md)
+- firmware build and source layout belong in [../satellite-firmware/README.md](../satellite-firmware/README.md)
+- dashboard setup belongs in [../ground-station-dashboard/README.md](../ground-station-dashboard/README.md)
