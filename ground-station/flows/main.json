@@ -180,7 +180,7 @@
         "type": "ui-group",
         "name": "Battery",
         "page": "f97e68d451736993",
-        "width": "7",
+        "width": "6",
         "height": 1,
         "order": 5,
         "showTitle": true,
@@ -208,7 +208,7 @@
         "type": "ui-group",
         "name": "LED System",
         "page": "f97e68d451736993",
-        "width": "7",
+        "width": "6",
         "height": "1",
         "order": 4,
         "showTitle": true,
@@ -222,7 +222,7 @@
         "type": "ui-group",
         "name": "RTC",
         "page": "f97e68d451736993",
-        "width": "7",
+        "width": "6",
         "height": 1,
         "order": 3,
         "showTitle": true,
@@ -304,7 +304,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"TELEMETRY\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr,\n    statusHeartbeatValue: getValue(\"STATUS\", \"UPTIME_S\"),\n    statusHeartbeatTime: getTime(\"STATUS\", \"UPTIME_S\")\n};\n\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    rtcTelemetry: getValue(\"RTC\", \"TELEMETRY\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"TELEMETRY\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr,\n    statusHeartbeatValue: getValue(\"STATUS\", \"UPTIME_S\"),\n    statusHeartbeatTime: getTime(\"STATUS\", \"UPTIME_S\")\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -312,7 +312,7 @@
         "finalize": "",
         "libs": [],
         "x": 750,
-        "y": 160,
+        "y": 360,
         "wires": [
             [
                 "353ea91c8195f24d",
@@ -327,7 +327,12 @@
                 "c720218d514f0575",
                 "0533515e80ab7a66",
                 "909594e5ba8c37c2",
-                "fe6c806c0622a520"
+                "fe6c806c0622a520",
+                "d506d2be422b81e6",
+                "93d87df78233859c",
+                "fb2a49fa8d6ad39d",
+                "51f5a5dcfe3e5cd8",
+                "89175a9d63aee81c"
             ]
         ]
     },
@@ -755,7 +760,7 @@
         "finalize": "",
         "libs": [],
         "x": 1070,
-        "y": 900,
+        "y": 1100,
         "wires": [
             [
                 "59e5d09d9ab69709"
@@ -808,7 +813,7 @@
         "sizeKeyThickness": "",
         "className": "",
         "x": 1340,
-        "y": 900,
+        "y": 1100,
         "wires": [
             []
         ]
@@ -904,10 +909,11 @@
         "id": "74bbce1b31f77c86",
         "type": "ui-table",
         "z": "3b521b08f4388c2f",
+        "d": true,
         "group": "33c8b33051afe822",
         "name": "LED Table",
         "label": "",
-        "order": 11,
+        "order": 15,
         "width": 0,
         "height": 0,
         "maxrows": 0,
@@ -931,6 +937,7 @@
         "id": "cbf9be1a32b5b38a",
         "type": "function",
         "z": "3b521b08f4388c2f",
+        "d": true,
         "name": "LED States",
         "func": "msg.payload = [\n    {\n        enable: msg.payload.ledEnable || \"\",\n        state: msg.payload.ledState || \"\",\n        color: msg.payload.ledColor || \"\",\n        telemetry: msg.payload.ledTelemetry || \"\"\n    }\n];\nreturn msg;",
         "outputs": 1,
@@ -1575,7 +1582,7 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "order": 5,
-        "width": "3",
+        "width": "2",
         "height": 1,
         "name": "",
         "label": "RTC Time",
@@ -1619,7 +1626,7 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "order": 6,
-        "width": "4",
+        "width": "2",
         "height": 1,
         "name": "",
         "label": "Clock Sync",
@@ -2104,7 +2111,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 860,
+        "y": 1060,
         "wires": [
             [
                 "17cc045685eb838a"
@@ -2133,7 +2140,7 @@
         "action": "replace",
         "className": "",
         "x": 1280,
-        "y": 860,
+        "y": 1060,
         "wires": [
             []
         ]
@@ -2329,6 +2336,7 @@
         "id": "a19d0a499361ec6c",
         "type": "ui-button",
         "z": "3b521b08f4388c2f",
+        "d": true,
         "group": "0c10ce94c624bca1",
         "name": "Send custCommand",
         "label": "Send",
@@ -2406,7 +2414,7 @@
         "width": "2",
         "height": 1,
         "name": "",
-        "label": "Telemetry Enabled",
+        "label": "TLM Telemetry",
         "format": "{{msg.payload}}",
         "layout": "col-center",
         "style": false,
@@ -2417,7 +2425,7 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1310,
+        "x": 1300,
         "y": 420,
         "wires": []
     },
@@ -2714,15 +2722,15 @@
         "id": "d506d2be422b81e6",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "extract RTC Sync",
-        "func": "msg.payload = msg.payload.rtcSync || \"\";\nreturn msg;",
+        "name": "extract RTC TLM Enabled",
+        "func": "msg.payload = msg.payload.rtcTelemetry || \"\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
+        "x": 1050,
         "y": 680,
         "wires": [
             [
@@ -2736,10 +2744,54 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "order": 7,
-        "width": "4",
+        "width": "2",
         "height": 1,
         "name": "",
-        "label": "Clock Sync",
+        "label": "RTC Telemetry",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1300,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "93d87df78233859c",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract LED Enable",
+        "func": "msg.payload = msg.payload.ledEnable || \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 840,
+        "wires": [
+            [
+                "244fb5d509b779a0"
+            ]
+        ]
+    },
+    {
+        "id": "244fb5d509b779a0",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "33c8b33051afe822",
+        "order": 11,
+        "width": "2",
+        "height": 1,
+        "name": "",
+        "label": "LED Enable",
         "format": "{{msg.payload}}",
         "layout": "col-center",
         "style": false,
@@ -2751,7 +2803,139 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1290,
-        "y": 680,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "fb2a49fa8d6ad39d",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract LED State",
+        "func": "msg.payload = msg.payload.ledState || \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 880,
+        "wires": [
+            [
+                "887b7ebf277dcbd2"
+            ]
+        ]
+    },
+    {
+        "id": "887b7ebf277dcbd2",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "33c8b33051afe822",
+        "order": 12,
+        "width": "2",
+        "height": 1,
+        "name": "",
+        "label": "LED State",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1280,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "51f5a5dcfe3e5cd8",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract LED Color",
+        "func": "msg.payload = msg.payload.ledColor || \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 920,
+        "wires": [
+            [
+                "2f5caf09449c7d9c"
+            ]
+        ]
+    },
+    {
+        "id": "2f5caf09449c7d9c",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "33c8b33051afe822",
+        "order": 14,
+        "width": "2",
+        "height": 1,
+        "name": "",
+        "label": "LED Color",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1290,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "89175a9d63aee81c",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract LED TLM",
+        "func": "msg.payload = msg.payload.ledTelemetry || \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 960,
+        "wires": [
+            [
+                "d7befc5a2714f9f5"
+            ]
+        ]
+    },
+    {
+        "id": "d7befc5a2714f9f5",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "33c8b33051afe822",
+        "order": 13,
+        "width": "2",
+        "height": 1,
+        "name": "",
+        "label": "LED Telemetry",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1300,
+        "y": 960,
         "wires": []
     }
 ]
