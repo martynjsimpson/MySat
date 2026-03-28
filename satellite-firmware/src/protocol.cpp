@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include "protocol_internal.h"
 #include "sender.h"
+#include "transport.h"
 
 namespace
 {
@@ -13,9 +14,9 @@ namespace
 
 void readSerialCommands()
 {
-  while (Serial.available() > 0)
+  while (transportAvailable() > 0)
   {
-    const char c = static_cast<char>(Serial.read());
+    const char c = static_cast<char>(transportRead());
 
     if (c == '\r')
     {

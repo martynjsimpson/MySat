@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include "rtc.h"
+#include "transport.h"
 
 namespace
 {
@@ -13,11 +14,11 @@ namespace
     char timestamp[21];
     if (!getCurrentTimestampIso(timestamp, sizeof(timestamp)))
     {
-      Serial.print("2000-01-01T00:00:00Z");
+      transportWrite("2000-01-01T00:00:00Z");
       return;
     }
 
-    Serial.print(timestamp);
+    transportWrite(timestamp);
   }
 
   bool isUnreservedContextChar(char c)
@@ -35,11 +36,11 @@ namespace
   {
     if (nibble < 10)
     {
-      Serial.print(static_cast<char>('0' + nibble));
+      transportWrite(static_cast<char>('0' + nibble));
     }
     else
     {
-      Serial.print(static_cast<char>('A' + (nibble - 10)));
+      transportWrite(static_cast<char>('A' + (nibble - 10)));
     }
   }
 
@@ -51,11 +52,11 @@ namespace
 
       if (isUnreservedContextChar(static_cast<char>(ch)))
       {
-        Serial.print(static_cast<char>(ch));
+        transportWrite(static_cast<char>(ch));
       }
       else
       {
-        Serial.print('%');
+        transportWrite('%');
         printHexDigit((ch >> 4) & 0x0F);
         printHexDigit(ch & 0x0F);
       }
@@ -76,56 +77,60 @@ void clearErrorContext()
 void sendAck(const char *target, const char *value)
 {
   printTimestampIso();
-  Serial.print(",ACK,");
-  Serial.print(target);
-  Serial.print(",");
-  Serial.println(value);
+  transportWrite(",ACK,");
+  transportWrite(target);
+  transportWrite(",");
+  transportWrite(value);
+  transportWriteLine();
 }
 
 void sendError(const char *errorCode)
 {
   printTimestampIso();
-  Serial.print(",ERR,");
-  Serial.print(errorCode);
+  transportWrite(",ERR,");
+  transportWrite(errorCode);
 
   if (errorContext != nullptr && *errorContext != '\0')
   {
-    Serial.print(",");
+    transportWrite(",");
     printEscapedContext(errorContext);
   }
 
-  Serial.println();
+  transportWriteLine();
 }
 
 void sendTelemetry(const char *target, const char *parameter, const char *value)
 {
   printTimestampIso();
-  Serial.print(",TLM,");
-  Serial.print(target);
-  Serial.print(",");
-  Serial.print(parameter);
-  Serial.print(",");
-  Serial.println(value);
+  transportWrite(",TLM,");
+  transportWrite(target);
+  transportWrite(",");
+  transportWrite(parameter);
+  transportWrite(",");
+  transportWrite(value);
+  transportWriteLine();
 }
 
 void sendTelemetryULong(const char *target, const char *parameter, unsigned long value)
 {
   printTimestampIso();
-  Serial.print(",TLM,");
-  Serial.print(target);
-  Serial.print(",");
-  Serial.print(parameter);
-  Serial.print(",");
-  Serial.println(value);
+  transportWrite(",TLM,");
+  transportWrite(target);
+  transportWrite(",");
+  transportWrite(parameter);
+  transportWrite(",");
+  transportWrite(value);
+  transportWriteLine();
 }
 
 void sendTelemetryFloat(const char *target, const char *parameter, float value, int decimals)
 {
   printTimestampIso();
-  Serial.print(",TLM,");
-  Serial.print(target);
-  Serial.print(",");
-  Serial.print(parameter);
-  Serial.print(",");
-  Serial.println(value, decimals);
+  transportWrite(",TLM,");
+  transportWrite(target);
+  transportWrite(",");
+  transportWrite(parameter);
+  transportWrite(",");
+  transportWrite(value, decimals);
+  transportWriteLine();
 }
