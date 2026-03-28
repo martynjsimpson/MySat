@@ -304,7 +304,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"ENABLE\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"TELEMETRY\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr,\n    statusHeartbeatValue: getValue(\"STATUS\", \"UPTIME_S\"),\n    statusHeartbeatTime: getTime(\"STATUS\", \"UPTIME_S\")\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -318,19 +318,16 @@
                 "353ea91c8195f24d",
                 "e801888fd08475bd",
                 "b8a99bc218fbe40e",
-                "bc470b80b14f8ffb",
-                "879d3a364ed6ee7f",
                 "0b2ea32d4b67bf0d",
                 "40b71589d101899b",
-                "dad35d72a6b5f9d6",
-                "b30ce9edf5df543c",
                 "ce81e4884bf62a13",
                 "05128a24ed57fb61",
                 "cbf9be1a32b5b38a",
-                "f085d816c4e62e09",
                 "7b54df25ad4ef61f",
                 "c720218d514f0575",
-                "0533515e80ab7a66"
+                "0533515e80ab7a66",
+                "909594e5ba8c37c2",
+                "fe6c806c0622a520"
             ]
         ]
     },
@@ -347,7 +344,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 620,
+        "y": 500,
         "wires": [
             [
                 "aa35e6502e80f6ca"
@@ -358,9 +355,9 @@
         "id": "aa35e6502e80f6ca",
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
-        "group": "0c10ce94c624bca1",
-        "order": 3,
-        "width": "4",
+        "group": "87c6d1cd17eff6d5",
+        "order": 8,
+        "width": "2",
         "height": 1,
         "name": "",
         "label": "Last TLM",
@@ -375,7 +372,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 620,
+        "y": 500,
         "wires": []
     },
     {
@@ -391,7 +388,7 @@
         "finalize": "",
         "libs": [],
         "x": 1050,
-        "y": 340,
+        "y": 420,
         "wires": [
             [
                 "0909b96a0a73a827"
@@ -411,100 +408,12 @@
         "finalize": "",
         "libs": [],
         "x": 1060,
-        "y": 380,
+        "y": 460,
         "wires": [
             [
                 "e5510a7192e55937"
             ]
         ]
-    },
-    {
-        "id": "bc470b80b14f8ffb",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract Charge Current (A)",
-        "func": "msg.payload = msg.payload.chargeCurrentA || \"\"; return msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1060,
-        "y": 960,
-        "wires": [
-            [
-                "591fda52697d738e"
-            ]
-        ]
-    },
-    {
-        "id": "591fda52697d738e",
-        "type": "ui-text",
-        "z": "3b521b08f4388c2f",
-        "group": "27f54bb6a6a84aaa",
-        "order": 4,
-        "width": 6,
-        "height": 1,
-        "name": "",
-        "label": "Charge Current (A)",
-        "format": "{{msg.payload}}",
-        "layout": "row-left",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#717171",
-        "wrapText": false,
-        "className": "",
-        "value": "payload",
-        "valueType": "msg",
-        "x": 1320,
-        "y": 960,
-        "wires": []
-    },
-    {
-        "id": "879d3a364ed6ee7f",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract Charge Voltage (V)",
-        "func": "msg.payload = msg.payload.chargeVoltageV || \"\"; return msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1060,
-        "y": 1000,
-        "wires": [
-            [
-                "4e79dc84e1f17698"
-            ]
-        ]
-    },
-    {
-        "id": "4e79dc84e1f17698",
-        "type": "ui-text",
-        "z": "3b521b08f4388c2f",
-        "group": "27f54bb6a6a84aaa",
-        "order": 5,
-        "width": 6,
-        "height": 1,
-        "name": "",
-        "label": "Charge Voltage (V)",
-        "format": "{{msg.payload}}",
-        "layout": "row-left",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#717171",
-        "wrapText": false,
-        "className": "",
-        "value": "payload",
-        "valueType": "msg",
-        "x": 1320,
-        "y": 1000,
-        "wires": []
     },
     {
         "id": "0b2ea32d4b67bf0d",
@@ -519,7 +428,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 660,
+        "y": 320,
         "wires": [
             [
                 "6d5439a9dd0319e8"
@@ -531,7 +440,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "0c10ce94c624bca1",
-        "order": 4,
+        "order": 3,
         "width": "4",
         "height": 1,
         "name": "",
@@ -547,7 +456,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 660,
+        "y": 320,
         "wires": []
     },
     {
@@ -563,7 +472,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 700,
+        "y": 360,
         "wires": [
             [
                 "4a17bc77ddbdb063"
@@ -575,7 +484,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "0c10ce94c624bca1",
-        "order": 5,
+        "order": 4,
         "width": "4",
         "height": 1,
         "name": "",
@@ -591,7 +500,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 700,
+        "y": 360,
         "wires": []
     },
     {
@@ -801,7 +710,7 @@
         "group": "0c10ce94c624bca1",
         "name": "",
         "label": "Ping",
-        "order": 6,
+        "order": 5,
         "width": "4",
         "height": "1",
         "emulateClick": false,
@@ -834,94 +743,6 @@
         ]
     },
     {
-        "id": "dad35d72a6b5f9d6",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract Battery Available card",
-        "func": "msg.payload = { label: 'Battery Available', value: msg.payload.batteryAvailable || '' };\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1050,
-        "y": 880,
-        "wires": [
-            [
-                "bfcf577fd7f82f7f"
-            ]
-        ]
-    },
-    {
-        "id": "bfcf577fd7f82f7f",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "27f54bb6a6a84aaa",
-        "page": "",
-        "ui": "",
-        "name": "Battery Available card",
-        "order": 2,
-        "width": 6,
-        "height": 2,
-        "head": "",
-        "format": "<template>\n  <v-card variant=\"tonal\">\n    <v-card-text class=\"d-flex align-center justify-space-between\">\n      <span>{{ msg.payload.label }}</span>\n      <v-chip\n        :color=\"msg.payload.value === 'TRUE' ? 'green' : 'grey'\"\n        variant=\"flat\"\n      >\n        {{ msg.payload.value || 'UNKNOWN' }}\n      </v-chip>\n    </v-card-text>\n  </v-card>\n</template>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1300,
-        "y": 880,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "b30ce9edf5df543c",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract On Battery card",
-        "func": "msg.payload = { label: 'On Battery', value: msg.payload.onBattery || '' };\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1050,
-        "y": 920,
-        "wires": [
-            [
-                "d5506d64e49831d9"
-            ]
-        ]
-    },
-    {
-        "id": "d5506d64e49831d9",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "27f54bb6a6a84aaa",
-        "page": "",
-        "ui": "",
-        "name": "On Battery card",
-        "order": 3,
-        "width": 6,
-        "height": 2,
-        "head": "",
-        "format": "<template>\n  <v-card variant=\"tonal\">\n    <v-card-text class=\"d-flex align-center justify-space-between\">\n      <span>{{ msg.payload.label }}</span>\n      <v-chip\n        :color=\"msg.payload.value === 'TRUE' ? 'green' : 'grey'\"\n        variant=\"flat\"\n      >\n        {{ msg.payload.value || 'UNKNOWN' }}\n      </v-chip>\n    </v-card-text>\n  </v-card>\n</template>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1300,
-        "y": 920,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "ce81e4884bf62a13",
         "type": "function",
         "z": "3b521b08f4388c2f",
@@ -934,7 +755,7 @@
         "finalize": "",
         "libs": [],
         "x": 1070,
-        "y": 480,
+        "y": 900,
         "wires": [
             [
                 "59e5d09d9ab69709"
@@ -987,7 +808,7 @@
         "sizeKeyThickness": "",
         "className": "",
         "x": 1340,
-        "y": 480,
+        "y": 900,
         "wires": [
             []
         ]
@@ -1013,8 +834,8 @@
         "mobileBreakpointType": "defaults",
         "action": "replace",
         "className": "",
-        "x": 1290,
-        "y": 160,
+        "x": 1010,
+        "y": 540,
         "wires": [
             []
         ]
@@ -1101,7 +922,7 @@
         "action": "replace",
         "className": "",
         "x": 1280,
-        "y": 240,
+        "y": 800,
         "wires": [
             []
         ]
@@ -1119,7 +940,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 240,
+        "y": 800,
         "wires": [
             [
                 "74bbce1b31f77c86"
@@ -1591,55 +1412,6 @@
         ]
     },
     {
-        "id": "f085d816c4e62e09",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "name": "TLM States",
-        "func": "msg.payload = [\n    {\n        telemetryEnable: msg.payload.telemetryEnable || \"\",\n        telemetryInterval: msg.payload.telemetryInterval || \"\"\n    }\n];\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1010,
-        "y": 300,
-        "wires": [
-            [
-                "e87734e6605d5f4d"
-            ]
-        ]
-    },
-    {
-        "id": "e87734e6605d5f4d",
-        "type": "ui-table",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "group": "87c6d1cd17eff6d5",
-        "name": "TLM Table",
-        "label": "",
-        "order": 10,
-        "width": 0,
-        "height": 0,
-        "maxrows": 0,
-        "passthru": false,
-        "autocols": true,
-        "showSearch": false,
-        "deselect": true,
-        "selectionType": "none",
-        "columns": [],
-        "mobileBreakpoint": "sm",
-        "mobileBreakpointType": "defaults",
-        "action": "replace",
-        "className": "",
-        "x": 1450,
-        "y": 280,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "283bee87f27680a3",
         "type": "function",
         "z": "3b521b08f4388c2f",
@@ -1790,7 +1562,7 @@
         "finalize": "",
         "libs": [],
         "x": 1050,
-        "y": 540,
+        "y": 600,
         "wires": [
             [
                 "e8c0bffef462e56b"
@@ -1801,9 +1573,9 @@
         "id": "e8c0bffef462e56b",
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
-        "group": "0c10ce94c624bca1",
-        "order": 1,
-        "width": "4",
+        "group": "1f22eb0bf52ef7c6",
+        "order": 5,
+        "width": "3",
         "height": 1,
         "name": "",
         "label": "RTC Time",
@@ -1818,7 +1590,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 540,
+        "y": 600,
         "wires": []
     },
     {
@@ -1834,7 +1606,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 580,
+        "y": 640,
         "wires": [
             [
                 "bd735e5dcb4579f4"
@@ -1845,8 +1617,8 @@
         "id": "bd735e5dcb4579f4",
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
-        "group": "0c10ce94c624bca1",
-        "order": 2,
+        "group": "1f22eb0bf52ef7c6",
+        "order": 6,
         "width": "4",
         "height": 1,
         "name": "",
@@ -1862,7 +1634,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1290,
-        "y": 580,
+        "y": 640,
         "wires": []
     },
     {
@@ -2332,7 +2104,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 440,
+        "y": 860,
         "wires": [
             [
                 "17cc045685eb838a"
@@ -2361,7 +2133,7 @@
         "action": "replace",
         "className": "",
         "x": 1280,
-        "y": 440,
+        "y": 860,
         "wires": [
             []
         ]
@@ -2437,7 +2209,7 @@
         "group": "0c10ce94c624bca1",
         "name": "",
         "label": "Gen Error",
-        "order": 7,
+        "order": 6,
         "width": "4",
         "height": "1",
         "emulateClick": false,
@@ -2560,7 +2332,7 @@
         "group": "0c10ce94c624bca1",
         "name": "Send custCommand",
         "label": "Send",
-        "order": 9,
+        "order": 8,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -2599,7 +2371,7 @@
         "group": "0c10ce94c624bca1",
         "name": "custCommand",
         "label": "Custom Command",
-        "order": 8,
+        "order": 7,
         "width": "3",
         "height": "1",
         "topic": "topic",
@@ -2630,8 +2402,8 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
-        "order": 8,
-        "width": "3",
+        "order": 9,
+        "width": "2",
         "height": 1,
         "name": "",
         "label": "Telemetry Enabled",
@@ -2646,7 +2418,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1310,
-        "y": 340,
+        "y": 420,
         "wires": []
     },
     {
@@ -2654,8 +2426,8 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
-        "order": 9,
-        "width": "3",
+        "order": 10,
+        "width": "2",
         "height": 1,
         "name": "",
         "label": "Telemetry Interval",
@@ -2670,7 +2442,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1310,
-        "y": 380,
+        "y": 460,
         "wires": []
     },
     {
@@ -2849,5 +2621,137 @@
                 "2e82d278f9c70970"
             ]
         ]
+    },
+    {
+        "id": "909594e5ba8c37c2",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract statusHeartbeat Value",
+        "func": "msg.payload = msg.payload.statusHeartbeatValue || \"\"; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1070,
+        "y": 240,
+        "wires": [
+            [
+                "9ba63acfcdb06bb0"
+            ]
+        ]
+    },
+    {
+        "id": "9ba63acfcdb06bb0",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "0c10ce94c624bca1",
+        "order": 2,
+        "width": "4",
+        "height": 1,
+        "name": "",
+        "label": "Heartbeat Counter",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1310,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "fe6c806c0622a520",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract statusHeartbeat Time",
+        "func": "msg.payload = msg.payload.statusHeartbeatTime || \"\"; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 200,
+        "wires": [
+            [
+                "eab9f7b01a04c458"
+            ]
+        ]
+    },
+    {
+        "id": "eab9f7b01a04c458",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "0c10ce94c624bca1",
+        "order": 1,
+        "width": "4",
+        "height": 1,
+        "name": "",
+        "label": "Last Heartbeat",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1300,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "d506d2be422b81e6",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract RTC Sync",
+        "func": "msg.payload = msg.payload.rtcSync || \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 680,
+        "wires": [
+            [
+                "dc21974ebd615146"
+            ]
+        ]
+    },
+    {
+        "id": "dc21974ebd615146",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "1f22eb0bf52ef7c6",
+        "order": 7,
+        "width": "4",
+        "height": 1,
+        "name": "",
+        "label": "Clock Sync",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1290,
+        "y": 680,
+        "wires": []
     }
 ]

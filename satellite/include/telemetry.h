@@ -8,6 +8,7 @@ void handleSetTelemetry(const Command &cmd);
 void handleSetTargetTelemetry(const Command &cmd);
 bool isTargetTelemetryEnabled(TargetType target);
 void reportTelemetryStatus();
+void reportStatusHeartbeat(bool incrementHeartbeat);
 void sendTelemetrySnapshot();
 void handlePeriodicTelemetry();
 

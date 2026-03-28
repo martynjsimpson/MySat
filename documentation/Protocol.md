@@ -60,6 +60,7 @@ SET,BATTERY,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
+GET,STATUS,UPTIME_S,NONE
 GET,LED,NONE,NONE
 GET,TELEMETRY,NONE,NONE
 GET,BATTERY,NONE,NONE
@@ -175,6 +176,7 @@ Examples:
 2026-03-27T12:00:40Z,TLM,LED,TELEMETRY,TRUE
 2026-03-27T12:00:40Z,TLM,LED,STATE,OFF
 2026-03-27T12:00:40Z,TLM,LED,COLOR,GREEN
+2026-03-27T12:00:40Z,TLM,STATUS,UPTIME_S,12
 2026-03-27T12:00:40Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:00:40Z,TLM,TELEMETRY,ENABLE,TRUE
 2026-03-27T12:00:40Z,TLM,TELEMETRY,INTERVAL_S,5
@@ -217,6 +219,7 @@ Examples:
 | `TELEMETRY` | Telemetry stream control/configuration target |
 | `BATTERY` | Battery / PMIC telemetry target |
 | `RTC` | Real-time clock state and time synchronisation target |
+| `STATUS` | System status and non-disableable heartbeat target |
 | `NONE` | Placeholder target when not applicable |
 
 ### Reserved targets
@@ -224,7 +227,6 @@ Examples:
 | Token | Intended future meaning |
 |---|---|
 | `MODE` | Spacecraft operating mode |
-| `STATUS` | General health or summary status |
 | `RADIO` | Communications subsystem |
 | `POWER` | Power domain or EPS-like functions |
 | `PAYLOAD` | Payload subsystem |
@@ -244,6 +246,7 @@ Examples:
 | `ENABLE` | Whether a feature or subsystem is allowed to operate |
 | `TELEMETRY` | Whether periodic telemetry for a target is included in snapshots |
 | `CURRENT_TIME` | The device's current UTC date/time |
+| `UPTIME_S` | Heartbeat counter/status uptime sample |
 | `SYNC` | Whether the device clock is considered in sync |
 | `STATE` | Current state of a target |
 | `COLOR` | Selected symbolic color for a target |
@@ -376,6 +379,7 @@ SET,LED,TELEMETRY,DISABLE
 SET,BATTERY,TELEMETRY,ENABLE
 SET,TELEMETRY,TELEMETRY,DISABLE
 TLM,LED,TELEMETRY,FALSE
+GET,STATUS,UPTIME_S,NONE
 ```
 
 ### When to use `CURRENT_TIME` and `SYNC`
@@ -475,7 +479,7 @@ The invalid state combination **disabled + on** should never occur.
 
 The telemetry subsystem currently controls periodic telemetry streaming.
 
-Subsystem telemetry can also be enabled or disabled per target using commands such as `SET,LED,TELEMETRY,DISABLE`.
+Subsystem telemetry can also be enabled or disabled per target using commands such as `SET,LED,TELEMETRY,DISABLE`. The `STATUS` heartbeat is emitted from the periodic snapshot path but is not part of the per-target telemetry enable/disable map.
 
 ### Supported telemetry commands
 
@@ -520,6 +524,24 @@ SET,BATTERY,TELEMETRY,DISABLE
 | `SET,BATTERY,TELEMETRY,DISABLE` | Omits battery data from periodic telemetry snapshots |
 
 Battery telemetry is also included in the periodic telemetry snapshot. The current implementation uses the same reporting path for both snapshots and `GET,BATTERY`, so disabling battery telemetry also suppresses the `GET,BATTERY` response.
+
+## STATUS target
+
+The status subsystem currently exposes the heartbeat counter reported in periodic snapshots.
+
+### Supported status commands
+
+```text
+GET,STATUS,UPTIME_S,NONE
+```
+
+### Status rules
+
+| Command | Behaviour |
+|---|---|
+| `GET,STATUS,UPTIME_S,NONE` | Returns the current heartbeat counter without incrementing it |
+
+The periodic snapshot always includes `TLM,STATUS,UPTIME_S,<n>` when global telemetry is enabled. The value increments by one for each emitted snapshot and is not controlled by per-target telemetry enable/disable commands.
 
 ## RTC target
 
@@ -587,6 +609,7 @@ SET,TELEMETRY,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,<iso8601-utc>
+GET,STATUS,UPTIME_S,NONE
 SET,TELEMETRY,ENABLE,TRUE
 SET,TELEMETRY,ENABLE,FALSE
 SET,TELEMETRY,INTERVAL_S,<integer>
@@ -614,6 +637,7 @@ SET,LED,COLOR,RED
 SET,TELEMETRY,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
+GET,STATUS,UPTIME_S,NONE
 GET,LED,NONE,NONE
 SET,TELEMETRY,INTERVAL_S,10
 GET,TELEMETRY,NONE,NONE
@@ -632,7 +656,9 @@ Possible responses:
 2026-03-27T12:00:00Z,ACK,TELEMETRY,TELEMETRY_DISABLE
 2026-03-27T12:00:00Z,ACK,RTC,TELEMETRY_DISABLE
 2026-03-27T12:00:00Z,ACK,RTC,CURRENT_TIME
+2026-03-27T12:00:00Z,TLM,STATUS,UPTIME_S,0
 2026-03-27T12:00:01Z,ACK,TELEMETRY,INTERVAL_S
+2026-03-27T12:00:02Z,TLM,STATUS,UPTIME_S,1
 2026-03-27T12:00:03Z,TLM,BATTERY,TELEMETRY,TRUE
 2026-03-27T12:00:03Z,TLM,BATTERY,AVAILABLE,TRUE
 2026-03-27T12:00:03Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500
