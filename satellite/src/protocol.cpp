@@ -114,6 +114,26 @@ namespace
       return PARAM_SECONDS;
     if (strcmp(token, "COLOR") == 0)
       return PARAM_COLOR;
+    if (strcmp(token, "AVAILABLE") == 0)
+      return PARAM_AVAILABLE;
+    if (strcmp(token, "CHARGE_CURRENT_A") == 0)
+      return PARAM_CHARGE_CURRENT_A;
+    if (strcmp(token, "CHARGE_VOLTAGE_V") == 0)
+      return PARAM_CHARGE_VOLTAGE_V;
+    if (strcmp(token, "CHARGE_PERCENT_P") == 0)
+      return PARAM_CHARGE_PERCENT_P;
+    if (strcmp(token, "VOLTAGE_V") == 0)
+      return PARAM_VOLTAGE_V;
+    if (strcmp(token, "LATITUDE_D") == 0)
+      return PARAM_LATITUDE_D;
+    if (strcmp(token, "LONGITUDE_D") == 0)
+      return PARAM_LONGITUDE_D;
+    if (strcmp(token, "ALTITUDE_M") == 0)
+      return PARAM_ALTITUDE_M;
+    if (strcmp(token, "SPEED_KPH") == 0)
+      return PARAM_SPEED_KPH;
+    if (strcmp(token, "SATELLITES_N") == 0)
+      return PARAM_SATELLITES_N;
     return PARAM_UNKNOWN;
   }
 
@@ -161,39 +181,19 @@ namespace
     switch (cmd.target)
     {
     case TARGET_LED:
-      if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
-      {
-        sendError("BAD_FORMAT");
-        return;
-      }
-      reportLedStatus();
+      handleGetLed(cmd);
       break;
 
     case TARGET_TELEMETRY:
-      if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
-      {
-        sendError("BAD_FORMAT");
-        return;
-      }
-      reportTelemetryStatus();
+      handleGetTelemetry(cmd);
       break;
 
     case TARGET_BATTERY:
-      if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
-      {
-        sendError("BAD_FORMAT");
-        return;
-      }
-      reportBatteryStatus();
+      handleGetBattery(cmd);
       break;
 
     case TARGET_GPS:
-      if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
-      {
-        sendError("BAD_FORMAT");
-        return;
-      }
-      reportGpsStatus();
+      handleGetGps(cmd);
       break;
 
     case TARGET_RTC:
