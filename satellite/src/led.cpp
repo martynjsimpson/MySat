@@ -55,6 +55,26 @@ namespace
     }
   }
 
+  void reportLedTelemetryStatus()
+  {
+    sendTelemetry("LED", "TELEMETRY", isTargetTelemetryEnabled(TARGET_LED) ? "TRUE" : "FALSE");
+  }
+
+  void reportLedEnableStatus()
+  {
+    sendTelemetry("LED", "ENABLE", ledEnabled ? "TRUE" : "FALSE");
+  }
+
+  void reportLedStateStatus()
+  {
+    sendTelemetry("LED", "STATE", ledStateOn ? "ON" : "OFF");
+  }
+
+  void reportLedColorStatus()
+  {
+    sendTelemetry("LED", "COLOR", colorToToken(ledColor));
+  }
+
   void applyLedOutput()
   {
     if (!ledEnabled || !ledStateOn)
@@ -94,6 +114,42 @@ void setupLed()
   ledStateOn = false;
   ledColor = LED_COLOR_GREEN;
   applyLedOutput();
+}
+
+void handleGetLed(const Command &cmd)
+{
+  if (cmd.value != VALUE_NONE)
+  {
+    sendError("BAD_FORMAT");
+    return;
+  }
+
+  switch (cmd.parameter)
+  {
+  case PARAM_NONE:
+    reportLedStatus();
+    break;
+
+  case PARAM_TELEMETRY:
+    reportLedTelemetryStatus();
+    break;
+
+  case PARAM_ENABLE:
+    reportLedEnableStatus();
+    break;
+
+  case PARAM_STATE:
+    reportLedStateStatus();
+    break;
+
+  case PARAM_COLOR:
+    reportLedColorStatus();
+    break;
+
+  default:
+    sendError("BAD_PARAMETER");
+    break;
+  }
 }
 
 void handleSetLed(const Command &cmd)
@@ -176,8 +232,8 @@ void handleSetLed(const Command &cmd)
 
 void reportLedStatus()
 {
-  sendTelemetry("LED", "TELEMETRY", isTargetTelemetryEnabled(TARGET_LED) ? "TRUE" : "FALSE");
-  sendTelemetry("LED", "ENABLE", ledEnabled ? "TRUE" : "FALSE");
-  sendTelemetry("LED", "STATE", ledStateOn ? "ON" : "OFF");
-  sendTelemetry("LED", "COLOR", colorToToken(ledColor));
+  reportLedTelemetryStatus();
+  reportLedEnableStatus();
+  reportLedStateStatus();
+  reportLedColorStatus();
 }

@@ -225,6 +225,11 @@ bool isClockSynchronized()
   return clockSynchronized;
 }
 
+void reportRtcTelemetryStatus()
+{
+  sendTelemetry("RTC", "TELEMETRY", isTargetTelemetryEnabled(TARGET_RTC) ? "TRUE" : "FALSE");
+}
+
 void reportRtcCurrentTime()
 {
   char timestamp[21];
@@ -244,7 +249,7 @@ void reportRtcSyncStatus()
 
 void reportRtcStatus()
 {
-  sendTelemetry("RTC", "TELEMETRY", isTargetTelemetryEnabled(TARGET_RTC) ? "TRUE" : "FALSE");
+  reportRtcTelemetryStatus();
   reportRtcCurrentTime();
   reportRtcSyncStatus();
 }
@@ -265,6 +270,10 @@ void handleGetRtc(const Command &cmd)
 
   case PARAM_CURRENT_TIME:
     reportRtcCurrentTime();
+    break;
+
+  case PARAM_TELEMETRY:
+    reportRtcTelemetryStatus();
     break;
 
   case PARAM_SYNC:

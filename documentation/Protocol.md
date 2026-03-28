@@ -65,10 +65,15 @@ SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
 GET,STATUS,HEARTBEAT_N,NONE
+GET,LED,STATE,NONE
 GET,LED,NONE,NONE
+GET,TELEMETRY,INTERVAL_S,NONE
 GET,TELEMETRY,NONE,NONE
+GET,BATTERY,VOLTAGE_V,NONE
 GET,BATTERY,NONE,NONE
+GET,GPS,LATITUDE_D,NONE
 GET,GPS,NONE,NONE
+GET,RTC,TELEMETRY,NONE
 GET,RTC,NONE,NONE
 GET,RTC,CURRENT_TIME,NONE
 GET,RTC,SYNC,NONE
@@ -194,8 +199,8 @@ Examples:
 2026-03-27T12:00:40Z,TLM,GPS,TELEMETRY,TRUE
 2026-03-27T12:00:40Z,TLM,GPS,ENABLE,TRUE
 2026-03-27T12:00:40Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:00:40Z,TLM,GPS,LATITUDE_D,51.5074000
-2026-03-27T12:00:40Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:00:40Z,TLM,GPS,LATITUDE_D,51.50740
+2026-03-27T12:00:40Z,TLM,GPS,LONGITUDE_D,-0.12780
 2026-03-27T12:00:40Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:00:40Z,TLM,GPS,SPEED_KPH,12.40
 2026-03-27T12:00:40Z,TLM,GPS,SATELLITES_N,9
@@ -267,7 +272,7 @@ Examples:
 | `INTERVAL_S` | Interval in seconds |
 | `NONE` | Placeholder parameter when not applicable |
 
-### Telemetry-only parameters currently emitted
+### Additional implemented parameters currently emitted or retrievable via `GET`
 
 | Token | Meaning |
 |---|---|
@@ -456,6 +461,100 @@ PING,NONE,NONE,NONE
 
 ## Implemented Behaviour
 
+## Authoritative Command List
+
+This section is the canonical list of currently implemented commands. Examples elsewhere in this document are illustrative, but this section should be treated as the source of truth for what the firmware accepts today.
+
+### Global commands
+
+| Command | Purpose |
+|---|---|
+| `PING,NONE,NONE,NONE` | Confirms parser and communications path are working |
+
+### LED target
+
+| Command | Purpose |
+|---|---|
+| `SET,LED,ENABLE,TRUE` | Enable LED operation |
+| `SET,LED,ENABLE,FALSE` | Disable LED operation and force LED off |
+| `SET,LED,STATE,ON` | Turn LED output on |
+| `SET,LED,STATE,OFF` | Turn LED output off |
+| `SET,LED,COLOR,RED` | Select red LED color |
+| `SET,LED,COLOR,GREEN` | Select green LED color |
+| `SET,LED,COLOR,BLUE` | Select blue LED color |
+| `SET,LED,TELEMETRY,ENABLE` | Include LED in periodic telemetry snapshots |
+| `SET,LED,TELEMETRY,DISABLE` | Omit LED from periodic telemetry snapshots |
+| `GET,LED,NONE,NONE` | Return all LED telemetry fields |
+| `GET,LED,TELEMETRY,NONE` | Return LED periodic telemetry enable state |
+| `GET,LED,ENABLE,NONE` | Return LED enable state |
+| `GET,LED,STATE,NONE` | Return LED on/off state |
+| `GET,LED,COLOR,NONE` | Return selected LED color |
+
+### TELEMETRY target
+
+| Command | Purpose |
+|---|---|
+| `SET,TELEMETRY,ENABLE,TRUE` | Enable periodic telemetry globally |
+| `SET,TELEMETRY,ENABLE,FALSE` | Disable periodic telemetry globally |
+| `SET,TELEMETRY,TELEMETRY,ENABLE` | Include telemetry subsystem status in snapshots |
+| `SET,TELEMETRY,TELEMETRY,DISABLE` | Omit telemetry subsystem status from snapshots |
+| `SET,TELEMETRY,INTERVAL_S,<integer>` | Set snapshot interval in seconds |
+| `GET,TELEMETRY,NONE,NONE` | Return all telemetry subsystem fields |
+| `GET,TELEMETRY,TELEMETRY,NONE` | Return telemetry-target telemetry enable state |
+| `GET,TELEMETRY,ENABLE,NONE` | Return global telemetry enable state |
+| `GET,TELEMETRY,INTERVAL_S,NONE` | Return current telemetry interval |
+
+### BATTERY target
+
+| Command | Purpose |
+|---|---|
+| `SET,BATTERY,TELEMETRY,ENABLE` | Include battery telemetry in periodic snapshots |
+| `SET,BATTERY,TELEMETRY,DISABLE` | Omit battery telemetry from periodic snapshots |
+| `GET,BATTERY,NONE,NONE` | Return all battery telemetry fields |
+| `GET,BATTERY,TELEMETRY,NONE` | Return battery periodic telemetry enable state |
+| `GET,BATTERY,AVAILABLE,NONE` | Return whether a battery is detected |
+| `GET,BATTERY,CHARGE_CURRENT_A,NONE` | Return configured/reported charge current |
+| `GET,BATTERY,CHARGE_VOLTAGE_V,NONE` | Return configured/reported charge voltage |
+| `GET,BATTERY,CHARGE_PERCENT_P,NONE` | Return approximate battery charge percentage |
+| `GET,BATTERY,VOLTAGE_V,NONE` | Return measured battery voltage |
+
+### GPS target
+
+| Command | Purpose |
+|---|---|
+| `SET,GPS,ENABLE,TRUE` | Enable GPS polling |
+| `SET,GPS,ENABLE,FALSE` | Disable GPS polling and clear cached fix values |
+| `SET,GPS,TELEMETRY,ENABLE` | Include GPS telemetry in periodic snapshots |
+| `SET,GPS,TELEMETRY,DISABLE` | Omit GPS telemetry from periodic snapshots |
+| `GET,GPS,NONE,NONE` | Return all GPS telemetry fields |
+| `GET,GPS,TELEMETRY,NONE` | Return GPS periodic telemetry enable state |
+| `GET,GPS,ENABLE,NONE` | Return GPS service enable state |
+| `GET,GPS,AVAILABLE,NONE` | Return whether a recent valid fix is available |
+| `GET,GPS,LATITUDE_D,NONE` | Return latitude in decimal degrees |
+| `GET,GPS,LONGITUDE_D,NONE` | Return longitude in decimal degrees |
+| `GET,GPS,ALTITUDE_M,NONE` | Return altitude in meters |
+| `GET,GPS,SPEED_KPH,NONE` | Return speed in kilometers per hour |
+| `GET,GPS,SATELLITES_N,NONE` | Return visible satellite count |
+
+### RTC target
+
+| Command | Purpose |
+|---|---|
+| `SET,RTC,TELEMETRY,ENABLE` | Include RTC telemetry in periodic snapshots |
+| `SET,RTC,TELEMETRY,DISABLE` | Omit RTC telemetry from periodic snapshots |
+| `SET,RTC,CURRENT_TIME,<iso8601-utc>` | Set the RTC from an ISO 8601 UTC timestamp |
+| `GET,RTC,NONE,NONE` | Return all RTC telemetry fields |
+| `GET,RTC,TELEMETRY,NONE` | Return RTC periodic telemetry enable state |
+| `GET,RTC,CURRENT_TIME,NONE` | Return current RTC timestamp |
+| `GET,RTC,SYNC,NONE` | Return RTC sync state |
+
+### STATUS target
+
+| Command | Purpose |
+|---|---|
+| `GET,STATUS,NONE,NONE` | Return all STATUS telemetry fields |
+| `GET,STATUS,HEARTBEAT_N,NONE` | Return current heartbeat counter without incrementing it |
+
 ## LED target
 
 The LED subsystem models two separate concepts:
@@ -476,6 +575,10 @@ SET,LED,COLOR,RED
 SET,LED,COLOR,GREEN
 SET,LED,COLOR,BLUE
 GET,LED,NONE,NONE
+GET,LED,TELEMETRY,NONE
+GET,LED,ENABLE,NONE
+GET,LED,STATE,NONE
+GET,LED,COLOR,NONE
 ```
 
 ### LED rules
@@ -510,6 +613,9 @@ SET,TELEMETRY,TELEMETRY,ENABLE
 SET,TELEMETRY,TELEMETRY,DISABLE
 SET,TELEMETRY,INTERVAL_S,5
 GET,TELEMETRY,NONE,NONE
+GET,TELEMETRY,TELEMETRY,NONE
+GET,TELEMETRY,ENABLE,NONE
+GET,TELEMETRY,INTERVAL_S,NONE
 ```
 
 ### Telemetry rules
@@ -521,7 +627,10 @@ GET,TELEMETRY,NONE,NONE
 | `SET,TELEMETRY,TELEMETRY,ENABLE` | Includes telemetry-status data in periodic telemetry snapshots |
 | `SET,TELEMETRY,TELEMETRY,DISABLE` | Omits telemetry-status data from periodic telemetry snapshots |
 | `SET,TELEMETRY,INTERVAL_S,n` | Sets telemetry interval in seconds |
-| `GET,TELEMETRY,NONE,NONE` | Returns telemetry configuration/status |
+| `GET,TELEMETRY,NONE,NONE` | Returns all telemetry configuration/status fields |
+| `GET,TELEMETRY,TELEMETRY,NONE` | Returns whether telemetry self-reporting is included in snapshots |
+| `GET,TELEMETRY,ENABLE,NONE` | Returns whether periodic telemetry is globally enabled |
+| `GET,TELEMETRY,INTERVAL_S,NONE` | Returns current telemetry interval |
 
 ## BATTERY target
 
@@ -531,6 +640,12 @@ The battery / PMIC subsystem is currently read-only from the command side.
 
 ```text
 GET,BATTERY,NONE,NONE
+GET,BATTERY,TELEMETRY,NONE
+GET,BATTERY,AVAILABLE,NONE
+GET,BATTERY,CHARGE_CURRENT_A,NONE
+GET,BATTERY,CHARGE_VOLTAGE_V,NONE
+GET,BATTERY,CHARGE_PERCENT_P,NONE
+GET,BATTERY,VOLTAGE_V,NONE
 SET,BATTERY,TELEMETRY,ENABLE
 SET,BATTERY,TELEMETRY,DISABLE
 ```
@@ -539,7 +654,13 @@ SET,BATTERY,TELEMETRY,DISABLE
 
 | Command | Behaviour |
 |---|---|
-| `GET,BATTERY,NONE,NONE` | Returns current battery telemetry when battery telemetry is enabled |
+| `GET,BATTERY,NONE,NONE` | Returns all current battery telemetry fields |
+| `GET,BATTERY,TELEMETRY,NONE` | Returns whether battery telemetry is included in snapshots |
+| `GET,BATTERY,AVAILABLE,NONE` | Returns whether a battery is detected |
+| `GET,BATTERY,CHARGE_CURRENT_A,NONE` | Returns charge current or `0.0` if no battery is present |
+| `GET,BATTERY,CHARGE_VOLTAGE_V,NONE` | Returns charge voltage or `0.0` if no battery is present |
+| `GET,BATTERY,CHARGE_PERCENT_P,NONE` | Returns charge percentage or `0` if no battery is present |
+| `GET,BATTERY,VOLTAGE_V,NONE` | Returns battery voltage or `0.0` if no battery is present |
 | `SET,BATTERY,TELEMETRY,ENABLE` | Includes battery data in periodic telemetry snapshots |
 | `SET,BATTERY,TELEMETRY,DISABLE` | Omits battery data from periodic telemetry snapshots |
 
@@ -555,6 +676,14 @@ The current implementation initializes the MKR GPS over the I2C cable connection
 
 ```text
 GET,GPS,NONE,NONE
+GET,GPS,TELEMETRY,NONE
+GET,GPS,ENABLE,NONE
+GET,GPS,AVAILABLE,NONE
+GET,GPS,LATITUDE_D,NONE
+GET,GPS,LONGITUDE_D,NONE
+GET,GPS,ALTITUDE_M,NONE
+GET,GPS,SPEED_KPH,NONE
+GET,GPS,SATELLITES_N,NONE
 SET,GPS,ENABLE,TRUE
 SET,GPS,ENABLE,FALSE
 SET,GPS,TELEMETRY,ENABLE
@@ -565,7 +694,15 @@ SET,GPS,TELEMETRY,DISABLE
 
 | Command | Behaviour |
 |---|---|
-| `GET,GPS,NONE,NONE` | Returns current GPS telemetry |
+| `GET,GPS,NONE,NONE` | Returns all current GPS telemetry fields |
+| `GET,GPS,TELEMETRY,NONE` | Returns whether GPS telemetry is included in snapshots |
+| `GET,GPS,ENABLE,NONE` | Returns whether GPS polling is enabled |
+| `GET,GPS,AVAILABLE,NONE` | Returns whether a recent valid fix is available |
+| `GET,GPS,LATITUDE_D,NONE` | Returns latitude in decimal degrees |
+| `GET,GPS,LONGITUDE_D,NONE` | Returns longitude in decimal degrees |
+| `GET,GPS,ALTITUDE_M,NONE` | Returns altitude in meters |
+| `GET,GPS,SPEED_KPH,NONE` | Returns speed in kilometers per hour |
+| `GET,GPS,SATELLITES_N,NONE` | Returns visible satellite count |
 | `SET,GPS,ENABLE,TRUE` | Enables GPS polling and telemetry values |
 | `SET,GPS,ENABLE,FALSE` | Disables GPS polling and clears reported fix values |
 | `SET,GPS,TELEMETRY,ENABLE` | Includes GPS data in periodic telemetry snapshots |
@@ -580,6 +717,7 @@ The status subsystem currently exposes the heartbeat counter reported in periodi
 ### Supported status commands
 
 ```text
+GET,STATUS,NONE,NONE
 GET,STATUS,HEARTBEAT_N,NONE
 ```
 
@@ -587,6 +725,7 @@ GET,STATUS,HEARTBEAT_N,NONE
 
 | Command | Behaviour |
 |---|---|
+| `GET,STATUS,NONE,NONE` | Returns all STATUS telemetry fields |
 | `GET,STATUS,HEARTBEAT_N,NONE` | Returns the current heartbeat counter without incrementing it |
 
 The periodic snapshot always includes `TLM,STATUS,HEARTBEAT_N,<n>` when global telemetry is enabled. The value increments by one for each emitted snapshot and is not controlled by per-target telemetry enable/disable commands.
@@ -602,6 +741,7 @@ SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
 GET,RTC,NONE,NONE
+GET,RTC,TELEMETRY,NONE
 GET,RTC,CURRENT_TIME,NONE
 GET,RTC,SYNC,NONE
 ```
@@ -613,7 +753,8 @@ GET,RTC,SYNC,NONE
 | `SET,RTC,TELEMETRY,ENABLE` | Includes RTC data in periodic telemetry snapshots |
 | `SET,RTC,TELEMETRY,DISABLE` | Omits RTC data from periodic telemetry snapshots |
 | `SET,RTC,CURRENT_TIME,<iso8601-utc>` | Sets the device clock from an ISO UTC timestamp |
-| `GET,RTC,NONE,NONE` | Returns current RTC time and sync state |
+| `GET,RTC,NONE,NONE` | Returns all current RTC telemetry fields |
+| `GET,RTC,TELEMETRY,NONE` | Returns whether RTC telemetry is included in snapshots |
 | `GET,RTC,CURRENT_TIME,NONE` | Returns current RTC time |
 | `GET,RTC,SYNC,NONE` | Returns current RTC sync state |
 
@@ -641,6 +782,7 @@ The clock is considered in sync when the stored timestamp is on or after `2026-0
 Currently implemented:
 
 ```text
+PING,NONE,NONE,NONE
 SET,LED,ENABLE,TRUE
 SET,LED,ENABLE,FALSE
 SET,LED,TELEMETRY,ENABLE
@@ -656,23 +798,45 @@ SET,GPS,ENABLE,TRUE
 SET,GPS,ENABLE,FALSE
 SET,GPS,TELEMETRY,ENABLE
 SET,GPS,TELEMETRY,DISABLE
+SET,TELEMETRY,ENABLE,TRUE
+SET,TELEMETRY,ENABLE,FALSE
 SET,TELEMETRY,TELEMETRY,ENABLE
 SET,TELEMETRY,TELEMETRY,DISABLE
+SET,TELEMETRY,INTERVAL_S,<integer>
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,<iso8601-utc>
+GET,STATUS,NONE,NONE
 GET,STATUS,HEARTBEAT_N,NONE
-SET,TELEMETRY,ENABLE,TRUE
-SET,TELEMETRY,ENABLE,FALSE
-SET,TELEMETRY,INTERVAL_S,<integer>
 GET,LED,NONE,NONE
+GET,LED,TELEMETRY,NONE
+GET,LED,ENABLE,NONE
+GET,LED,STATE,NONE
+GET,LED,COLOR,NONE
 GET,TELEMETRY,NONE,NONE
+GET,TELEMETRY,TELEMETRY,NONE
+GET,TELEMETRY,ENABLE,NONE
+GET,TELEMETRY,INTERVAL_S,NONE
 GET,BATTERY,NONE,NONE
+GET,BATTERY,TELEMETRY,NONE
+GET,BATTERY,AVAILABLE,NONE
+GET,BATTERY,CHARGE_CURRENT_A,NONE
+GET,BATTERY,CHARGE_VOLTAGE_V,NONE
+GET,BATTERY,CHARGE_PERCENT_P,NONE
+GET,BATTERY,VOLTAGE_V,NONE
 GET,GPS,NONE,NONE
+GET,GPS,TELEMETRY,NONE
+GET,GPS,ENABLE,NONE
+GET,GPS,AVAILABLE,NONE
+GET,GPS,LATITUDE_D,NONE
+GET,GPS,LONGITUDE_D,NONE
+GET,GPS,ALTITUDE_M,NONE
+GET,GPS,SPEED_KPH,NONE
+GET,GPS,SATELLITES_N,NONE
 GET,RTC,NONE,NONE
+GET,RTC,TELEMETRY,NONE
 GET,RTC,CURRENT_TIME,NONE
 GET,RTC,SYNC,NONE
-PING,NONE,NONE,NONE
 ```
 
 ---
@@ -723,8 +887,8 @@ Possible responses:
 2026-03-27T12:00:04Z,TLM,GPS,TELEMETRY,TRUE
 2026-03-27T12:00:04Z,TLM,GPS,ENABLE,TRUE
 2026-03-27T12:00:04Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:00:04Z,TLM,GPS,LATITUDE_D,51.5074000
-2026-03-27T12:00:04Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:00:04Z,TLM,GPS,LATITUDE_D,51.50740
+2026-03-27T12:00:04Z,TLM,GPS,LONGITUDE_D,-0.12780
 2026-03-27T12:00:04Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:00:04Z,TLM,GPS,SPEED_KPH,12.40
 2026-03-27T12:00:04Z,TLM,GPS,SATELLITES_N,9

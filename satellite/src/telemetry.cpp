@@ -70,6 +70,38 @@ void setupTelemetry()
   lastTelemetryTime = getUptimeSeconds();
 }
 
+void handleGetTelemetry(const Command &cmd)
+{
+  if (cmd.value != VALUE_NONE)
+  {
+    sendError("BAD_FORMAT");
+    return;
+  }
+
+  switch (cmd.parameter)
+  {
+  case PARAM_NONE:
+    reportTelemetryStatus();
+    break;
+
+  case PARAM_TELEMETRY:
+    sendTelemetry("TELEMETRY", "TELEMETRY", telemetryTelemetryEnabled ? "TRUE" : "FALSE");
+    break;
+
+  case PARAM_ENABLE:
+    sendTelemetry("TELEMETRY", "ENABLE", telemetryEnabled ? "TRUE" : "FALSE");
+    break;
+
+  case PARAM_INTERVAL_S:
+    sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
+    break;
+
+  default:
+    sendError("BAD_PARAMETER");
+    break;
+  }
+}
+
 bool isTargetTelemetryEnabled(TargetType target)
 {
   bool *flag = getTargetTelemetryFlag(target);

@@ -37,6 +37,36 @@ namespace
     battPerc = static_cast<int>(
         (battVolt - batteryEmptyVoltage) * 100.0f / (batteryFullVoltage - batteryEmptyVoltage));
   }
+
+  void reportBatteryTelemetryStatus()
+  {
+    sendTelemetry("BATTERY", "TELEMETRY", isTargetTelemetryEnabled(TARGET_BATTERY) ? "TRUE" : "FALSE");
+  }
+
+  void reportBatteryAvailability(bool batteryConnected)
+  {
+    sendTelemetry("BATTERY", "AVAILABLE", batteryConnected ? "TRUE" : "FALSE");
+  }
+
+  void reportBatteryChargeCurrent(bool batteryConnected)
+  {
+    sendTelemetryFloat("BATTERY", "CHARGE_CURRENT_A", batteryConnected ? PMIC.getChargeCurrent() : 0.0f, 3);
+  }
+
+  void reportBatteryChargeVoltage(bool batteryConnected)
+  {
+    sendTelemetryFloat("BATTERY", "CHARGE_VOLTAGE_V", batteryConnected ? PMIC.getChargeVoltage() : 0.0f, 3);
+  }
+
+  void reportBatteryChargePercent(bool batteryConnected)
+  {
+    sendTelemetryULong("BATTERY", "CHARGE_PERCENT_P", batteryConnected ? static_cast<unsigned long>(battPerc) : 0);
+  }
+
+  void reportBatteryVoltage(bool batteryConnected)
+  {
+    sendTelemetryFloat("BATTERY", "VOLTAGE_V", batteryConnected ? battVolt : 0.0f);
+  }
 }
 
 void setupBattery()
@@ -63,10 +93,60 @@ void reportBatteryStatus()
     updateBatteryValues();
   }
 
-  sendTelemetry("BATTERY", "TELEMETRY", isTargetTelemetryEnabled(TARGET_BATTERY) ? "TRUE" : "FALSE");
-  sendTelemetry("BATTERY", "AVAILABLE", batteryConnected ? "TRUE" : "FALSE");
-  sendTelemetryFloat("BATTERY", "CHARGE_CURRENT_A", batteryConnected ? PMIC.getChargeCurrent() : 0.0f, 3);
-  sendTelemetryFloat("BATTERY", "CHARGE_VOLTAGE_V", batteryConnected ? PMIC.getChargeVoltage() : 0.0f, 3);
-  sendTelemetryULong("BATTERY", "CHARGE_PERCENT_P", batteryConnected ? static_cast<unsigned long>(battPerc) : 0);
-  sendTelemetryFloat("BATTERY", "VOLTAGE_V", batteryConnected ? battVolt : 0.0f);
+  reportBatteryTelemetryStatus();
+  reportBatteryAvailability(batteryConnected);
+  reportBatteryChargeCurrent(batteryConnected);
+  reportBatteryChargeVoltage(batteryConnected);
+  reportBatteryChargePercent(batteryConnected);
+  reportBatteryVoltage(batteryConnected);
+}
+
+void handleGetBattery(const Command &cmd)
+{
+  if (cmd.value != VALUE_NONE)
+  {
+    sendError("BAD_FORMAT");
+    return;
+  }
+
+  const bool batteryConnected = isBatteryConnected();
+  if (batteryConnected)
+  {
+    updateBatteryValues();
+  }
+
+  switch (cmd.parameter)
+  {
+  case PARAM_NONE:
+    reportBatteryStatus();
+    break;
+
+  case PARAM_TELEMETRY:
+    reportBatteryTelemetryStatus();
+    break;
+
+  case PARAM_AVAILABLE:
+    reportBatteryAvailability(batteryConnected);
+    break;
+
+  case PARAM_CHARGE_CURRENT_A:
+    reportBatteryChargeCurrent(batteryConnected);
+    break;
+
+  case PARAM_CHARGE_VOLTAGE_V:
+    reportBatteryChargeVoltage(batteryConnected);
+    break;
+
+  case PARAM_CHARGE_PERCENT_P:
+    reportBatteryChargePercent(batteryConnected);
+    break;
+
+  case PARAM_VOLTAGE_V:
+    reportBatteryVoltage(batteryConnected);
+    break;
+
+  default:
+    sendError("BAD_PARAMETER");
+    break;
+  }
 }

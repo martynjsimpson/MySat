@@ -10,6 +10,7 @@ unsigned long getUptimeSeconds();
 bool getCurrentTimestampIso(char *buffer, size_t bufferSize);
 bool setCurrentTimeIso(const char *isoTimestamp);
 bool isClockSynchronized();
+void reportRtcTelemetryStatus();
 void reportRtcCurrentTime();
 void reportRtcSyncStatus();
 void reportRtcStatus();

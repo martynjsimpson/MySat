@@ -4,6 +4,7 @@
 #include "commands.h"
 
 void setupTelemetry();
+void handleGetTelemetry(const Command &cmd);
 void handleSetTelemetry(const Command &cmd);
 void handleSetTargetTelemetry(const Command &cmd);
 bool isTargetTelemetryEnabled(TargetType target);

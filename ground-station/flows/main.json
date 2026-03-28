@@ -3545,5 +3545,66 @@
                 "375a32f7bbdd7eb6"
             ]
         ]
+    },
+    {
+        "id": "422af41c05a542bd",
+        "type": "ui-dropdown",
+        "z": "3b521b08f4388c2f",
+        "group": "a02eb05c11bee1d4",
+        "name": "",
+        "label": "Select Option:",
+        "tooltip": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "multiple": false,
+        "chips": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "enable",
+                "value": "ENABLE",
+                "type": "str"
+            },
+            {
+                "label": "Latitude",
+                "value": "LATITUDE_D",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 140,
+        "y": 1740,
+        "wires": [
+            [
+                "51704248b4f8e452"
+            ]
+        ]
+    },
+    {
+        "id": "51704248b4f8e452",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get RTC",
+        "func": "let option = String(msg.payload) + \"\\n\";\nmsg.payload = \"GET,GPS,\" + option + \",NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1740,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
     }
 ]

@@ -48,8 +48,8 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 2026-03-27T12:02:20Z,TLM,GPS,TELEMETRY,TRUE
 2026-03-27T12:02:20Z,TLM,GPS,ENABLE,TRUE
 2026-03-27T12:02:20Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:02:20Z,TLM,GPS,LATITUDE_D,48.8583700
-2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:02:20Z,TLM,GPS,LATITUDE_D,48.85837
+2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.12780
 2026-03-27T12:02:20Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:02:20Z,TLM,GPS,SPEED_KPH,12.40
 2026-03-27T12:02:20Z,TLM,GPS,SATELLITES_N,9
@@ -105,7 +105,7 @@ At present, the periodic snapshot includes:
 
 If telemetry for an individual target is disabled, that target is omitted from periodic snapshots until it is re-enabled.
 
-For `LED`, `RTC`, `TELEMETRY`, `BATTERY`, and `GPS`, explicit `GET` commands still return current status even when that target is omitted from periodic snapshots. `STATUS` is always included in periodic snapshots when global telemetry is enabled, and `GET,STATUS,HEARTBEAT_N,NONE` returns the current counter without incrementing it.
+For `LED`, `RTC`, `TELEMETRY`, `BATTERY`, and `GPS`, explicit `GET` commands still return current status even when that target is omitted from periodic snapshots. `GET,<target>,NONE,NONE` returns the full target snapshot, while `GET,<target>,<parameter>,NONE` returns just the requested telemetry line for supported parameters. `STATUS` is always included in periodic snapshots when global telemetry is enabled, and `GET,STATUS,HEARTBEAT_N,NONE` returns the current counter without incrementing it.
 
 Typical snapshot:
 
@@ -127,8 +127,8 @@ Typical snapshot:
 2026-03-27T12:03:20Z,TLM,GPS,TELEMETRY,TRUE
 2026-03-27T12:03:20Z,TLM,GPS,ENABLE,TRUE
 2026-03-27T12:03:20Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:03:20Z,TLM,GPS,LATITUDE_D,48.8583700
-2026-03-27T12:03:20Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:03:20Z,TLM,GPS,LATITUDE_D,48.85837
+2026-03-27T12:03:20Z,TLM,GPS,LONGITUDE_D,-0.12780
 2026-03-27T12:03:20Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:03:20Z,TLM,GPS,SPEED_KPH,12.40
 2026-03-27T12:03:20Z,TLM,GPS,SATELLITES_N,9
@@ -465,8 +465,8 @@ Value type:
 Examples:
 
 ```text
-2026-03-27T12:04:09Z,TLM,GPS,LATITUDE_D,48.8583700
-2026-03-27T12:04:09Z,TLM,GPS,LATITUDE_D,0.0000000
+2026-03-27T12:04:09Z,TLM,GPS,LATITUDE_D,48.85837
+2026-03-27T12:04:09Z,TLM,GPS,LATITUDE_D,0.00000
 ```
 
 ### `GPS,LONGITUDE_D`
@@ -479,8 +479,8 @@ Value type:
 Examples:
 
 ```text
-2026-03-27T12:04:10Z,TLM,GPS,LONGITUDE_D,-0.1278000
-2026-03-27T12:04:10Z,TLM,GPS,LONGITUDE_D,0.0000000
+2026-03-27T12:04:10Z,TLM,GPS,LONGITUDE_D,-0.12780
+2026-03-27T12:04:10Z,TLM,GPS,LONGITUDE_D,0.00000
 ```
 
 ### `GPS,ALTITUDE_M`
@@ -555,8 +555,8 @@ This table is intended for a ground-station developer or future parser implement
 | `GPS` | `TELEMETRY` | Whether GPS data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,TELEMETRY,TRUE` |
 | `GPS` | `ENABLE` | Whether the GPS service is enabled | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,ENABLE,TRUE` |
 | `GPS` | `AVAILABLE` | Whether a recent valid GPS fix is available | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,GPS,AVAILABLE,TRUE` |
-| `GPS` | `LATITUDE_D` | GPS latitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LATITUDE_D,48.8583700` |
-| `GPS` | `LONGITUDE_D` | GPS longitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.1278000` |
+| `GPS` | `LATITUDE_D` | GPS latitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LATITUDE_D,48.85837` |
+| `GPS` | `LONGITUDE_D` | GPS longitude in decimal degrees | float | `2026-03-27T12:02:20Z,TLM,GPS,LONGITUDE_D,-0.12780` |
 | `GPS` | `ALTITUDE_M` | GPS altitude in meters | float | `2026-03-27T12:02:20Z,TLM,GPS,ALTITUDE_M,35.20` |
 | `GPS` | `SPEED_KPH` | GPS speed in kilometers per hour | float | `2026-03-27T12:02:20Z,TLM,GPS,SPEED_KPH,12.40` |
 | `GPS` | `SATELLITES_N` | Number of satellites currently visible to the GPS receiver | unsigned integer | `2026-03-27T12:02:20Z,TLM,GPS,SATELLITES_N,9` |
@@ -651,8 +651,8 @@ A parser should:
 2026-03-27T12:02:10Z,TLM,GPS,TELEMETRY,TRUE
 2026-03-27T12:02:10Z,TLM,GPS,ENABLE,TRUE
 2026-03-27T12:02:10Z,TLM,GPS,AVAILABLE,TRUE
-2026-03-27T12:02:10Z,TLM,GPS,LATITUDE_D,48.8583700
-2026-03-27T12:02:10Z,TLM,GPS,LONGITUDE_D,-0.1278000
+2026-03-27T12:02:10Z,TLM,GPS,LATITUDE_D,48.85837
+2026-03-27T12:02:10Z,TLM,GPS,LONGITUDE_D,-0.12780
 2026-03-27T12:02:10Z,TLM,GPS,ALTITUDE_M,35.20
 2026-03-27T12:02:10Z,TLM,GPS,SPEED_KPH,12.40
 2026-03-27T12:02:10Z,TLM,GPS,SATELLITES_N,9
