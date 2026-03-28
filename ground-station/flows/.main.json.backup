@@ -3,7 +3,7 @@
         "id": "3b521b08f4388c2f",
         "type": "tab",
         "label": "Flow 1",
-        "disabled": false,
+        "disabled": true,
         "info": "",
         "env": []
     },
@@ -304,7 +304,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"ENABLE\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr,\n    statusHeartbeatValue: getValue(\"STATUS\", \"UPTIME_S\"),\n    statusHeartbeatTime: getTime(\"STATUS\", \"UPTIME_S\")\n};\n\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"TELEMETRY\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr,\n    statusHeartbeatValue: getValue(\"STATUS\", \"UPTIME_S\"),\n    statusHeartbeatTime: getTime(\"STATUS\", \"UPTIME_S\")\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -755,7 +755,7 @@
         "finalize": "",
         "libs": [],
         "x": 1070,
-        "y": 800,
+        "y": 900,
         "wires": [
             [
                 "59e5d09d9ab69709"
@@ -808,7 +808,7 @@
         "sizeKeyThickness": "",
         "className": "",
         "x": 1340,
-        "y": 800,
+        "y": 900,
         "wires": [
             []
         ]
@@ -922,7 +922,7 @@
         "action": "replace",
         "className": "",
         "x": 1280,
-        "y": 700,
+        "y": 800,
         "wires": [
             []
         ]
@@ -940,7 +940,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 700,
+        "y": 800,
         "wires": [
             [
                 "74bbce1b31f77c86"
@@ -2104,7 +2104,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 760,
+        "y": 860,
         "wires": [
             [
                 "17cc045685eb838a"
@@ -2133,7 +2133,7 @@
         "action": "replace",
         "className": "",
         "x": 1280,
-        "y": 760,
+        "y": 860,
         "wires": [
             []
         ]
@@ -2708,6 +2708,50 @@
         "valueType": "msg",
         "x": 1300,
         "y": 200,
+        "wires": []
+    },
+    {
+        "id": "d506d2be422b81e6",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract RTC Sync",
+        "func": "msg.payload = msg.payload.rtcSync || \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 680,
+        "wires": [
+            [
+                "dc21974ebd615146"
+            ]
+        ]
+    },
+    {
+        "id": "dc21974ebd615146",
+        "type": "ui-text",
+        "z": "3b521b08f4388c2f",
+        "group": "1f22eb0bf52ef7c6",
+        "order": 7,
+        "width": "4",
+        "height": 1,
+        "name": "",
+        "label": "Clock Sync",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1290,
+        "y": 680,
         "wires": []
     }
 ]
