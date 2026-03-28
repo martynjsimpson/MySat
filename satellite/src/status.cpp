@@ -12,6 +12,11 @@ void setupStatus()
   heartbeatCount = 0;
 }
 
+void reportStatusStarted()
+{
+  sendTelemetry("STATUS", "STARTED", "TRUE");
+}
+
 void reportStatusHeartbeat(bool incrementHeartbeat)
 {
   if (incrementHeartbeat)

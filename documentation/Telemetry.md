@@ -35,6 +35,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 2026-03-27T12:02:20Z,TLM,LED,ENABLE,FALSE
 2026-03-27T12:02:20Z,TLM,LED,STATE,OFF
 2026-03-27T12:02:20Z,TLM,LED,COLOR,GREEN
+2026-03-27T12:02:20Z,TLM,STATUS,STARTED,TRUE
 2026-03-27T12:02:20Z,TLM,STATUS,HEARTBEAT_N,12
 2026-03-27T12:02:20Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:02:20Z,TLM,TELEMETRY,ENABLE,TRUE
@@ -139,6 +140,21 @@ Typical snapshot:
 ## Current Targets and Parameters
 
 ## STATUS target
+
+### `STATUS,STARTED`
+
+Reports that firmware setup completed successfully.
+
+Value type:
+- `TRUE`
+
+Examples:
+
+```text
+2026-03-27T12:03:18Z,TLM,STATUS,STARTED,TRUE
+```
+
+This is a one-time startup event emitted at the end of `setup()`, after the firmware first emits `STATUS,HEARTBEAT_N,0`. It is not part of the periodic telemetry snapshot and is not queryable via `GET`.
 
 ### `STATUS,HEARTBEAT_N`
 
@@ -539,6 +555,7 @@ This table is intended for a ground-station developer or future parser implement
 | `LED` | `TELEMETRY` | Whether LED data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,LED,TELEMETRY,TRUE` |
 | `LED` | `STATE` | Current LED output state | `ON` / `OFF` | `2026-03-27T12:02:20Z,TLM,LED,STATE,OFF` |
 | `LED` | `COLOR` | Current selected LED color | `RED` / `GREEN` / `BLUE` | `2026-03-27T12:02:20Z,TLM,LED,COLOR,GREEN` |
+| `STATUS` | `STARTED` | One-time boot-complete event emitted at the end of `setup()` | `TRUE` | `2026-03-27T12:03:18Z,TLM,STATUS,STARTED,TRUE` |
 | `STATUS` | `HEARTBEAT_N` | Heartbeat counter incremented once per periodic snapshot | unsigned integer | `2026-03-27T12:02:20Z,TLM,STATUS,HEARTBEAT_N,12` |
 | `RTC` | `TELEMETRY` | Whether RTC data is included in periodic snapshots | `TRUE` / `FALSE` | `2026-03-27T12:02:20Z,TLM,RTC,TELEMETRY,TRUE` |
 | `RTC` | `CURRENT_TIME` | Current device UTC time | ISO UTC string | `2026-03-27T12:02:20Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:02:20Z` |
@@ -593,6 +610,7 @@ or, if keeping history:
 | `LED,TELEMETRY` | LED telemetry enabled indicator |
 | `LED,STATE` | on/off icon or status badge |
 | `LED,COLOR` | color label or swatch |
+| `STATUS,STARTED` | boot-complete event marker |
 | `STATUS,HEARTBEAT_N` | heartbeat counter and last-heartbeat freshness indicator |
 | `RTC,TELEMETRY` | RTC telemetry enabled indicator |
 | `RTC,CURRENT_TIME` | device time display |
@@ -638,6 +656,7 @@ A parser should:
 2026-03-27T12:01:40Z,TLM,LED,ENABLE,FALSE
 2026-03-27T12:01:40Z,TLM,LED,STATE,OFF
 2026-03-27T12:01:40Z,TLM,LED,COLOR,GREEN
+2026-03-27T12:01:45Z,TLM,STATUS,STARTED,TRUE
 2026-03-27T12:01:50Z,TLM,STATUS,HEARTBEAT_N,7
 2026-03-27T12:01:50Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:01:50Z,TLM,TELEMETRY,ENABLE,TRUE

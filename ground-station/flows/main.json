@@ -3,7 +3,7 @@
         "id": "3b521b08f4388c2f",
         "type": "tab",
         "label": "Flow 1",
-        "disabled": false,
+        "disabled": true,
         "info": "",
         "env": []
     },
@@ -2040,65 +2040,6 @@
         ]
     },
     {
-        "id": "75d89644b6648243",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "send Error",
-        "func": "msg.payload = \"PING,TEST,NONE,NONE\\n\";\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 370,
-        "y": 300,
-        "wires": [
-            [
-                "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "80f7dae0ec2b017d",
-        "type": "ui-button",
-        "z": "3b521b08f4388c2f",
-        "group": "0c10ce94c624bca1",
-        "name": "",
-        "label": "Gen Error",
-        "order": 7,
-        "width": "4",
-        "height": "1",
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 180,
-        "y": 300,
-        "wires": [
-            [
-                "75d89644b6648243"
-            ]
-        ]
-    },
-    {
         "id": "1548f4b860c06079",
         "type": "function",
         "z": "3b521b08f4388c2f",
@@ -3919,6 +3860,65 @@
         "wires": [
             [
                 "cdda8c29f1dc0e57"
+            ]
+        ]
+    },
+    {
+        "id": "4dcfcdf209f856a5",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send RESET",
+        "func": "msg.payload = \"RESET,NONE,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 300,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "91dbdc582d83626d",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "0c10ce94c624bca1",
+        "name": "",
+        "label": "Reset",
+        "order": 7,
+        "width": "4",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "red",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 300,
+        "wires": [
+            [
+                "4dcfcdf209f856a5"
             ]
         ]
     }

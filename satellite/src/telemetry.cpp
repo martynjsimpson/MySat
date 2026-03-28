@@ -191,6 +191,11 @@ void reportTelemetryStatus()
   sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
 }
 
+void resetTelemetrySchedule()
+{
+  lastTelemetryTime = getUptimeSeconds();
+}
+
 void sendTelemetrySnapshot()
 {
   reportStatusHeartbeat(true);

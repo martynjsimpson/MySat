@@ -261,6 +261,22 @@ namespace
     }
   }
 
+  void handleReset(const Command &cmd)
+  {
+    if (cmd.target != TARGET_NONE ||
+        cmd.parameter != PARAM_NONE ||
+        cmd.value != VALUE_NONE)
+    {
+      sendError("BAD_FORMAT");
+      return;
+    }
+
+    sendAck("RESET", "REBOOT");
+    Serial.flush();
+    delay(50);
+    NVIC_SystemReset();
+  }
+
   void executeCommand(const Command &cmd)
   {
     switch (cmd.type)
@@ -275,6 +291,10 @@ namespace
 
     case CMD_PING:
       handlePing(cmd);
+      break;
+
+    case CMD_RESET:
+      handleReset(cmd);
       break;
 
     default:
@@ -371,35 +391,4 @@ void readSerialCommands()
 void setupProtocol()
 {
   inputPos = 0;
-
-  Serial.println("READY");
-  Serial.println("Commands:");
-  Serial.println("SET,LED,ENABLE,TRUE");
-  Serial.println("SET,LED,ENABLE,FALSE");
-  Serial.println("SET,LED,TELEMETRY,ENABLE");
-  Serial.println("SET,LED,TELEMETRY,DISABLE");
-  Serial.println("SET,LED,STATE,ON");
-  Serial.println("SET,LED,STATE,OFF");
-  Serial.println("SET,LED,COLOR,RED");
-  Serial.println("SET,LED,COLOR,GREEN");
-  Serial.println("SET,LED,COLOR,BLUE");
-  Serial.println("SET,BATTERY,TELEMETRY,ENABLE");
-  Serial.println("SET,BATTERY,TELEMETRY,DISABLE");
-  Serial.println("SET,GPS,ENABLE,TRUE");
-  Serial.println("SET,GPS,ENABLE,FALSE");
-  Serial.println("GET,GPS,NONE,NONE");
-  Serial.println("SET,TELEMETRY,TELEMETRY,ENABLE");
-  Serial.println("SET,TELEMETRY,TELEMETRY,DISABLE");
-  Serial.println("SET,RTC,TELEMETRY,ENABLE");
-  Serial.println("SET,RTC,TELEMETRY,DISABLE");
-  Serial.println("SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z");
-  Serial.println("SET,TELEMETRY,ENABLE,TRUE");
-  Serial.println("SET,TELEMETRY,ENABLE,FALSE");
-  Serial.println("SET,TELEMETRY,INTERVAL_S,5");
-  Serial.println("GET,LED,NONE,NONE");
-  Serial.println("GET,TELEMETRY,NONE,NONE");
-  Serial.println("GET,BATTERY,NONE,NONE");
-  Serial.println("GET,RTC,NONE,NONE");
-  Serial.println("GET,STATUS,HEARTBEAT_N,NONE");
-  Serial.println("PING,NONE,NONE,NONE");
 }
