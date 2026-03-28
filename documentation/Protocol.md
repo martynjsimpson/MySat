@@ -60,7 +60,7 @@ SET,BATTERY,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
-GET,STATUS,UPTIME_S,NONE
+GET,STATUS,HEARTBEAT_N,NONE
 GET,LED,NONE,NONE
 GET,TELEMETRY,NONE,NONE
 GET,BATTERY,NONE,NONE
@@ -176,7 +176,7 @@ Examples:
 2026-03-27T12:00:40Z,TLM,LED,TELEMETRY,TRUE
 2026-03-27T12:00:40Z,TLM,LED,STATE,OFF
 2026-03-27T12:00:40Z,TLM,LED,COLOR,GREEN
-2026-03-27T12:00:40Z,TLM,STATUS,UPTIME_S,12
+2026-03-27T12:00:40Z,TLM,STATUS,HEARTBEAT_N,12
 2026-03-27T12:00:40Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:00:40Z,TLM,TELEMETRY,ENABLE,TRUE
 2026-03-27T12:00:40Z,TLM,TELEMETRY,INTERVAL_S,5
@@ -246,7 +246,7 @@ Examples:
 | `ENABLE` | Whether a feature or subsystem is allowed to operate |
 | `TELEMETRY` | Whether periodic telemetry for a target is included in snapshots |
 | `CURRENT_TIME` | The device's current UTC date/time |
-| `UPTIME_S` | Heartbeat counter/status uptime sample |
+| `HEARTBEAT_N` | Heartbeat sequence counter |
 | `SYNC` | Whether the device clock is considered in sync |
 | `STATE` | Current state of a target |
 | `COLOR` | Selected symbolic color for a target |
@@ -379,7 +379,7 @@ SET,LED,TELEMETRY,DISABLE
 SET,BATTERY,TELEMETRY,ENABLE
 SET,TELEMETRY,TELEMETRY,DISABLE
 TLM,LED,TELEMETRY,FALSE
-GET,STATUS,UPTIME_S,NONE
+GET,STATUS,HEARTBEAT_N,NONE
 ```
 
 ### When to use `CURRENT_TIME` and `SYNC`
@@ -532,16 +532,16 @@ The status subsystem currently exposes the heartbeat counter reported in periodi
 ### Supported status commands
 
 ```text
-GET,STATUS,UPTIME_S,NONE
+GET,STATUS,HEARTBEAT_N,NONE
 ```
 
 ### Status rules
 
 | Command | Behaviour |
 |---|---|
-| `GET,STATUS,UPTIME_S,NONE` | Returns the current heartbeat counter without incrementing it |
+| `GET,STATUS,HEARTBEAT_N,NONE` | Returns the current heartbeat counter without incrementing it |
 
-The periodic snapshot always includes `TLM,STATUS,UPTIME_S,<n>` when global telemetry is enabled. The value increments by one for each emitted snapshot and is not controlled by per-target telemetry enable/disable commands.
+The periodic snapshot always includes `TLM,STATUS,HEARTBEAT_N,<n>` when global telemetry is enabled. The value increments by one for each emitted snapshot and is not controlled by per-target telemetry enable/disable commands.
 
 ## RTC target
 
@@ -609,7 +609,7 @@ SET,TELEMETRY,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,<iso8601-utc>
-GET,STATUS,UPTIME_S,NONE
+GET,STATUS,HEARTBEAT_N,NONE
 SET,TELEMETRY,ENABLE,TRUE
 SET,TELEMETRY,ENABLE,FALSE
 SET,TELEMETRY,INTERVAL_S,<integer>
@@ -637,7 +637,7 @@ SET,LED,COLOR,RED
 SET,TELEMETRY,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
-GET,STATUS,UPTIME_S,NONE
+GET,STATUS,HEARTBEAT_N,NONE
 GET,LED,NONE,NONE
 SET,TELEMETRY,INTERVAL_S,10
 GET,TELEMETRY,NONE,NONE
@@ -656,9 +656,9 @@ Possible responses:
 2026-03-27T12:00:00Z,ACK,TELEMETRY,TELEMETRY_DISABLE
 2026-03-27T12:00:00Z,ACK,RTC,TELEMETRY_DISABLE
 2026-03-27T12:00:00Z,ACK,RTC,CURRENT_TIME
-2026-03-27T12:00:00Z,TLM,STATUS,UPTIME_S,0
+2026-03-27T12:00:00Z,TLM,STATUS,HEARTBEAT_N,0
 2026-03-27T12:00:01Z,ACK,TELEMETRY,INTERVAL_S
-2026-03-27T12:00:02Z,TLM,STATUS,UPTIME_S,1
+2026-03-27T12:00:02Z,TLM,STATUS,HEARTBEAT_N,1
 2026-03-27T12:00:03Z,TLM,BATTERY,TELEMETRY,TRUE
 2026-03-27T12:00:03Z,TLM,BATTERY,AVAILABLE,TRUE
 2026-03-27T12:00:03Z,TLM,BATTERY,CHARGE_CURRENT_A,0.500

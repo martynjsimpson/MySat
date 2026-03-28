@@ -76,56 +76,6 @@
         }
     },
     {
-        "id": "3910494bd8aa444c",
-        "type": "ui-page",
-        "name": "Ground Station",
-        "ui": "d0f6c0df3d6bbbec",
-        "path": "/page1",
-        "icon": "home",
-        "layout": "grid",
-        "theme": "5b53033ae39ab468",
-        "breakpoints": [
-            {
-                "name": "Default",
-                "px": "0",
-                "cols": "3"
-            },
-            {
-                "name": "Tablet",
-                "px": "576",
-                "cols": "6"
-            },
-            {
-                "name": "Small Desktop",
-                "px": "768",
-                "cols": "9"
-            },
-            {
-                "name": "Desktop",
-                "px": "1024",
-                "cols": "12"
-            }
-        ],
-        "order": 2,
-        "className": "",
-        "visible": true,
-        "disabled": false
-    },
-    {
-        "id": "27f54bb6a6a84aaa",
-        "type": "ui-group",
-        "name": "Group 1",
-        "page": "3910494bd8aa444c",
-        "width": 6,
-        "height": 1,
-        "order": 1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
         "id": "f97e68d451736993",
         "type": "ui-page",
         "name": "Mission Control",
@@ -304,7 +254,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    rtcTelemetry: getValue(\"RTC\", \"TELEMETRY\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"TELEMETRY\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr,\n    statusHeartbeatValue: getValue(\"STATUS\", \"UPTIME_S\"),\n    statusHeartbeatTime: getTime(\"STATUS\", \"UPTIME_S\")\n};\n\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    rtcTelemetry: getValue(\"RTC\", \"TELEMETRY\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"TELEMETRY\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr,\n    statusHeartbeatValue: getValue(\"STATUS\", \"HEARTBEAT_N\"),\n    statusHeartbeatTime: getTime(\"STATUS\", \"HEARTBEAT_N\")\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -321,7 +271,6 @@
                 "0b2ea32d4b67bf0d",
                 "40b71589d101899b",
                 "ce81e4884bf62a13",
-                "05128a24ed57fb61",
                 "cbf9be1a32b5b38a",
                 "7b54df25ad4ef61f",
                 "c720218d514f0575",
@@ -521,7 +470,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 380,
+        "y": 260,
         "wires": [
             [
                 "a407349444f312cf"
@@ -740,7 +689,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 170,
-        "y": 380,
+        "y": 260,
         "wires": [
             [
                 "9331f758d9c225ed"
@@ -814,33 +763,6 @@
         "className": "",
         "x": 1340,
         "y": 1100,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "05128a24ed57fb61",
-        "type": "ui-table",
-        "z": "3b521b08f4388c2f",
-        "group": "27f54bb6a6a84aaa",
-        "name": "Last 10 TLM",
-        "label": "",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "maxrows": "10",
-        "passthru": false,
-        "autocols": true,
-        "showSearch": true,
-        "deselect": true,
-        "selectionType": "none",
-        "columns": [],
-        "mobileBreakpoint": "sm",
-        "mobileBreakpointType": "defaults",
-        "action": "replace",
-        "className": "",
-        "x": 1010,
-        "y": 540,
         "wires": [
             []
         ]
@@ -2216,7 +2138,7 @@
         "group": "0c10ce94c624bca1",
         "name": "",
         "label": "Gen Error",
-        "order": 6,
+        "order": 7,
         "width": "4",
         "height": "1",
         "emulateClick": false,
@@ -2240,7 +2162,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 180,
+        "x": 160,
         "y": 340,
         "wires": [
             [
@@ -2305,7 +2227,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 1480,
+        "y": 380,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2340,7 +2262,7 @@
         "group": "0c10ce94c624bca1",
         "name": "Send custCommand",
         "label": "Send",
-        "order": 8,
+        "order": 9,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -2379,8 +2301,8 @@
         "group": "0c10ce94c624bca1",
         "name": "custCommand",
         "label": "Custom Command",
-        "order": 7,
-        "width": "3",
+        "order": 8,
+        "width": "4",
         "height": "1",
         "topic": "topic",
         "topicType": "msg",
@@ -2398,7 +2320,7 @@
         "iconPosition": "left",
         "iconInnerPosition": "inside",
         "x": 140,
-        "y": 1480,
+        "y": 380,
         "wires": [
             [
                 "0370a1a51410027a"
@@ -2414,7 +2336,7 @@
         "width": "2",
         "height": 1,
         "name": "",
-        "label": "TLM Telemetry Enabled",
+        "label": "TLM Telemetry",
         "format": "{{msg.payload}}",
         "layout": "col-center",
         "style": false,
@@ -2425,7 +2347,7 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1330,
+        "x": 1300,
         "y": 420,
         "wires": []
     },
@@ -2937,5 +2859,64 @@
         "x": 1300,
         "y": 960,
         "wires": []
+    },
+    {
+        "id": "089c3ef6e90e9473",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get Status",
+        "func": "msg.payload = \"GET,STATUS,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 300,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "fc394b82c03ca94d",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "0c10ce94c624bca1",
+        "name": "",
+        "label": "Get Status",
+        "order": 6,
+        "width": "4",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "089c3ef6e90e9473"
+            ]
+        ]
     }
 ]

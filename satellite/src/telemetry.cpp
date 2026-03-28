@@ -167,7 +167,7 @@ void reportStatusHeartbeat(bool incrementHeartbeat)
     ++heartbeatCount;
   }
 
-  sendTelemetryULong("STATUS", "UPTIME_S", heartbeatCount);
+  sendTelemetryULong("STATUS", "HEARTBEAT_N", heartbeatCount);
 }
 
 void sendTelemetrySnapshot()
