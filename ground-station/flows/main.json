@@ -3025,7 +3025,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
-        "order": 4,
+        "order": 6,
         "width": "2",
         "height": 1,
         "name": "",
@@ -3069,7 +3069,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
-        "order": 5,
+        "order": 7,
         "width": "2",
         "height": 1,
         "name": "",
@@ -3113,7 +3113,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
-        "order": 7,
+        "order": 9,
         "width": "2",
         "height": 1,
         "name": "",
@@ -3157,7 +3157,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
-        "order": 8,
+        "order": 10,
         "width": "2",
         "height": 1,
         "name": "",
@@ -3189,7 +3189,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1540,
+        "y": 1660,
         "wires": [
             [
                 "a407349444f312cf"
@@ -3203,7 +3203,7 @@
         "group": "a02eb05c11bee1d4",
         "name": "",
         "label": "GPS TLM Enable",
-        "order": 2,
+        "order": 4,
         "width": "2",
         "height": "1",
         "emulateClick": false,
@@ -3228,7 +3228,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1540,
+        "y": 1660,
         "wires": [
             [
                 "105a93f091bf072b"
@@ -3248,7 +3248,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1580,
+        "y": 1700,
         "wires": [
             [
                 "a407349444f312cf"
@@ -3262,7 +3262,7 @@
         "group": "a02eb05c11bee1d4",
         "name": "",
         "label": "GPS TLM Disable",
-        "order": 3,
+        "order": 5,
         "width": "2",
         "height": "1",
         "emulateClick": false,
@@ -3287,7 +3287,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1580,
+        "y": 1700,
         "wires": [
             [
                 "b5ad1afa06be4a91"
@@ -3319,7 +3319,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
-        "order": 9,
+        "order": 11,
         "width": "2",
         "height": 1,
         "name": "",
@@ -3363,7 +3363,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
-        "order": 10,
+        "order": 12,
         "width": "2",
         "height": 1,
         "name": "",
@@ -3459,7 +3459,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
-        "order": 6,
+        "order": 8,
         "width": "2",
         "height": 1,
         "name": "",
@@ -3477,5 +3477,123 @@
         "x": 1300,
         "y": 1420,
         "wires": []
+    },
+    {
+        "id": "dc305f410e85ee53",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send GPS Enable",
+        "func": "msg.payload = \"SET,GPS,ENABLE,TRUE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1540,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "5edb44ceb3b3b1ee",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "a02eb05c11bee1d4",
+        "name": "",
+        "label": "GPS Enable",
+        "order": 2,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 150,
+        "y": 1540,
+        "wires": [
+            [
+                "dc305f410e85ee53"
+            ]
+        ]
+    },
+    {
+        "id": "375a32f7bbdd7eb6",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send GPS Disable",
+        "func": "msg.payload = \"SET,GPS,ENABLE,FALSE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1580,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "cfbab3af6a622097",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "a02eb05c11bee1d4",
+        "name": "",
+        "label": "GPS Disable",
+        "order": 3,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 150,
+        "y": 1580,
+        "wires": [
+            [
+                "375a32f7bbdd7eb6"
+            ]
+        ]
     }
 ]

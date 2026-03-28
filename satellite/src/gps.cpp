@@ -20,6 +20,8 @@ namespace
   unsigned long lastFixMillis = 0;
 
   const unsigned long gpsFixTimeoutMs = 10000;
+  const float stationarySpeedThresholdKph = 1.0f;
+  const int gpsCoordinateDecimalPlaces = 5; // 1 = ~11 km, 2 = ~1.1 km, 3 = ~110m, 4 = ~11m, 5 = ~1.1m, 6 = ~11cm, 7 = ~1.1cm. >5 = jitter
 
   void clearGpsValues()
   {
@@ -56,6 +58,10 @@ void updateGps()
     longitudeDeg = GPS.longitude();
     altitudeM = GPS.altitude();
     speedKph = GPS.speed();
+    if (speedKph < stationarySpeedThresholdKph)
+    {
+      speedKph = 0.0f;
+    }
     satellitesVisible = GPS.satellites();
     lastFixMillis = millis();
     gpsFixAvailable = true;
@@ -106,8 +112,8 @@ void reportGpsStatus()
   sendTelemetry("GPS", "TELEMETRY", isTargetTelemetryEnabled(TARGET_GPS) ? "TRUE" : "FALSE");
   sendTelemetry("GPS", "ENABLE", gpsEnabled ? "TRUE" : "FALSE");
   sendTelemetry("GPS", "AVAILABLE", gpsFixAvailable ? "TRUE" : "FALSE");
-  sendTelemetryFloat("GPS", "LATITUDE_D", gpsFixAvailable ? latitudeDeg : 0.0f, 7);
-  sendTelemetryFloat("GPS", "LONGITUDE_D", gpsFixAvailable ? longitudeDeg : 0.0f, 7);
+  sendTelemetryFloat("GPS", "LATITUDE_D", gpsFixAvailable ? latitudeDeg : 0.0f, gpsCoordinateDecimalPlaces);
+  sendTelemetryFloat("GPS", "LONGITUDE_D", gpsFixAvailable ? longitudeDeg : 0.0f, gpsCoordinateDecimalPlaces);
   sendTelemetryFloat("GPS", "ALTITUDE_M", gpsFixAvailable ? altitudeM : 0.0f, 2);
   sendTelemetryFloat("GPS", "SPEED_KPH", gpsFixAvailable ? speedKph : 0.0f, 2);
   sendTelemetryULong("GPS", "SATELLITES_N", gpsFixAvailable ? static_cast<unsigned long>(satellitesVisible) : 0);
