@@ -45,6 +45,9 @@ namespace Config
     constexpr uint8_t syncThresholdSecond = 0;
 
     constexpr bool defaultAutoSyncFromGps = true;
+    constexpr unsigned long driftCheckIntervalSeconds = 600;
+    constexpr unsigned long minResyncIntervalSeconds = 3600;
+    constexpr unsigned long driftResyncThresholdSeconds = 1;
   }
 
   namespace Led

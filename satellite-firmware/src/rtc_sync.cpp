@@ -6,6 +6,9 @@
 namespace
 {
   bool autoSyncRtcFromGps = Config::Rtc::defaultAutoSyncFromGps;
+  unsigned long lastDriftCheckUptimeSeconds = 0;
+  unsigned long lastRtcResyncUptimeSeconds = 0;
+  bool driftResyncPending = false;
 
   void emitRtcSyncTelemetryIfTransitioned(bool wasClockSynchronized)
   {
@@ -14,27 +17,78 @@ namespace
       reportRtcSyncStatus();
     }
   }
+
+  unsigned long absoluteDifferenceSeconds(unsigned long lhs, unsigned long rhs)
+  {
+    return lhs > rhs ? (lhs - rhs) : (rhs - lhs);
+  }
 }
 
 void handleRtcAutoSync()
 {
-  // Once the clock is considered synchronized we stop re-applying GPS time on
-  // every loop iteration and leave any later adjustments to explicit RTC writes.
-  if (!autoSyncRtcFromGps || isClockSynchronized())
+  if (!autoSyncRtcFromGps)
   {
     return;
   }
 
+  const unsigned long now = getUptimeSeconds();
   unsigned long gpsEpochSeconds = 0;
   if (!getGpsTimeUnix(gpsEpochSeconds))
   {
+    driftResyncPending = false;
     return;
   }
 
   const bool wasClockSynchronized = isClockSynchronized();
+  if (!wasClockSynchronized)
+  {
+    if (setCurrentTimeUnix(gpsEpochSeconds))
+    {
+      lastRtcResyncUptimeSeconds = now;
+      emitRtcSyncTelemetryIfTransitioned(wasClockSynchronized);
+    }
+    return;
+  }
+
+  if ((now - lastDriftCheckUptimeSeconds) < Config::Rtc::driftCheckIntervalSeconds)
+  {
+    return;
+  }
+  lastDriftCheckUptimeSeconds = now;
+
+  unsigned long rtcEpochSeconds = 0;
+  if (!getCurrentTimeUnix(rtcEpochSeconds))
+  {
+    driftResyncPending = false;
+    return;
+  }
+
+  const unsigned long driftSeconds = absoluteDifferenceSeconds(rtcEpochSeconds, gpsEpochSeconds);
+  if (driftSeconds <= Config::Rtc::driftResyncThresholdSeconds)
+  {
+    driftResyncPending = false;
+    return;
+  }
+
+  if ((now - lastRtcResyncUptimeSeconds) < Config::Rtc::minResyncIntervalSeconds)
+  {
+    driftResyncPending = false;
+    return;
+  }
+
+  // Require the drift threshold to be exceeded on two scheduled checks before
+  // rewriting the RTC so a single second-boundary sample does not trigger a correction.
+  if (!driftResyncPending)
+  {
+    driftResyncPending = true;
+    return;
+  }
+
   if (setCurrentTimeUnix(gpsEpochSeconds))
   {
-    emitRtcSyncTelemetryIfTransitioned(wasClockSynchronized);
+    lastRtcResyncUptimeSeconds = now;
+    driftResyncPending = false;
+    reportRtcCurrentTime();
   }
 }
 

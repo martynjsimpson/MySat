@@ -35,7 +35,11 @@
 ## Behavior Notes
 
 - `RTC,SYNC,TRUE` is emitted immediately when the clock transitions from unsynchronised to synchronised.
-- GPS auto-sync is also present in firmware as a config-controlled behavior.
+- GPS auto-sync is present in firmware as a config-controlled behavior.
+- While unsynchronised, the firmware will set the RTC from GPS as soon as valid GPS time is available.
+- Once synchronised, the firmware checks for RTC drift against GPS on a fixed interval instead of every loop iteration.
+- A drift correction is only applied if the RTC differs from GPS by more than one second, the condition is observed on two consecutive scheduled checks, and the minimum resync cooldown has elapsed.
+- When an automatic drift correction is applied, the firmware emits `RTC,CURRENT_TIME` telemetry immediately so the ground side can observe the adjustment.
 - `SET,RTC,SYNC,GPS` returns `ERR,GPS_TIME_UNAVAILABLE` if valid GPS time is not available.
 - `GET` works even when RTC periodic telemetry is disabled.
 

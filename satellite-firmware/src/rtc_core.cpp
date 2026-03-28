@@ -184,6 +184,24 @@ namespace
     dt.second = rtc.getSeconds();
     return dt;
   }
+
+  unsigned long daysSinceUnixEpoch(const RtcDateTime &dt)
+  {
+    unsigned long days = 0;
+
+    for (uint16_t year = 1970; year < dt.year; ++year)
+    {
+      days += isLeapYear(year) ? 366UL : 365UL;
+    }
+
+    for (uint8_t month = 1; month < dt.month; ++month)
+    {
+      days += daysInMonth(dt.year, month);
+    }
+
+    days += static_cast<unsigned long>(dt.day - 1);
+    return days;
+  }
 }
 
 void setupRtc()
@@ -220,6 +238,23 @@ bool getCurrentTimestampIso(char *buffer, size_t bufferSize)
       dt.second);
 
   return written > 0 && static_cast<size_t>(written) < bufferSize;
+}
+
+bool getCurrentTimeUnix(unsigned long &epochSeconds)
+{
+  const RtcDateTime dt = getRtcDateTime();
+
+  if (!isValidDateTime(dt) || dt.year < 1970)
+  {
+    return false;
+  }
+
+  const unsigned long days = daysSinceUnixEpoch(dt);
+  epochSeconds = (days * 86400UL) +
+                 (static_cast<unsigned long>(dt.hour) * 3600UL) +
+                 (static_cast<unsigned long>(dt.minute) * 60UL) +
+                 static_cast<unsigned long>(dt.second);
+  return true;
 }
 
 bool setCurrentTimeIso(const char *isoTimestamp)
