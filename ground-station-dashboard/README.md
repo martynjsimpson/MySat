@@ -2,7 +2,7 @@
 
 Node-RED based ground station for MySat.
 
-This directory is the source-controlled home of the ground-station prototype. The canonical flow file is [flows/main.json](./flows/main.json), and the local Node-RED settings file points the runtime at that flow directly.
+This directory is the source-controlled home of the ground-station dashboard prototype. The canonical flow file is [flows/main.json](./flows/main.json), and the local Node-RED settings file points the runtime at that flow directly.
 
 ## Requirements
 
@@ -35,9 +35,9 @@ npm run start
 
 This starts Node-RED with:
 
-- `ground-station/` as the user directory
-- `ground-station/settings.js` as the settings file
-- `ground-station/flows/main.json` as the active flow file
+- `ground-station-dashboard/` as the user directory
+- `ground-station-dashboard/settings.js` as the settings file
+- `ground-station-dashboard/flows/main.json` as the active flow file
 
 If you want stable encrypted credentials across machines or reinstalls, set `NODE_RED_CREDENTIAL_SECRET` before starting Node-RED.
 

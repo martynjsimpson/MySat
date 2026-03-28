@@ -1,5 +1,5 @@
 {
-  "name": "ground-station",
+  "name": "ground-station-dashboard",
   "version": "1.0.0",
   "description": "Node-RED ground station prototype for MySat",
   "private": true,
@@ -9,7 +9,7 @@
   },
   "keywords": [
     "node-red",
-    "ground-station",
+    "ground-station-dashboard",
     "telemetry",
     "cubesat"
   ],
