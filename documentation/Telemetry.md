@@ -282,6 +282,8 @@ Examples:
 2000-01-01T00:00:05Z,TLM,RTC,SYNC,FALSE
 ```
 
+This value becomes `TRUE` after a successful `SET,RTC,CURRENT_TIME,<iso8601-utc>` or `SET,RTC,SYNC,GPS`.
+
 ---
 
 ## TELEMETRY target

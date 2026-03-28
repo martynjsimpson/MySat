@@ -9,6 +9,7 @@ void setupRtc();
 unsigned long getUptimeSeconds();
 bool getCurrentTimestampIso(char *buffer, size_t bufferSize);
 bool setCurrentTimeIso(const char *isoTimestamp);
+bool setCurrentTimeUnix(unsigned long epochSeconds);
 bool isClockSynchronized();
 void reportRtcTelemetryStatus();
 void reportRtcCurrentTime();

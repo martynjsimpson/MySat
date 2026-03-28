@@ -64,6 +64,7 @@ SET,GPS,TELEMETRY,DISABLE
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
+SET,RTC,SYNC,GPS
 GET,STATUS,HEARTBEAT_N,NONE
 GET,LED,STATE,NONE
 GET,LED,NONE,NONE
@@ -753,6 +754,7 @@ The RTC subsystem exposes the device's current UTC clock value and whether that 
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
+SET,RTC,SYNC,GPS
 GET,RTC,NONE,NONE
 GET,RTC,TELEMETRY,NONE
 GET,RTC,CURRENT_TIME,NONE
@@ -766,12 +768,15 @@ GET,RTC,SYNC,NONE
 | `SET,RTC,TELEMETRY,ENABLE` | Includes RTC data in periodic telemetry snapshots |
 | `SET,RTC,TELEMETRY,DISABLE` | Omits RTC data from periodic telemetry snapshots |
 | `SET,RTC,CURRENT_TIME,<iso8601-utc>` | Sets the device clock from an ISO UTC timestamp |
+| `SET,RTC,SYNC,GPS` | Sets the device clock from the latest available GPS UTC time |
 | `GET,RTC,NONE,NONE` | Returns all current RTC telemetry fields |
 | `GET,RTC,TELEMETRY,NONE` | Returns whether RTC telemetry is included in snapshots |
 | `GET,RTC,CURRENT_TIME,NONE` | Returns current RTC time |
 | `GET,RTC,SYNC,NONE` | Returns current RTC sync state |
 
 The clock is considered in sync when the stored timestamp is on or after `2026-03-27T00:00:00Z`.
+
+If `SET,RTC,SYNC,GPS` is requested before GPS UTC time is available, the firmware returns `GPS_TIME_UNAVAILABLE`.
 
 ---
 
@@ -784,6 +789,7 @@ The clock is considered in sync when the stored timestamp is on or after `2026-0
 | `BAD_PARAMETER` | Parameter was invalid for the given target |
 | `UNKNOWN_CMD` | Command token was not recognised |
 | `UNKNOWN_TARGET` | Target token was not recognised |
+| `GPS_TIME_UNAVAILABLE` | GPS UTC time was not available when GPS RTC sync was requested |
 | `LED_DISABLED` | LED was commanded on while disabled |
 | `OVERFLOW` | Input buffer overflowed before newline was received |
 | `RTC_READ_FAILED` | RTC timestamp could not be formatted for output |
@@ -820,6 +826,7 @@ SET,TELEMETRY,INTERVAL_S,<integer>
 SET,RTC,TELEMETRY,ENABLE
 SET,RTC,TELEMETRY,DISABLE
 SET,RTC,CURRENT_TIME,<iso8601-utc>
+SET,RTC,SYNC,GPS
 GET,STATUS,NONE,NONE
 GET,STATUS,HEARTBEAT_N,NONE
 GET,LED,NONE,NONE
