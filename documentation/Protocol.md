@@ -778,6 +778,12 @@ The clock is considered in sync when the stored timestamp is on or after `2026-0
 
 If `SET,RTC,SYNC,GPS` is requested before GPS UTC time is available, the firmware returns `GPS_TIME_UNAVAILABLE`.
 
+When the RTC transitions from unsynchronized to synchronized, the firmware also emits an immediate telemetry line:
+
+```text
+TIME,TLM,RTC,SYNC,TRUE
+```
+
 ---
 
 ## Error Codes

@@ -27,6 +27,7 @@ namespace
 
   const RtcDateTime initialDateTime = {2000, 1, 1, 0, 0, 0};
   const RtcDateTime syncThreshold = {2026, 3, 27, 0, 0, 0};
+  bool autoSyncRtcFromGps = true;
 
   bool isLeapYear(uint16_t year)
   {
@@ -173,6 +174,14 @@ namespace
     dt.second = rtc.getSeconds();
     return dt;
   }
+
+  void emitRtcSyncTelemetryIfTransitioned(bool wasClockSynchronized)
+  {
+    if (!wasClockSynchronized && clockSynchronized)
+    {
+      reportRtcSyncStatus();
+    }
+  }
 } // namespace
 
 void setupRtc()
@@ -254,6 +263,26 @@ bool isClockSynchronized()
   return clockSynchronized;
 }
 
+void handleRtcAutoSync()
+{
+  if (!autoSyncRtcFromGps || clockSynchronized)
+  {
+    return;
+  }
+
+  unsigned long gpsEpochSeconds = 0;
+  if (!getGpsTimeUnix(gpsEpochSeconds))
+  {
+    return;
+  }
+
+  const bool wasClockSynchronized = clockSynchronized;
+  if (setCurrentTimeUnix(gpsEpochSeconds))
+  {
+    emitRtcSyncTelemetryIfTransitioned(wasClockSynchronized);
+  }
+}
+
 void reportRtcTelemetryStatus()
 {
   sendTelemetry("RTC", "TELEMETRY", isTargetTelemetryEnabled(TARGET_RTC) ? "TRUE" : "FALSE");
@@ -320,17 +349,22 @@ void handleSetRtc(const Command &cmd)
   switch (cmd.parameter)
   {
   case PARAM_CURRENT_TIME:
+  {
+    const bool wasClockSynchronized = clockSynchronized;
     if (cmd.rawValueToken == nullptr || !setCurrentTimeIso(cmd.rawValueToken))
     {
       sendError("BAD_VALUE");
       return;
     }
 
+    emitRtcSyncTelemetryIfTransitioned(wasClockSynchronized);
     sendAck("RTC", "CURRENT_TIME");
     break;
+  }
 
   case PARAM_SYNC:
   {
+    const bool wasClockSynchronized = clockSynchronized;
     if (cmd.rawValueToken == nullptr || strcmp(cmd.rawValueToken, "GPS") != 0)
     {
       sendError("BAD_VALUE");
@@ -344,6 +378,7 @@ void handleSetRtc(const Command &cmd)
       return;
     }
 
+    emitRtcSyncTelemetryIfTransitioned(wasClockSynchronized);
     sendAck("RTC", "SYNC");
     break;
   }

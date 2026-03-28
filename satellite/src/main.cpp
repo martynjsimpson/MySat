@@ -29,6 +29,7 @@ void setup()
 void loop()
 {
   updateGps();
+  handleRtcAutoSync();
   readSerialCommands();
   handlePeriodicTelemetry();
 }
