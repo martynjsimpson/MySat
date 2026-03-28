@@ -1,5 +1,6 @@
 #include "telemetry.h"
 
+#include "gps.h"
 #include "led.h"
 #include "pmic.h"
 #include "rtc.h"
@@ -13,6 +14,7 @@ namespace
   bool rtcTelemetryEnabled;
   bool ledTelemetryEnabled;
   bool batteryTelemetryEnabled;
+  bool gpsTelemetryEnabled;
   unsigned long telemetryIntervalSeconds;
   unsigned long lastTelemetryTime = 0;
 
@@ -28,6 +30,8 @@ namespace
       return &ledTelemetryEnabled;
     case TARGET_BATTERY:
       return &batteryTelemetryEnabled;
+    case TARGET_GPS:
+      return &gpsTelemetryEnabled;
     default:
       return nullptr;
     }
@@ -45,6 +49,8 @@ namespace
       return "LED";
     case TARGET_BATTERY:
       return "BATTERY";
+    case TARGET_GPS:
+      return "GPS";
     default:
       return nullptr;
     }
@@ -59,6 +65,7 @@ void setupTelemetry()
   rtcTelemetryEnabled = false;
   ledTelemetryEnabled = false;
   batteryTelemetryEnabled = false;
+  gpsTelemetryEnabled = false;
   telemetryIntervalSeconds = 5;
   lastTelemetryTime = getUptimeSeconds();
 }
@@ -170,6 +177,10 @@ void sendTelemetrySnapshot()
   if (batteryTelemetryEnabled)
   {
     reportBatteryStatus();
+  }
+  if (gpsTelemetryEnabled)
+  {
+    reportGpsStatus();
   }
 }
 

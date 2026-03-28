@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "gps.h"
 #include "rtc.h"
 #include "led.h"
 #include "pmic.h"
@@ -15,6 +16,7 @@ void setup()
 
   setupLed();
   setupBattery();
+  setupGps();
   setupStatus();
   setupTelemetry();
   setupProtocol();
@@ -22,6 +24,7 @@ void setup()
 
 void loop()
 {
+  updateGps();
   readSerialCommands();
   handlePeriodicTelemetry();
 }

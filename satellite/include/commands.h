@@ -26,6 +26,7 @@ enum TargetType
   TARGET_LED,
   TARGET_TELEMETRY,
   TARGET_BATTERY,
+  TARGET_GPS,
   TARGET_RTC,
 
   // Reserved future
