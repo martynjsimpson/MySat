@@ -10,6 +10,7 @@ void handleSetTargetTelemetry(const Command &cmd);
 bool isTargetTelemetryEnabled(TargetType target);
 void reportTelemetryStatus();
 void sendTelemetrySnapshot();
+void resetTelemetrySchedule();
 void handlePeriodicTelemetry();
 
 #endif

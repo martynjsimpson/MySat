@@ -20,6 +20,10 @@ void setup()
   setupStatus();
   setupTelemetry();
   setupProtocol();
+  delay(6000);
+  reportStatusStarted();
+  reportStatusHeartbeat(false);
+  resetTelemetrySchedule();
 }
 
 void loop()

@@ -78,6 +78,7 @@ GET,RTC,NONE,NONE
 GET,RTC,CURRENT_TIME,NONE
 GET,RTC,SYNC,NONE
 PING,NONE,NONE,NONE
+RESET,NONE,NONE,NONE
 ```
 
 ---
@@ -186,6 +187,7 @@ Examples:
 2026-03-27T12:00:40Z,TLM,LED,TELEMETRY,TRUE
 2026-03-27T12:00:40Z,TLM,LED,STATE,OFF
 2026-03-27T12:00:40Z,TLM,LED,COLOR,GREEN
+2026-03-27T12:00:40Z,TLM,STATUS,STARTED,TRUE
 2026-03-27T12:00:40Z,TLM,STATUS,HEARTBEAT_N,12
 2026-03-27T12:00:40Z,TLM,TELEMETRY,TELEMETRY,TRUE
 2026-03-27T12:00:40Z,TLM,TELEMETRY,ENABLE,TRUE
@@ -217,12 +219,12 @@ Examples:
 | `SET` | Apply a value to a target/parameter |
 | `GET` | Request telemetry/status for a target |
 | `PING` | Confirm parser and communications path are working |
+| `RESET` | Reboot the device |
 
 ### Reserved command types
 
 | Token | Intended future meaning |
 |---|---|
-| `RESET` | Reset a subsystem or service |
 | `SAVE` | Persist configuration or logs |
 
 ---
@@ -286,6 +288,7 @@ Examples:
 | `ALTITUDE_M` | GPS altitude in meters |
 | `SPEED_KPH` | GPS speed in kilometers per hour |
 | `SATELLITES_N` | Number of satellites currently visible to the GPS receiver |
+| `STARTED` | One-time boot-complete event emitted at the end of setup |
 
 ### Reserved parameters
 
@@ -470,6 +473,7 @@ This section is the canonical list of currently implemented commands. Examples e
 | Command | Purpose |
 |---|---|
 | `PING,NONE,NONE,NONE` | Confirms parser and communications path are working |
+| `RESET,NONE,NONE,NONE` | Reboots the device |
 
 ### LED target
 
@@ -730,6 +734,15 @@ GET,STATUS,HEARTBEAT_N,NONE
 
 The periodic snapshot always includes `TLM,STATUS,HEARTBEAT_N,<n>` when global telemetry is enabled. The value increments by one for each emitted snapshot and is not controlled by per-target telemetry enable/disable commands.
 
+At the end of `setup()`, the firmware emits the reset heartbeat value and then a one-time startup event:
+
+```text
+TIME,TLM,STATUS,HEARTBEAT_N,0
+TIME,TLM,STATUS,STARTED,TRUE
+```
+
+These startup telemetry lines are not part of the periodic snapshot. `STATUS,STARTED` is not queryable via `GET`.
+
 ## RTC target
 
 The RTC subsystem exposes the device's current UTC clock value and whether that clock is considered synchronised.
@@ -783,6 +796,7 @@ Currently implemented:
 
 ```text
 PING,NONE,NONE,NONE
+RESET,NONE,NONE,NONE
 SET,LED,ENABLE,TRUE
 SET,LED,ENABLE,FALSE
 SET,LED,TELEMETRY,ENABLE
@@ -847,6 +861,7 @@ Commands sent to device:
 
 ```text
 PING,NONE,NONE,NONE
+RESET,NONE,NONE,NONE
 SET,LED,ENABLE,TRUE
 SET,LED,STATE,ON
 SET,LED,TELEMETRY,DISABLE
