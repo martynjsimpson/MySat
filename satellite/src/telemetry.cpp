@@ -8,12 +8,12 @@
 
 namespace
 {
-  bool telemetryEnabled = true;
-  bool telemetryTelemetryEnabled = false;
-  bool rtcTelemetryEnabled = false;
-  bool ledTelemetryEnabled = false;
-  bool batteryTelemetryEnabled = true;
-  unsigned long telemetryIntervalSeconds = 5;
+  bool telemetryEnabled;
+  bool telemetryTelemetryEnabled;
+  bool rtcTelemetryEnabled;
+  bool ledTelemetryEnabled;
+  bool batteryTelemetryEnabled;
+  unsigned long telemetryIntervalSeconds;
   unsigned long lastTelemetryTime = 0;
 
   bool *getTargetTelemetryFlag(TargetType target)
@@ -55,10 +55,10 @@ namespace
 void setupTelemetry()
 {
   telemetryEnabled = true;
-  telemetryTelemetryEnabled = true;
-  rtcTelemetryEnabled = true;
-  ledTelemetryEnabled = true;
-  batteryTelemetryEnabled = true;
+  telemetryTelemetryEnabled = false;
+  rtcTelemetryEnabled = false;
+  ledTelemetryEnabled = false;
+  batteryTelemetryEnabled = false;
   telemetryIntervalSeconds = 5;
   lastTelemetryTime = getUptimeSeconds();
 }
