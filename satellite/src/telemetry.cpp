@@ -218,16 +218,18 @@ void sendTelemetrySnapshot()
 
 void handlePeriodicTelemetry()
 {
-  if (!telemetryEnabled)
-  {
-    return;
-  }
-
   const unsigned long now = getUptimeSeconds();
 
   if ((now - lastTelemetryTime) >= telemetryIntervalSeconds)
   {
     lastTelemetryTime = now;
+
+    if (!telemetryEnabled)
+    {
+      reportStatusHeartbeat(true);
+      return;
+    }
+
     sendTelemetrySnapshot();
   }
 }
