@@ -7,6 +7,7 @@
 
 namespace {
 bool telemetryEnabled = true;
+bool telemetryTelemetryEnabled = true;
 bool rtcTelemetryEnabled = true;
 bool ledTelemetryEnabled = true;
 bool batteryTelemetryEnabled = true;
@@ -15,6 +16,8 @@ unsigned long lastTelemetryTime = 0;
 
 bool *getTargetTelemetryFlag(TargetType target) {
   switch (target) {
+    case TARGET_TELEMETRY:
+      return &telemetryTelemetryEnabled;
     case TARGET_RTC:
       return &rtcTelemetryEnabled;
     case TARGET_LED:
@@ -28,6 +31,8 @@ bool *getTargetTelemetryFlag(TargetType target) {
 
 const char *targetToToken(TargetType target) {
   switch (target) {
+    case TARGET_TELEMETRY:
+      return "TELEMETRY";
     case TARGET_RTC:
       return "RTC";
     case TARGET_LED:
@@ -43,6 +48,7 @@ const char *targetToToken(TargetType target) {
 
 void setupTelemetry() {
   telemetryEnabled = true;
+  telemetryTelemetryEnabled = true;
   rtcTelemetryEnabled = true;
   ledTelemetryEnabled = true;
   batteryTelemetryEnabled = true;
@@ -115,6 +121,7 @@ void handleSetTargetTelemetry(const Command &cmd) {
 }
 
 void reportTelemetryStatus() {
+  sendTelemetry("TELEMETRY", "TELEMETRY", telemetryTelemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetry("TELEMETRY", "ENABLE", telemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
 }
@@ -126,7 +133,9 @@ void sendTelemetrySnapshot() {
   if (ledTelemetryEnabled) {
     reportLedStatus();
   }
-  reportTelemetryStatus();
+  if (telemetryTelemetryEnabled) {
+    reportTelemetryStatus();
+  }
   if (batteryTelemetryEnabled) {
     reportBatteryStatus();
   }

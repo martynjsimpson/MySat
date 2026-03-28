@@ -193,7 +193,7 @@ namespace
 
   void handleSet(const Command &cmd)
   {
-    if (cmd.parameter == PARAM_TELEMETRY && cmd.target != TARGET_TELEMETRY)
+    if (cmd.parameter == PARAM_TELEMETRY)
     {
       handleSetTargetTelemetry(cmd);
       return;
@@ -357,6 +357,8 @@ void setupProtocol()
   Serial.println("SET,LED,COLOR,BLUE");
   Serial.println("SET,BATTERY,TELEMETRY,ENABLE");
   Serial.println("SET,BATTERY,TELEMETRY,DISABLE");
+  Serial.println("SET,TELEMETRY,TELEMETRY,ENABLE");
+  Serial.println("SET,TELEMETRY,TELEMETRY,DISABLE");
   Serial.println("SET,RTC,TELEMETRY,ENABLE");
   Serial.println("SET,RTC,TELEMETRY,DISABLE");
   Serial.println("SET,RTC,CURRENT_TIME,2026-03-27T12:00:00Z");

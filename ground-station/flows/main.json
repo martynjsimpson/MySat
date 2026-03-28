@@ -647,7 +647,7 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 1220,
+        "y": 1340,
         "wires": [
             [
                 "a407349444f312cf"
@@ -747,7 +747,7 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 860,
+        "y": 880,
         "wires": [
             [
                 "a407349444f312cf"
@@ -767,7 +767,7 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 900,
+        "y": 920,
         "wires": [
             [
                 "a407349444f312cf"
@@ -787,7 +787,7 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 940,
+        "y": 1060,
         "wires": [
             [
                 "a407349444f312cf"
@@ -947,7 +947,7 @@
         "z": "3b521b08f4388c2f",
         "name": "Charge Percent Gauge",
         "group": "50860bfd06fffa7a",
-        "order": 6,
+        "order": 5,
         "value": "payload",
         "valueType": "msg",
         "width": 6,
@@ -1445,8 +1445,8 @@
         "group": "87c6d1cd17eff6d5",
         "name": "",
         "label": "Disable TLM",
-        "order": 4,
-        "width": "2",
+        "order": 7,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1459,7 +1459,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "red",
+        "buttonColor": "",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1470,7 +1470,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 860,
+        "y": 880,
         "wires": [
             [
                 "b5d62154f09edf79"
@@ -1484,8 +1484,8 @@
         "group": "87c6d1cd17eff6d5",
         "name": "",
         "label": "Enable TLM",
-        "order": 3,
-        "width": "2",
+        "order": 6,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1498,7 +1498,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "green",
+        "buttonColor": "",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1509,7 +1509,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 900,
+        "y": 920,
         "wires": [
             [
                 "59a0bb862787b1a6"
@@ -1523,7 +1523,7 @@
         "group": "87c6d1cd17eff6d5",
         "name": "tlmInterval",
         "label": "TLM Interval",
-        "order": 2,
+        "order": 5,
         "width": "2",
         "height": "1",
         "topic": "topic",
@@ -1544,7 +1544,7 @@
         "iconInnerPosition": "inside",
         "spinner": "default",
         "x": 150,
-        "y": 980,
+        "y": 1100,
         "wires": [
             [
                 "283bee87f27680a3"
@@ -1558,7 +1558,7 @@
         "group": "87c6d1cd17eff6d5",
         "name": "",
         "label": "TLM Interval",
-        "order": 1,
+        "order": 4,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1583,7 +1583,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 150,
-        "y": 940,
+        "y": 1060,
         "wires": [
             [
                 "e328bd37e42d09ce"
@@ -1619,7 +1619,7 @@
         "group": "87c6d1cd17eff6d5",
         "name": "TLM Table",
         "label": "",
-        "order": 7,
+        "order": 10,
         "width": 0,
         "height": 0,
         "maxrows": 0,
@@ -1652,7 +1652,7 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 980,
+        "y": 1100,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1878,7 +1878,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 1040,
+        "y": 1160,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1917,7 +1917,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 160,
-        "y": 1040,
+        "y": 1160,
         "wires": [
             [
                 "33792257d24eb50f"
@@ -1937,7 +1937,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 1080,
+        "y": 1200,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1976,7 +1976,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 160,
-        "y": 1080,
+        "y": 1200,
         "wires": [
             [
                 "d85c917cf73e1f60"
@@ -2015,7 +2015,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 150,
-        "y": 1220,
+        "y": 1340,
         "wires": [
             [
                 "e4b26bb90d0f220e"
@@ -2035,7 +2035,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1120,
+        "y": 1240,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2074,7 +2074,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1120,
+        "y": 1240,
         "wires": [
             [
                 "9d15a20c452e946c"
@@ -2094,7 +2094,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1160,
+        "y": 1280,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2133,7 +2133,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1160,
+        "y": 1280,
         "wires": [
             [
                 "1549be4bc8ec49fe"
@@ -2185,7 +2185,7 @@
         "page": "",
         "ui": "",
         "name": "PacketLogTemplateWidget",
-        "order": 10,
+        "order": 13,
         "width": "8",
         "height": "5",
         "head": "",
@@ -2214,7 +2214,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1260,
+        "y": 1380,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2253,7 +2253,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1260,
+        "y": 1380,
         "wires": [
             [
                 "2be552e6b24cceb2"
@@ -2273,7 +2273,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1300,
+        "y": 1420,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2312,7 +2312,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 130,
-        "y": 1300,
+        "y": 1420,
         "wires": [
             [
                 "f4a1656cb87162e3"
@@ -2394,7 +2394,7 @@
         "page": "",
         "ui": "",
         "name": "ErrorLogTemplateWidget",
-        "order": 8,
+        "order": 11,
         "width": "4",
         "height": "3",
         "head": "",
@@ -2497,7 +2497,7 @@
         "page": "",
         "ui": "",
         "name": "AckLogTemplateWidget",
-        "order": 9,
+        "order": 12,
         "width": "4",
         "height": "3",
         "head": "",
@@ -2526,7 +2526,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 1360,
+        "y": 1480,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2546,7 +2546,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1400,
+        "y": 1520,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2585,7 +2585,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 120,
-        "y": 1400,
+        "y": 1520,
         "wires": [
             [
                 "cdda8c29f1dc0e57"
@@ -2618,7 +2618,7 @@
         "iconPosition": "left",
         "iconInnerPosition": "inside",
         "x": 140,
-        "y": 1360,
+        "y": 1480,
         "wires": [
             [
                 "0370a1a51410027a"
@@ -2630,7 +2630,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
-        "order": 5,
+        "order": 8,
         "width": "3",
         "height": 1,
         "name": "",
@@ -2654,7 +2654,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
-        "order": 6,
+        "order": 9,
         "width": "3",
         "height": 1,
         "name": "",
@@ -2672,5 +2672,182 @@
         "x": 1310,
         "y": 380,
         "wires": []
+    },
+    {
+        "id": "ae52786b457f50e3",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send TLM TLM Enable",
+        "func": "msg.payload = \"SET,TELEMETRY,TELEMETRY,ENABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 960,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "ca36fd9b245b023d",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "87c6d1cd17eff6d5",
+        "name": "",
+        "label": "TLM TLM Enable",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "green",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 960,
+        "wires": [
+            [
+                "ae52786b457f50e3"
+            ]
+        ]
+    },
+    {
+        "id": "c3309c0c60ec49bd",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send TLM TLM Disable",
+        "func": "msg.payload = \"SET,TELEMETRY,TELEMETRY,DISABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 1000,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "cc279f78c4911bdf",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "87c6d1cd17eff6d5",
+        "name": "",
+        "label": "TLM TLM Disable",
+        "order": 3,
+        "width": "2",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "red",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 1000,
+        "wires": [
+            [
+                "c3309c0c60ec49bd"
+            ]
+        ]
+    },
+    {
+        "id": "2e82d278f9c70970",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get TLM",
+        "func": "msg.payload = \"GET,TELEMETRY,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 840,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "295e2193fc2d2416",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "87c6d1cd17eff6d5",
+        "name": "",
+        "label": "Get TLM",
+        "order": 1,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 140,
+        "y": 840,
+        "wires": [
+            [
+                "2e82d278f9c70970"
+            ]
+        ]
     }
 ]
