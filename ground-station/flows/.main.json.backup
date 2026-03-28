@@ -1431,7 +1431,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
-        "order": 5,
+        "order": 6,
         "width": "2",
         "height": 1,
         "name": "",
@@ -1475,7 +1475,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
-        "order": 6,
+        "order": 7,
         "width": "2",
         "height": 1,
         "name": "",
@@ -1507,7 +1507,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1240,
+        "y": 1200,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1546,7 +1546,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 180,
-        "y": 1240,
+        "y": 1200,
         "wires": [
             [
                 "33792257d24eb50f"
@@ -1557,7 +1557,7 @@
         "id": "d85c917cf73e1f60",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "send Sync RTC",
+        "name": "send Sync RTC Local",
         "func": "const iso = new Date().toISOString().replace(/\\.\\d{3}Z$/, \"Z\");\nmsg.payload = \"SET,RTC,CURRENT_TIME,\" + iso + \"\\n\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -1565,8 +1565,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
-        "y": 1280,
+        "x": 400,
+        "y": 1240,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1579,7 +1579,7 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "name": "",
-        "label": "Sync RTC",
+        "label": "Sync RTC Local",
         "order": 4,
         "width": "1",
         "height": "1",
@@ -1604,8 +1604,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 180,
-        "y": 1280,
+        "x": 160,
+        "y": 1240,
         "wires": [
             [
                 "d85c917cf73e1f60"
@@ -2474,7 +2474,7 @@
         "type": "ui-text",
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
-        "order": 7,
+        "order": 8,
         "width": "2",
         "height": 1,
         "name": "",
@@ -3607,7 +3607,7 @@
         "name": "RTC Get Option",
         "label": "GET RTC Parameter",
         "tooltip": "",
-        "order": 8,
+        "order": 9,
         "width": "6",
         "height": "1",
         "passthru": false,
@@ -3919,6 +3919,63 @@
         "wires": [
             [
                 "4dcfcdf209f856a5"
+            ]
+        ]
+    },
+    {
+        "id": "abeca463a1810f08",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Sync RTC GPS",
+        "func": "msg.payload = \"SET,RTC,SYNC,GPS\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "52fc46764e32ba83",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "1f22eb0bf52ef7c6",
+        "name": "",
+        "label": "Sync RTC GPS",
+        "order": 5,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 160,
+        "y": 1280,
+        "wires": [
+            [
+                "abeca463a1810f08"
             ]
         ]
     }

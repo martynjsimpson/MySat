@@ -18,6 +18,8 @@ namespace
   float speedKph = 0.0f;
   int satellitesVisible = 0;
   unsigned long lastFixMillis = 0;
+  unsigned long gpsEpochSeconds = 0;
+  bool gpsTimeAvailable = false;
 
   const unsigned long gpsFixTimeoutMs = 10000;
   const float stationarySpeedThresholdKph = 1.0f;
@@ -30,6 +32,8 @@ namespace
     altitudeM = 0.0f;
     speedKph = 0.0f;
     satellitesVisible = 0;
+    gpsEpochSeconds = 0;
+    gpsTimeAvailable = false;
   }
 
   void reportGpsTelemetryStatus()
@@ -103,6 +107,8 @@ void updateGps()
       speedKph = 0.0f;
     }
     satellitesVisible = GPS.satellites();
+    gpsEpochSeconds = GPS.getTime();
+    gpsTimeAvailable = (gpsEpochSeconds != 0);
     lastFixMillis = millis();
     gpsFixAvailable = true;
     return;
@@ -113,6 +119,19 @@ void updateGps()
     gpsFixAvailable = false;
     clearGpsValues();
   }
+}
+
+bool getGpsTimeUnix(unsigned long &epochSeconds)
+{
+  updateGps();
+
+  if (!gpsTimeAvailable)
+  {
+    return false;
+  }
+
+  epochSeconds = gpsEpochSeconds;
+  return true;
 }
 
 void handleSetGps(const Command &cmd)

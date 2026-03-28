@@ -4,7 +4,9 @@
 #include <RTCZero.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
+#include "gps.h"
 #include "sender.h"
 #include "telemetry.h"
 
@@ -220,6 +222,33 @@ bool setCurrentTimeIso(const char *isoTimestamp)
   return true;
 }
 
+bool setCurrentTimeUnix(unsigned long epochSeconds)
+{
+  const time_t rawTime = static_cast<time_t>(epochSeconds);
+  const struct tm *utc = gmtime(&rawTime);
+  if (utc == nullptr)
+  {
+    return false;
+  }
+
+  RtcDateTime dt{};
+  dt.year = static_cast<uint16_t>(utc->tm_year + 1900);
+  dt.month = static_cast<uint8_t>(utc->tm_mon + 1);
+  dt.day = static_cast<uint8_t>(utc->tm_mday);
+  dt.hour = static_cast<uint8_t>(utc->tm_hour);
+  dt.minute = static_cast<uint8_t>(utc->tm_min);
+  dt.second = static_cast<uint8_t>(utc->tm_sec);
+
+  if (!isValidDateTime(dt))
+  {
+    return false;
+  }
+
+  setRtcDateTime(dt);
+  clockSynchronized = compareDateTime(dt, syncThreshold) >= 0;
+  return true;
+}
+
 bool isClockSynchronized()
 {
   return clockSynchronized;
@@ -299,6 +328,25 @@ void handleSetRtc(const Command &cmd)
 
     sendAck("RTC", "CURRENT_TIME");
     break;
+
+  case PARAM_SYNC:
+  {
+    if (cmd.rawValueToken == nullptr || strcmp(cmd.rawValueToken, "GPS") != 0)
+    {
+      sendError("BAD_VALUE");
+      return;
+    }
+
+    unsigned long gpsEpochSeconds = 0;
+    if (!getGpsTimeUnix(gpsEpochSeconds) || !setCurrentTimeUnix(gpsEpochSeconds))
+    {
+      sendError("GPS_TIME_UNAVAILABLE");
+      return;
+    }
+
+    sendAck("RTC", "SYNC");
+    break;
+  }
 
   default:
     sendError("BAD_PARAMETER");
