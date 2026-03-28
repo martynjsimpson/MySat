@@ -57,20 +57,16 @@ void setupBattery()
 void reportBatteryStatus()
 {
   const bool batteryConnected = isBatteryConnected();
-  const bool targetTelemetryEnabled = isTargetTelemetryEnabled(TARGET_BATTERY);
 
   if (batteryConnected)
   {
     updateBatteryValues();
   }
 
-  if (targetTelemetryEnabled)
-  {
-    sendTelemetry("BATTERY", "TELEMETRY", targetTelemetryEnabled ? "TRUE" : "FALSE");
-    sendTelemetry("BATTERY", "AVAILABLE", batteryConnected ? "TRUE" : "FALSE");
-    sendTelemetryFloat("BATTERY", "CHARGE_CURRENT_A", batteryConnected ? PMIC.getChargeCurrent() : 0.0f, 3);
-    sendTelemetryFloat("BATTERY", "CHARGE_VOLTAGE_V", batteryConnected ? PMIC.getChargeVoltage() : 0.0f, 3);
-    sendTelemetryULong("BATTERY", "CHARGE_PERCENT_P", batteryConnected ? static_cast<unsigned long>(battPerc) : 0);
-    sendTelemetryFloat("BATTERY", "VOLTAGE_V", batteryConnected ? battVolt : 0.0f);
-  }
+  sendTelemetry("BATTERY", "TELEMETRY", isTargetTelemetryEnabled(TARGET_BATTERY) ? "TRUE" : "FALSE");
+  sendTelemetry("BATTERY", "AVAILABLE", batteryConnected ? "TRUE" : "FALSE");
+  sendTelemetryFloat("BATTERY", "CHARGE_CURRENT_A", batteryConnected ? PMIC.getChargeCurrent() : 0.0f, 3);
+  sendTelemetryFloat("BATTERY", "CHARGE_VOLTAGE_V", batteryConnected ? PMIC.getChargeVoltage() : 0.0f, 3);
+  sendTelemetryULong("BATTERY", "CHARGE_PERCENT_P", batteryConnected ? static_cast<unsigned long>(battPerc) : 0);
+  sendTelemetryFloat("BATTERY", "VOLTAGE_V", batteryConnected ? battVolt : 0.0f);
 }
