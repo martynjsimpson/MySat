@@ -9,6 +9,8 @@ namespace
 
 void setupTransport()
 {
+  // Today the transport abstraction is serial-backed; future transports can
+  // provide the same API without changing protocol or sender code.
   Serial.begin(kSerialBaudRate);
 }
 

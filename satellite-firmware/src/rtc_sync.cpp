@@ -18,6 +18,8 @@ namespace
 
 void handleRtcAutoSync()
 {
+  // Once the clock is considered synchronized we stop re-applying GPS time on
+  // every loop iteration and leave any later adjustments to explicit RTC writes.
   if (!autoSyncRtcFromGps || isClockSynchronized())
   {
     return;

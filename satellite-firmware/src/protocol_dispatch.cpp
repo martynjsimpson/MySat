@@ -110,6 +110,7 @@ namespace
     }
 
     sendAck("RESET", "REBOOT");
+    // Give the current transport a chance to push the ACK out before the MCU resets.
     transportFlush();
     delay(Config::Protocol::resetAckDelayMs);
     NVIC_SystemReset();

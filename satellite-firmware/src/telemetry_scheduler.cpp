@@ -19,6 +19,8 @@ void resetTelemetrySchedule()
 
 void sendTelemetrySnapshot()
 {
+  // STATUS heartbeat is always emitted so the ground side can distinguish
+  // "telemetry disabled" from "link appears dead".
   reportStatusHeartbeat(true);
   if (isTargetTelemetryEnabled(TARGET_RTC))
   {
@@ -52,6 +54,7 @@ void handlePeriodicTelemetry()
 
     if (!isTelemetryEnabledInternal())
     {
+      // Even with normal telemetry disabled, the heartbeat remains the liveness signal.
       reportStatusHeartbeat(true);
       return;
     }

@@ -36,6 +36,8 @@ namespace
       Config::Rtc::syncThresholdHour,
       Config::Rtc::syncThresholdMinute,
       Config::Rtc::syncThresholdSecond};
+  // Synchronization is tracked heuristically: any RTC value at or beyond this
+  // threshold is treated as having been set from a trusted source.
 
   bool isLeapYear(uint16_t year)
   {
@@ -188,6 +190,8 @@ void setupRtc()
 {
   rtc.begin();
   setRtcDateTime(initialDateTime);
+  // The MCU RTC has no persistent "time source" metadata, so startup always
+  // begins from the configured baseline and an unsynchronized state.
   clockSynchronized = false;
 }
 
