@@ -304,7 +304,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"ENABLE\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    onBattery: getValue(\"BATTERY\", \"ON_BATTERY\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nmsg.payload = {\n    time: s.time || \"\",\n    rtcCurrentTime: getValue(\"RTC\", \"CURRENT_TIME\"),\n    rtcSync: getValue(\"RTC\", \"SYNC\"),\n    ledEnable: getValue(\"LED\", \"ENABLE\"),\n    ledState: getValue(\"LED\", \"STATE\"),\n    ledColor: getValue(\"LED\", \"COLOR\"),\n    ledTelemetry: getValue(\"LED\", \"TELEMETRY\"),\n    telemetryEnable: getValue(\"TELEMETRY\", \"ENABLE\"),\n    telemetryInterval: getValue(\"TELEMETRY\", \"INTERVAL_S\"),\n    batteryTelemetry: getValue(\"BATTERY\", \"TELEMETRY\"),\n    batteryAvailable: getValue(\"BATTERY\", \"AVAILABLE\"),\n    chargeCurrentA: getValue(\"BATTERY\", \"CHARGE_CURRENT_A\"),\n    chargeVoltageV: getValue(\"BATTERY\", \"CHARGE_VOLTAGE_V\"),\n    chargePercentP: getValue(\"BATTERY\", \"CHARGE_PERCENT_P\"),\n    batteryVoltage: getValue(\"BATTERY\", \"VOLTAGE_V\"),\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -347,7 +347,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 600,
+        "y": 620,
         "wires": [
             [
                 "aa35e6502e80f6ca"
@@ -375,7 +375,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 600,
+        "y": 620,
         "wires": []
     },
     {
@@ -519,7 +519,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 640,
+        "y": 660,
         "wires": [
             [
                 "6d5439a9dd0319e8"
@@ -547,7 +547,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 640,
+        "y": 660,
         "wires": []
     },
     {
@@ -563,7 +563,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 680,
+        "y": 700,
         "wires": [
             [
                 "4a17bc77ddbdb063"
@@ -591,7 +591,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 680,
+        "y": 700,
         "wires": []
     },
     {
@@ -933,8 +933,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1060,
-        "y": 1040,
+        "x": 1070,
+        "y": 480,
         "wires": [
             [
                 "59e5d09d9ab69709"
@@ -945,36 +945,49 @@
         "id": "59e5d09d9ab69709",
         "type": "ui-gauge",
         "z": "3b521b08f4388c2f",
-        "d": true,
         "name": "Charge Percent Gauge",
-        "group": "27f54bb6a6a84aaa",
+        "group": "50860bfd06fffa7a",
         "order": 6,
+        "value": "payload",
+        "valueType": "msg",
         "width": 6,
         "height": 4,
         "gtype": "gauge-half",
+        "gstyle": "needle",
         "title": "Charge Percent",
+        "alwaysShowTitle": false,
+        "units": "%",
         "icon": "",
         "prefix": "",
         "suffix": "",
         "segments": [
             {
                 "from": "0",
-                "color": "#d32f2f"
+                "color": "#d32f2f",
+                "text": "",
+                "textType": "value"
             },
             {
                 "from": "20",
-                "color": "#fbc02d"
+                "color": "#fbc02d",
+                "text": "",
+                "textType": "value"
             },
             {
                 "from": "50",
-                "color": "#388e3c"
+                "color": "#388e3c",
+                "text": "",
+                "textType": "value"
             }
         ],
         "min": 0,
         "max": "100",
+        "sizeThickness": "20",
+        "sizeGap": "",
+        "sizeKeyThickness": "",
         "className": "",
-        "x": 1310,
-        "y": 1040,
+        "x": 1340,
+        "y": 480,
         "wires": [
             []
         ]
@@ -1777,7 +1790,7 @@
         "finalize": "",
         "libs": [],
         "x": 1050,
-        "y": 520,
+        "y": 540,
         "wires": [
             [
                 "e8c0bffef462e56b"
@@ -1805,7 +1818,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1280,
-        "y": 520,
+        "y": 540,
         "wires": []
     },
     {
@@ -1821,7 +1834,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 560,
+        "y": 580,
         "wires": [
             [
                 "bd735e5dcb4579f4"
@@ -1849,7 +1862,7 @@
         "value": "payload",
         "valueType": "msg",
         "x": 1290,
-        "y": 560,
+        "y": 580,
         "wires": []
     },
     {
@@ -2311,7 +2324,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Batt States",
-        "func": "msg.payload = [\n    {\n        batteryTelemetry: msg.payload.batteryTelemetry || \"\",\n        batteryAvailable: msg.payload.batteryAvailable || \"\",\n        onBattery: msg.payload.onBattery || \"\",\n        chargeCurrentA: msg.payload.chargeCurrentA || \"\",\n        chargeVoltageV: msg.payload.chargeVoltageV || \"\",\n        chargePercentP: msg.payload.chargePercentP || \"\"\n    }\n];\nreturn msg;",
+        "func": "msg.payload = [\n    {\n        batteryTelemetry: msg.payload.batteryTelemetry || \"\",\n        batteryAvailable: msg.payload.batteryAvailable || \"\",\n        chargeCurrentA: msg.payload.chargeCurrentA || \"\",\n        chargeVoltageV: msg.payload.chargeVoltageV || \"\",\n        chargePercentP: msg.payload.chargePercentP || \"\",\n        batteryVoltage: msg.payload.batteryVoltage || \"\",\n    }\n];\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
