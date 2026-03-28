@@ -284,6 +284,8 @@ Examples:
 
 This value becomes `TRUE` after a successful `SET,RTC,CURRENT_TIME,<iso8601-utc>` or `SET,RTC,SYNC,GPS`.
 
+When the RTC transitions from unsynchronized to synchronized, the firmware emits `TLM,RTC,SYNC,TRUE` immediately instead of waiting for the next periodic snapshot.
+
 ---
 
 ## TELEMETRY target
