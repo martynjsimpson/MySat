@@ -754,5 +754,28 @@
                 "file": "/Users/martynsimpson/Dev/MySat/ground-station/node_modules/node-red-node-serialport/25-serial.js"
             }
         }
+    },
+    "node-red-contrib-web-worldmap": {
+        "name": "node-red-contrib-web-worldmap",
+        "version": "5.6.1",
+        "local": true,
+        "user": true,
+        "nodes": {
+            "worldmap": {
+                "name": "worldmap",
+                "types": [
+                    "worldmap",
+                    "ui_worldmap",
+                    "worldmap in",
+                    "worldmap-tracks",
+                    "worldmap-hull"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-contrib-web-worldmap",
+                "file": "/Users/martynsimpson/Dev/MySat/ground-station/node_modules/node-red-contrib-web-worldmap/worldmap.js"
+            }
+        }
     }
 }
