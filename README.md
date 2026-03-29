@@ -15,6 +15,8 @@ It is best thought of as a **satellite-inspired control and telemetry lab**.
 - dashboarding and operator visibility
 - maintainable repo and documentation structure
 
+![Node-RED dashboard](assets/Dashboard.png)
+
 ## System overview
 
 MySat currently consists of three cooperating parts:
