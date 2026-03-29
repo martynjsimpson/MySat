@@ -7,6 +7,7 @@ This directory contains the shared documentation for the firmware and ground sta
 - [Architecture.md](./Architecture.md) defines the repo-level system boundaries and project layout.
 - [Protocol.md](./Protocol.md) defines the generic command and response protocol.
 - [Telemetry.md](./Telemetry.md) defines generic telemetry framing and snapshot behavior.
+- [RF_Transition.md](./RF_Transition.md) captures the planned move from serial-first to an RF-backed architecture.
 
 ## Target Reference
 
