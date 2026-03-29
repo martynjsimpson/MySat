@@ -11,6 +11,7 @@ namespace
   bool ledTelemetryEnabled;
   bool batteryTelemetryEnabled;
   bool gpsTelemetryEnabled;
+  bool thermalTelemetryEnabled;
   unsigned long telemetryIntervalSeconds;
 
   bool *getTargetTelemetryFlag(TargetType target)
@@ -27,6 +28,8 @@ namespace
       return &batteryTelemetryEnabled;
     case TARGET_GPS:
       return &gpsTelemetryEnabled;
+    case TARGET_THERMAL:
+      return &thermalTelemetryEnabled;
     default:
       return nullptr;
     }
@@ -46,6 +49,8 @@ namespace
       return "BATTERY";
     case TARGET_GPS:
       return "GPS";
+    case TARGET_THERMAL:
+      return "THERMAL";
     default:
       return nullptr;
     }
@@ -60,6 +65,7 @@ void setupTelemetry()
   ledTelemetryEnabled = Config::Telemetry::defaultReportLed;
   batteryTelemetryEnabled = Config::Telemetry::defaultReportBattery;
   gpsTelemetryEnabled = Config::Telemetry::defaultReportGps;
+  thermalTelemetryEnabled = Config::Telemetry::defaultReportThermal;
   telemetryIntervalSeconds = Config::Telemetry::defaultIntervalSeconds;
 }
 

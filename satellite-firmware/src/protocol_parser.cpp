@@ -124,6 +124,10 @@ namespace
       return PARAM_SPEED_KPH;
     if (strcmp(token, "SATELLITES_N") == 0)
       return PARAM_SATELLITES_N;
+    if (strcmp(token, "TEMPERATURE_C") == 0)
+      return PARAM_TEMPERATURE_C;
+    if (strcmp(token, "HUMIDITY_P") == 0)
+      return PARAM_HUMIDITY_P;
     return PARAM_UNKNOWN;
   }
 

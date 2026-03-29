@@ -37,6 +37,7 @@ platformio device monitor --environment mkrwifi1010
 - `include/rtc.h` - RTC interface
 - `include/sender.h` - outbound `ACK`, `ERR`, and `TLM` helpers
 - `include/status.h` - status heartbeat interface
+- `include/thermal.h` - DHT11 thermal interface
 - `include/telemetry.h` - telemetry control and scheduler interface
 - `include/transport.h` - transport abstraction used by protocol and sender code
 
@@ -56,6 +57,7 @@ platformio device monitor --environment mkrwifi1010
 - `src/rtc_core.cpp` - RTC storage, formatting, and time conversion
 - `src/rtc_sync.cpp` - RTC GPS sync behavior
 - `src/status.cpp` - startup and heartbeat reporting
+- `src/thermal.cpp` - DHT11 polling, caching, and reporting
 - `src/sender.cpp` - wire-format message emission
 - `src/transport_serial.cpp` - current serial-backed transport implementation
 
@@ -66,9 +68,12 @@ platformio device monitor --environment mkrwifi1010
 - `BATTERY` - PMIC-backed battery reporting
 - `GPS` - GPS control and position reporting
 - `RTC` - RTC time and synchronisation state
+- `THERMAL` - DHT11 temperature and humidity reporting
 - `STATUS` - startup event and non-disableable heartbeat
 
 The current GPS implementation is configured for the MKR GPS connected over the I2C cable path.
+
+The current thermal implementation is configured for a DHT11 on `D7`, with temperature and humidity reported through the `THERMAL` target.
 
 ## Documentation Boundaries
 

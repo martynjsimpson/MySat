@@ -9,6 +9,7 @@
 #include "rtc.h"
 #include "sender.h"
 #include "status.h"
+#include "thermal.h"
 #include "telemetry.h"
 #include "transport.h"
 
@@ -36,6 +37,10 @@ namespace
 
     case TARGET_RTC:
       handleGetRtc(cmd);
+      break;
+
+    case TARGET_THERMAL:
+      handleGetThermal(cmd);
       break;
 
     case TARGET_STATUS:
@@ -77,6 +82,10 @@ namespace
 
     case TARGET_RTC:
       handleSetRtc(cmd);
+      break;
+
+    case TARGET_THERMAL:
+      handleSetThermal(cmd);
       break;
 
     default:

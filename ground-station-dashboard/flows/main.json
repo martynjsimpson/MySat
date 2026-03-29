@@ -132,7 +132,7 @@
         "page": "f97e68d451736993",
         "width": "6",
         "height": 1,
-        "order": 7,
+        "order": 8,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -174,7 +174,7 @@
         "page": "f97e68d451736993",
         "width": "6",
         "height": 1,
-        "order": 3,
+        "order": 7,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -210,6 +210,20 @@
         "groupType": "default"
     },
     {
+        "id": "d4e48e4db2f9418c",
+        "type": "ui-group",
+        "name": "THERMAL",
+        "page": "f97e68d451736993",
+        "width": 6,
+        "height": 1,
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
         "id": "5124fb12bde93c6f",
         "type": "serial in",
         "z": "3b521b08f4388c2f",
@@ -219,8 +233,7 @@
         "y": 40,
         "wires": [
             [
-                "e80ca2965e7ce828",
-                "4aa096b064148427"
+                "e80ca2965e7ce828"
             ]
         ]
     },
@@ -231,7 +244,7 @@
         "name": "",
         "serial": "7180565ad450ba58",
         "x": 780,
-        "y": 960,
+        "y": 980,
         "wires": []
     },
     {
@@ -282,7 +295,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\nconst freshnessThresholdMs = 30000;\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nlet payload = {\n    time: s.time || \"\",\n    freshnessThresholdMs,\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nfunction addField(key, label, target, parameter) {\n    payload[key] = getValue(target, parameter);\n    payload[key + \"Label\"] = label;\n    payload[key + \"Time\"] = getTime(target, parameter);\n}\n\naddField(\"rtcCurrentTime\", \"Current Time\", \"RTC\", \"CURRENT_TIME\");\naddField(\"rtcSync\", \"Clock Sync\", \"RTC\", \"SYNC\");\naddField(\"rtcTelemetry\", \"TLM\", \"RTC\", \"TELEMETRY\");\n\naddField(\"ledEnable\", \"Enabled\", \"LED\", \"ENABLE\");\naddField(\"ledState\", \"State\", \"LED\", \"STATE\");\naddField(\"ledColor\", \"Color\", \"LED\", \"COLOR\");\naddField(\"ledTelemetry\", \"TLM\", \"LED\", \"TELEMETRY\");\n\naddField(\"telemetryEnable\", \"Enable\", \"TELEMETRY\", \"ENABLE\");\naddField(\"telemetryTelemetry\", \"TLM\", \"TELEMETRY\", \"TELEMETRY\");\naddField(\"telemetryInterval\", \"Interval\", \"TELEMETRY\", \"INTERVAL_S\");\n\naddField(\"batteryTelemetry\", \"Battery Telemetry\", \"BATTERY\", \"TELEMETRY\");\naddField(\"batteryAvailable\", \"Battery Available\", \"BATTERY\", \"AVAILABLE\");\naddField(\"chargeCurrentA\", \"Charge Current (A)\", \"BATTERY\", \"CHARGE_CURRENT_A\");\naddField(\"chargeVoltageV\", \"Charge Voltage (V)\", \"BATTERY\", \"CHARGE_VOLTAGE_V\");\naddField(\"chargePercentP\", \"Charge Percent (%)\", \"BATTERY\", \"CHARGE_PERCENT_P\");\naddField(\"batteryVoltage\", \"Battery Voltage (V)\", \"BATTERY\", \"VOLTAGE_V\");\n\naddField(\"statusHeartbeatValue\", \"Heartbeat Counter\", \"STATUS\", \"HEARTBEAT_N\");\n\naddField(\"gpsEnable\", \"Enabled\", \"GPS\", \"ENABLE\");\naddField(\"gpsAvailable\", \"Available\", \"GPS\", \"AVAILABLE\");\naddField(\"gpsLatitude\", \"Latitude\", \"GPS\", \"LATITUDE_D\");\naddField(\"gpsLongitude\", \"Longitude\", \"GPS\", \"LONGITUDE_D\");\naddField(\"gpsAltitude\", \"Altitude\", \"GPS\", \"ALTITUDE_M\");\naddField(\"gpsSpeed\", \"Speed\", \"GPS\", \"SPEED_KPH\");\naddField(\"gpsSatellites\", \"Satellites\", \"GPS\", \"SATELLITES_N\");\naddField(\"gpsTelemetry\", \"TLM\", \"GPS\", \"TELEMETRY\");\n\nmsg.payload = payload;\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\nconst freshnessThresholdMs = 30000;\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nlet payload = {\n    time: s.time || \"\",\n    freshnessThresholdMs,\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nfunction addField(key, label, target, parameter) {\n    payload[key] = getValue(target, parameter);\n    payload[key + \"Label\"] = label;\n    payload[key + \"Time\"] = getTime(target, parameter);\n}\n\naddField(\"rtcCurrentTime\", \"Current Time\", \"RTC\", \"CURRENT_TIME\");\naddField(\"rtcSync\", \"Clock Sync\", \"RTC\", \"SYNC\");\naddField(\"rtcTelemetry\", \"TLM\", \"RTC\", \"TELEMETRY\");\n\naddField(\"ledEnable\", \"Enabled\", \"LED\", \"ENABLE\");\naddField(\"ledState\", \"State\", \"LED\", \"STATE\");\naddField(\"ledColor\", \"Color\", \"LED\", \"COLOR\");\naddField(\"ledTelemetry\", \"TLM\", \"LED\", \"TELEMETRY\");\n\naddField(\"telemetryEnable\", \"Enable\", \"TELEMETRY\", \"ENABLE\");\naddField(\"telemetryTelemetry\", \"TLM\", \"TELEMETRY\", \"TELEMETRY\");\naddField(\"telemetryInterval\", \"Interval\", \"TELEMETRY\", \"INTERVAL_S\");\n\naddField(\"batteryTelemetry\", \"Battery Telemetry\", \"BATTERY\", \"TELEMETRY\");\naddField(\"batteryAvailable\", \"Battery Available\", \"BATTERY\", \"AVAILABLE\");\naddField(\"chargeCurrentA\", \"Charge Current (A)\", \"BATTERY\", \"CHARGE_CURRENT_A\");\naddField(\"chargeVoltageV\", \"Charge Voltage (V)\", \"BATTERY\", \"CHARGE_VOLTAGE_V\");\naddField(\"chargePercentP\", \"Charge Percent (%)\", \"BATTERY\", \"CHARGE_PERCENT_P\");\naddField(\"batteryVoltage\", \"Battery Voltage (V)\", \"BATTERY\", \"VOLTAGE_V\");\n\naddField(\"statusHeartbeatValue\", \"Heartbeat Counter\", \"STATUS\", \"HEARTBEAT_N\");\n\naddField(\"gpsEnable\", \"Enabled\", \"GPS\", \"ENABLE\");\naddField(\"gpsAvailable\", \"Available\", \"GPS\", \"AVAILABLE\");\naddField(\"gpsLatitude\", \"Latitude\", \"GPS\", \"LATITUDE_D\");\naddField(\"gpsLongitude\", \"Longitude\", \"GPS\", \"LONGITUDE_D\");\naddField(\"gpsAltitude\", \"Altitude\", \"GPS\", \"ALTITUDE_M\");\naddField(\"gpsSpeed\", \"Speed\", \"GPS\", \"SPEED_KPH\");\naddField(\"gpsSatellites\", \"Satellites\", \"GPS\", \"SATELLITES_N\");\naddField(\"gpsTelemetry\", \"TLM\", \"GPS\", \"TELEMETRY\");\n\naddField(\"thermalEnable\", \"Enabled\", \"THERMAL\", \"ENABLE\");\naddField(\"thermalAvailable\", \"Available\", \"THERMAL\", \"AVAILABLE\");\naddField(\"thermalTemperatureC\", \"Temperature\", \"THERMAL\", \"TEMPERATURE_C\");\naddField(\"thermalHumidityP\", \"Humidity\", \"THERMAL\", \"HUMIDITY_P\");\naddField(\"thermalTelemetry\", \"TLM\", \"THERMAL\", \"TELEMETRY\");\n\nmsg.payload = payload;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -290,7 +303,7 @@
         "finalize": "",
         "libs": [],
         "x": 750,
-        "y": 760,
+        "y": 520,
         "wires": [
             [
                 "e801888fd08475bd",
@@ -298,12 +311,12 @@
                 "40b71589d101899b",
                 "ce81e4884bf62a13",
                 "7b54df25ad4ef61f",
-                "0533515e80ab7a66",
                 "909594e5ba8c37c2",
                 "fe6c806c0622a520",
                 "93d87df78233859c",
                 "a1a18baa0c4bd1de",
                 "baab0a7f141ded66",
+                "c1a5e6f4b9d24731",
                 "ce3a285745eb4602",
                 "1adbe36cd8830cab",
                 "9b67958256975ec3",
@@ -325,7 +338,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1050,
+        "x": 1080,
         "y": 400,
         "wires": [
             [
@@ -345,7 +358,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
+        "x": 1050,
         "y": 300,
         "wires": [
             [
@@ -373,7 +386,7 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1280,
+        "x": 1320,
         "y": 300,
         "wires": []
     },
@@ -389,7 +402,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
+        "x": 1050,
         "y": 340,
         "wires": [
             [
@@ -417,7 +430,7 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 1280,
+        "x": 1320,
         "y": 340,
         "wires": []
     },
@@ -434,7 +447,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
                 "a407349444f312cf"
@@ -474,7 +487,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1460,
+        "y": 1380,
         "wires": [
             [
                 "a407349444f312cf"
@@ -574,7 +587,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 980,
+        "y": 900,
         "wires": [
             [
                 "a407349444f312cf"
@@ -594,7 +607,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 940,
+        "y": 860,
         "wires": [
             [
                 "a407349444f312cf"
@@ -633,7 +646,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 190,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
                 "9331f758d9c225ed"
@@ -652,8 +665,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1070,
-        "y": 900,
+        "x": 1090,
+        "y": 800,
         "wires": [
             [
                 "59e5d09d9ab69709"
@@ -666,7 +679,7 @@
         "z": "3b521b08f4388c2f",
         "name": "Charge Percent Gauge",
         "group": "50860bfd06fffa7a",
-        "order": 11,
+        "order": 10,
         "value": "payload",
         "valueType": "msg",
         "width": 6,
@@ -705,8 +718,8 @@
         "sizeGap": "",
         "sizeKeyThickness": "",
         "className": "",
-        "x": 1340,
-        "y": 900,
+        "x": 1360,
+        "y": 800,
         "wires": [
             []
         ]
@@ -762,7 +775,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 180,
+        "x": 190,
         "y": 440,
         "wires": [
             [
@@ -801,7 +814,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 170,
+        "x": 190,
         "y": 480,
         "wires": [
             [
@@ -840,7 +853,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 170,
+        "x": 180,
         "y": 520,
         "wires": [
             [
@@ -879,7 +892,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 180,
+        "x": 190,
         "y": 560,
         "wires": [
             [
@@ -918,7 +931,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 180,
+        "x": 190,
         "y": 600,
         "wires": [
             [
@@ -1003,8 +1016,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 140,
-        "y": 940,
+        "x": 180,
+        "y": 860,
         "wires": [
             [
                 "59a0bb862787b1a6"
@@ -1042,8 +1055,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 130,
-        "y": 980,
+        "x": 190,
+        "y": 900,
         "wires": [
             [
                 "b5d62154f09edf79"
@@ -1078,7 +1091,7 @@
         "iconInnerPosition": "inside",
         "spinner": "default",
         "x": 170,
-        "y": 1100,
+        "y": 1020,
         "wires": [
             [
                 "283bee87f27680a3"
@@ -1098,7 +1111,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1100,
+        "y": 1020,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1156,7 +1169,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
+        "x": 180,
         "y": 680,
         "wires": [
             [
@@ -1215,7 +1228,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
+        "x": 180,
         "y": 720,
         "wires": [
             [
@@ -1235,8 +1248,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1050,
-        "y": 540,
+        "x": 1060,
+        "y": 460,
         "wires": [
             [
                 "bd735e5dcb4579f4"
@@ -1261,8 +1274,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1300,
-        "y": 540,
+        "x": 1340,
+        "y": 460,
         "wires": [
             []
         ]
@@ -1280,7 +1293,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1200,
+        "y": 1120,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1318,8 +1331,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 180,
-        "y": 1200,
+        "x": 190,
+        "y": 1120,
         "wires": [
             [
                 "33792257d24eb50f"
@@ -1339,7 +1352,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 1240,
+        "y": 1160,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1377,8 +1390,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 160,
-        "y": 1240,
+        "x": 170,
+        "y": 1160,
         "wires": [
             [
                 "d85c917cf73e1f60"
@@ -1417,7 +1430,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 170,
-        "y": 1460,
+        "y": 1380,
         "wires": [
             [
                 "e4b26bb90d0f220e"
@@ -1437,7 +1450,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 1320,
+        "y": 1240,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1475,8 +1488,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
-        "y": 1320,
+        "x": 180,
+        "y": 1240,
         "wires": [
             [
                 "9d15a20c452e946c"
@@ -1496,7 +1509,7 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 1360,
+        "y": 1280,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1534,30 +1547,13 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
-        "y": 1360,
+        "x": 180,
+        "y": 1280,
         "wires": [
             [
                 "1549be4bc8ec49fe"
             ]
         ]
-    },
-    {
-        "id": "4aa096b064148427",
-        "type": "debug",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 300,
-        "y": 120,
-        "wires": []
     },
     {
         "id": "a1ea5ba4421bd12a",
@@ -1616,7 +1612,7 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 1500,
+        "y": 1420,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1655,7 +1651,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 150,
-        "y": 1500,
+        "y": 1420,
         "wires": [
             [
                 "2be552e6b24cceb2"
@@ -1675,7 +1671,7 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 1540,
+        "y": 1460,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1714,60 +1710,11 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 150,
-        "y": 1540,
+        "y": 1460,
         "wires": [
             [
                 "f4a1656cb87162e3"
             ]
-        ]
-    },
-    {
-        "id": "0533515e80ab7a66",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "name": "Batt States",
-        "func": "msg.payload = [\n    {\n        batteryTelemetry: msg.payload.batteryTelemetry || \"\",\n        batteryAvailable: msg.payload.batteryAvailable || \"\",\n        chargeCurrentA: msg.payload.chargeCurrentA || \"\",\n        chargeVoltageV: msg.payload.chargeVoltageV || \"\",\n        chargePercentP: msg.payload.chargePercentP || \"\",\n        batteryVoltage: msg.payload.batteryVoltage || \"\",\n    }\n];\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1010,
-        "y": 860,
-        "wires": [
-            [
-                "17cc045685eb838a"
-            ]
-        ]
-    },
-    {
-        "id": "17cc045685eb838a",
-        "type": "ui-table",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "group": "50860bfd06fffa7a",
-        "name": "Batt Table",
-        "label": "",
-        "order": 10,
-        "width": 0,
-        "height": 0,
-        "maxrows": 0,
-        "passthru": false,
-        "autocols": true,
-        "showSearch": false,
-        "deselect": true,
-        "selectionType": "none",
-        "columns": [],
-        "mobileBreakpoint": "sm",
-        "mobileBreakpointType": "defaults",
-        "action": "replace",
-        "className": "",
-        "x": 1300,
-        "y": 860,
-        "wires": [
-            []
         ]
     },
     {
@@ -1871,7 +1818,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 340,
+        "y": 380,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1904,7 +1851,7 @@
         "iconPosition": "left",
         "iconInnerPosition": "inside",
         "x": 160,
-        "y": 340,
+        "y": 380,
         "wires": [
             [
                 "0370a1a51410027a"
@@ -1929,7 +1876,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1320,
+        "x": 1360,
         "y": 400,
         "wires": [
             []
@@ -1948,7 +1895,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 1020,
+        "y": 940,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1986,8 +1933,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 120,
-        "y": 1020,
+        "x": 180,
+        "y": 940,
         "wires": [
             [
                 "ae52786b457f50e3"
@@ -2007,7 +1954,7 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 1060,
+        "y": 980,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2045,8 +1992,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 120,
-        "y": 1060,
+        "x": 180,
+        "y": 980,
         "wires": [
             [
                 "c3309c0c60ec49bd"
@@ -2066,7 +2013,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 900,
+        "y": 820,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2104,8 +2051,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
-        "y": 900,
+        "x": 190,
+        "y": 820,
         "wires": [
             [
                 "2e82d278f9c70970"
@@ -2124,7 +2071,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1070,
+        "x": 1090,
         "y": 240,
         "wires": [
             [
@@ -2150,7 +2097,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1330,
+        "x": 1370,
         "y": 240,
         "wires": [
             []
@@ -2168,7 +2115,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1060,
+        "x": 1080,
         "y": 200,
         "wires": [
             [
@@ -2194,7 +2141,7 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1300,
+        "x": 1340,
         "y": 200,
         "wires": [
             []
@@ -2212,8 +2159,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1040,
-        "y": 600,
+        "x": 1060,
+        "y": 520,
         "wires": [
             [
                 "244fb5d509b779a0"
@@ -2238,8 +2185,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1300,
-        "y": 600,
+        "x": 1340,
+        "y": 520,
         "wires": [
             []
         ]
@@ -2257,7 +2204,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 260,
+        "y": 300,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2296,7 +2243,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 170,
-        "y": 260,
+        "y": 300,
         "wires": [
             [
                 "089c3ef6e90e9473"
@@ -2316,7 +2263,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1640,
+        "y": 1560,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2331,7 +2278,7 @@
         "name": "Poll GPS",
         "label": "Poll",
         "order": 2,
-        "width": "1",
+        "width": "2",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -2354,8 +2301,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 190,
-        "y": 1640,
+        "x": 180,
+        "y": 1560,
         "wires": [
             [
                 "99f6a6b4cde014ec"
@@ -2374,8 +2321,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1040,
-        "y": 660,
+        "x": 1060,
+        "y": 580,
         "wires": [
             [
                 "6c1abf38ce1d10c7"
@@ -2400,8 +2347,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1300,
-        "y": 660,
+        "x": 1340,
+        "y": 580,
         "wires": [
             []
         ]
@@ -2419,7 +2366,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 1760,
+        "y": 1680,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2457,8 +2404,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
-        "y": 1760,
+        "x": 180,
+        "y": 1680,
         "wires": [
             [
                 "105a93f091bf072b"
@@ -2478,7 +2425,7 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 1800,
+        "y": 1720,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2516,8 +2463,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
-        "y": 1800,
+        "x": 180,
+        "y": 1720,
         "wires": [
             [
                 "b5ad1afa06be4a91"
@@ -2552,8 +2499,8 @@
         "mapurl": "",
         "mapopt": "",
         "mapwms": false,
-        "x": 1280,
-        "y": 700,
+        "x": 1320,
+        "y": 620,
         "wires": []
     },
     {
@@ -2568,8 +2515,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1050,
-        "y": 700,
+        "x": 1070,
+        "y": 620,
         "wires": [
             [
                 "22b2e0d2b7246c22"
@@ -2589,7 +2536,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1680,
+        "y": 1600,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2627,8 +2574,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 170,
-        "y": 1680,
+        "x": 190,
+        "y": 1600,
         "wires": [
             [
                 "dc305f410e85ee53"
@@ -2648,7 +2595,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1720,
+        "y": 1640,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2686,8 +2633,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 170,
-        "y": 1720,
+        "x": 180,
+        "y": 1640,
         "wires": [
             [
                 "375a32f7bbdd7eb6"
@@ -2758,7 +2705,7 @@
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
         "x": 160,
-        "y": 1840,
+        "y": 1760,
         "wires": [
             [
                 "51704248b4f8e452"
@@ -2778,7 +2725,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1840,
+        "y": 1760,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2793,7 +2740,7 @@
         "name": "Batt Get Option",
         "label": "GET Battery Parameter",
         "tooltip": "",
-        "order": 12,
+        "order": 11,
         "width": "6",
         "height": "1",
         "passthru": false,
@@ -2839,7 +2786,7 @@
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
         "x": 160,
-        "y": 1580,
+        "y": 1500,
         "wires": [
             [
                 "15393e4f233d1ad0"
@@ -2859,7 +2806,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 1580,
+        "y": 1500,
         "wires": [
             [
                 "a407349444f312cf"
@@ -2905,7 +2852,7 @@
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
         "x": 160,
-        "y": 1400,
+        "y": 1320,
         "wires": [
             [
                 "8882f258a5ed5fa0"
@@ -2925,7 +2872,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 1400,
+        "y": 1320,
         "wires": [
             [
                 "a407349444f312cf"
@@ -3042,7 +2989,7 @@
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
         "x": 160,
-        "y": 1140,
+        "y": 1060,
         "wires": [
             [
                 "46d81b6a9fcaf4c6"
@@ -3062,7 +3009,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1140,
+        "y": 1060,
         "wires": [
             [
                 "a407349444f312cf"
@@ -3082,7 +3029,7 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 300,
+        "y": 340,
         "wires": [
             [
                 "a407349444f312cf"
@@ -3120,8 +3067,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 170,
-        "y": 300,
+        "x": 190,
+        "y": 340,
         "wires": [
             [
                 "4dcfcdf209f856a5"
@@ -3141,7 +3088,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 1280,
+        "y": 1200,
         "wires": [
             [
                 "a407349444f312cf"
@@ -3179,8 +3126,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 160,
-        "y": 1280,
+        "x": 170,
+        "y": 1200,
         "wires": [
             [
                 "abeca463a1810f08"
@@ -3223,8 +3170,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1040,
-        "y": 940,
+        "x": 1060,
+        "y": 840,
         "wires": [
             [
                 "902c416c219dd801"
@@ -3249,8 +3196,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1300,
-        "y": 940,
+        "x": 1320,
+        "y": 840,
         "wires": [
             []
         ]
@@ -3267,8 +3214,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
-        "y": 980,
+        "x": 1050,
+        "y": 880,
         "wires": [
             [
                 "69af21a5b485e3e9"
@@ -3293,8 +3240,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1320,
-        "y": 980,
+        "x": 1340,
+        "y": 880,
         "wires": [
             []
         ]
@@ -3311,8 +3258,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1060,
-        "y": 1020,
+        "x": 1080,
+        "y": 920,
         "wires": [
             [
                 "2d3845ca76ac01f8"
@@ -3337,8 +3284,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1320,
-        "y": 1020,
+        "x": 1340,
+        "y": 920,
         "wires": [
             []
         ]
@@ -3355,8 +3302,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1060,
-        "y": 1060,
+        "x": 1080,
+        "y": 960,
         "wires": [
             [
                 "dce7627a1e966373"
@@ -3381,8 +3328,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1320,
-        "y": 1060,
+        "x": 1340,
+        "y": 960,
         "wires": [
             []
         ]
@@ -3399,8 +3346,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1060,
-        "y": 1100,
+        "x": 1080,
+        "y": 1000,
         "wires": [
             [
                 "0e1db750190549e3"
@@ -3425,8 +3372,8 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1320,
-        "y": 1100,
+        "x": 1340,
+        "y": 1000,
         "wires": [
             []
         ]
@@ -3443,8 +3390,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
-        "y": 1140,
+        "x": 1050,
+        "y": 1040,
         "wires": [
             [
                 "a3f22085dd57dbdd"
@@ -3469,10 +3416,425 @@
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1290,
-        "y": 1140,
+        "x": 1310,
+        "y": 1040,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "c1a5e6f4b9d24731",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract THERMAL Summary",
+        "func": "function item(label, value, time) {\n    return {\n        label: label || \"\",\n        value: value || \"\",\n        time: time || \"\"\n    };\n}\n\nmsg.payload = {\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000,\n    statusItems: [\n        item(msg.payload.thermalEnableLabel, msg.payload.thermalEnable, msg.payload.thermalEnableTime),\n        item(msg.payload.thermalAvailableLabel, msg.payload.thermalAvailable, msg.payload.thermalAvailableTime),\n        item(msg.payload.thermalTelemetryLabel, msg.payload.thermalTelemetry, msg.payload.thermalTelemetryTime)\n    ],\n    metricRows: [\n        [\n            item(msg.payload.thermalTemperatureCLabel, msg.payload.thermalTemperatureC, msg.payload.thermalTemperatureCTime),\n            item(msg.payload.thermalHumidityPLabel, msg.payload.thermalHumidityP, msg.payload.thermalHumidityPTime)\n        ]\n    ]\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1080,
+        "y": 680,
+        "wires": [
+            [
+                "f2b7143d8e2844e6"
+            ]
+        ]
+    },
+    {
+        "id": "f2b7143d8e2844e6",
+        "type": "ui-template",
+        "z": "3b521b08f4388c2f",
+        "group": "d4e48e4db2f9418c",
+        "page": "",
+        "ui": "",
+        "name": "THERMAL Summary",
+        "order": 1,
+        "width": "6",
+        "height": 3,
+        "head": "",
+        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status-3\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n    <div v-for=\"(row, index) in metricRows\" :key=\"index\" class=\"summary-grid summary-grid-metrics\">\n      <div v-for=\"item in row\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    },\n    metricRows() {\n      return this.payloadData.metricRows || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1360,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ad9a1172f96f4d2e",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get THERMAL",
+        "func": "msg.payload = \"GET,THERMAL,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1820,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "e43154d835d74d51",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "d4e48e4db2f9418c",
+        "name": "Poll THERMAL",
+        "label": "Poll",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "purple",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 160,
+        "y": 1820,
+        "wires": [
+            [
+                "ad9a1172f96f4d2e"
+            ]
+        ]
+    },
+    {
+        "id": "2c97ba51f2b14120",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send THERMAL Enable",
+        "func": "msg.payload = \"SET,THERMAL,ENABLE,TRUE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 1860,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "6d27dcb8ef6f4785",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "d4e48e4db2f9418c",
+        "name": "",
+        "label": "Enable",
+        "order": 3,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#2e7d32",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 190,
+        "y": 1860,
+        "wires": [
+            [
+                "2c97ba51f2b14120"
+            ]
+        ]
+    },
+    {
+        "id": "ec1cb4d6f88d4960",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send THERMAL Disable",
+        "func": "msg.payload = \"SET,THERMAL,ENABLE,FALSE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 1900,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "2973fe2e0f034bc2",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "d4e48e4db2f9418c",
+        "name": "",
+        "label": "Disable",
+        "order": 4,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#c62828",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 180,
+        "y": 1900,
+        "wires": [
+            [
+                "ec1cb4d6f88d4960"
+            ]
+        ]
+    },
+    {
+        "id": "72e87a9eae8f48ef",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send THERMAL TLM Enable",
+        "func": "msg.payload = \"SET,THERMAL,TELEMETRY,ENABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 1940,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "df2cbc86e4dc4f1e",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "d4e48e4db2f9418c",
+        "name": "",
+        "label": "TLM On",
+        "order": 5,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#66bb6a",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 180,
+        "y": 1940,
+        "wires": [
+            [
+                "72e87a9eae8f48ef"
+            ]
+        ]
+    },
+    {
+        "id": "987f73a4442b4f0a",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send THERMAL TLM Disable",
+        "func": "msg.payload = \"SET,THERMAL,TELEMETRY,DISABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 1980,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "372e724be5094945",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "d4e48e4db2f9418c",
+        "name": "",
+        "label": "TLM Off",
+        "order": 6,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#ef5350",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 180,
+        "y": 1980,
+        "wires": [
+            [
+                "987f73a4442b4f0a"
+            ]
+        ]
+    },
+    {
+        "id": "1199c61802ad4041",
+        "type": "ui-dropdown",
+        "z": "3b521b08f4388c2f",
+        "group": "d4e48e4db2f9418c",
+        "name": "THERMAL Get Option",
+        "label": "GET THERMAL Parameter",
+        "tooltip": "",
+        "order": 7,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "multiple": false,
+        "chips": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Enable",
+                "value": "ENABLE",
+                "type": "str"
+            },
+            {
+                "label": "Available",
+                "value": "AVAILABLE",
+                "type": "str"
+            },
+            {
+                "label": "Temperature",
+                "value": "TEMPERATURE_C",
+                "type": "str"
+            },
+            {
+                "label": "Humidity",
+                "value": "HUMIDITY_P",
+                "type": "str"
+            },
+            {
+                "label": "Telemetry",
+                "value": "TELEMETRY",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 140,
+        "y": 2020,
+        "wires": [
+            [
+                "aa7ec0aa8d7f43ba"
+            ]
+        ]
+    },
+    {
+        "id": "aa7ec0aa8d7f43ba",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get THERMAL Option",
+        "func": "let option = String(msg.payload);\nlet command = String(\"GET,THERMAL,\" + option + \",NONE\\n\");\n\nflow.set(\"thermalGet\", command);\nmsg.payload = command;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 2020,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
         ]
     }
 ]

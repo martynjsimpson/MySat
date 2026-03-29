@@ -11,6 +11,7 @@ Target-specific command and telemetry details are documented separately:
 - [BATTERY](./targets/BATTERY.md)
 - [GPS](./targets/GPS.md)
 - [RTC](./targets/RTC.md)
+- [THERMAL](./targets/THERMAL.md)
 - [STATUS](./targets/STATUS.md)
 
 Telemetry framing and snapshot behavior are documented in [Telemetry.md](./Telemetry.md).
@@ -103,6 +104,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 | `BATTERY` | PMIC-backed battery reporting | [BATTERY.md](./targets/BATTERY.md) |
 | `GPS` | GPS control and position reporting | [GPS.md](./targets/GPS.md) |
 | `RTC` | RTC time and sync control | [RTC.md](./targets/RTC.md) |
+| `THERMAL` | DHT11-based temperature and humidity reporting | [THERMAL.md](./targets/THERMAL.md) |
 | `STATUS` | Startup event and heartbeat reporting | [STATUS.md](./targets/STATUS.md) |
 
 ## Reserved Targets
@@ -113,7 +115,6 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 | `RADIO` | Communications subsystem |
 | `POWER` | Power subsystem |
 | `PAYLOAD` | Payload subsystem |
-| `THERMAL` | Thermal subsystem |
 | `LOG` | Log or event store |
 | `WATCHDOG` | Fault monitoring or watchdog |
 | `UPTIME` | Reserved for future uptime reporting |
@@ -124,7 +125,7 @@ These tokens are implemented in the parser today and are used by one or more tar
 
 | Kind | Tokens |
 |---|---|
-| Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `COLOR`, `AVAILABLE`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `CHARGE_PERCENT_P`, `VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N` |
+| Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `COLOR`, `AVAILABLE`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `CHARGE_PERCENT_P`, `VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N`, `TEMPERATURE_C`, `HUMIDITY_P` |
 | Values | `NONE`, `TRUE`, `FALSE`, `ENABLE`, `DISABLE`, `ON`, `OFF`, `RED`, `GREEN`, `BLUE` |
 
 ## Reserved Generic Tokens

@@ -5,6 +5,7 @@
 #include "pmic.h"
 #include "rtc.h"
 #include "status.h"
+#include "thermal.h"
 #include "telemetry_config_internal.h"
 
 namespace
@@ -41,6 +42,10 @@ void sendTelemetrySnapshot()
   if (isTargetTelemetryEnabled(TARGET_GPS))
   {
     reportGpsStatus();
+  }
+  if (isTargetTelemetryEnabled(TARGET_THERMAL))
+  {
+    reportThermalStatus();
   }
 }
 

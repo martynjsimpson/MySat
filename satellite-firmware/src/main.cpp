@@ -7,6 +7,7 @@
 #include "protocol.h"
 #include "rtc.h"
 #include "status.h"
+#include "thermal.h"
 #include "telemetry.h"
 #include "transport.h"
 
@@ -17,6 +18,7 @@ void setup()
   setupLed();
   setupBattery();
   setupGps();
+  setupThermal();
   setupStatus();
   setupTelemetry();
   setupProtocol();
@@ -29,6 +31,7 @@ void setup()
 void loop()
 {
   updateGps();
+  updateThermal();
   handleRtcAutoSync();
   readIncomingCommands();
   handlePeriodicTelemetry();

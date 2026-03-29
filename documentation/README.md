@@ -24,6 +24,7 @@ Implemented target pages:
 - [BATTERY](./targets/BATTERY.md)
 - [GPS](./targets/GPS.md)
 - [RTC](./targets/RTC.md)
+- [THERMAL](./targets/THERMAL.md)
 - [STATUS](./targets/STATUS.md)
 
 ## Boundaries
