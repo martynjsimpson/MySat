@@ -50,3 +50,4 @@ ground-station-dashboard/.config.users.json.backup
 ground-station-dashboard/.config.runtime.json.backup
 
 .cache/
+ground-station-dashboard/flows/.main.json.backup

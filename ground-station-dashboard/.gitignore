@@ -1,5 +1,7 @@
 .DS_Store
 .config.*.json
+.config.nodes.json.backup
+.config.users.json.backup
 .sessions.json
 .config.users.json
 .node-red
@@ -7,3 +9,4 @@ lib/
 node_modules/
 flows/*_cred.json
 flows/.flows.json.backup
+flows/.main.json.backup

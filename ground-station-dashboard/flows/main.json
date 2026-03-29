@@ -282,7 +282,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\nconst freshnessThresholdMs = 30000;\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nlet payload = {\n    time: s.time || \"\",\n    freshnessThresholdMs,\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nfunction addField(key, label, target, parameter) {\n    payload[key] = getValue(target, parameter);\n    payload[key + \"Label\"] = label;\n    payload[key + \"Time\"] = getTime(target, parameter);\n}\n\naddField(\"rtcCurrentTime\", \"RTC Current Time\", \"RTC\", \"CURRENT_TIME\");\naddField(\"rtcSync\", \"Clock Sync\", \"RTC\", \"SYNC\");\naddField(\"rtcTelemetry\", \"RTC Telemetry Enabled\", \"RTC\", \"TELEMETRY\");\n\naddField(\"ledEnable\", \"LED Enable\", \"LED\", \"ENABLE\");\naddField(\"ledState\", \"LED State\", \"LED\", \"STATE\");\naddField(\"ledColor\", \"LED Color\", \"LED\", \"COLOR\");\naddField(\"ledTelemetry\", \"LED Telemetry Enabled\", \"LED\", \"TELEMETRY\");\n\naddField(\"telemetryEnable\", \"TLM Telemetry Enabled\", \"TELEMETRY\", \"TELEMETRY\");\naddField(\"telemetryInterval\", \"Telemetry Interval\", \"TELEMETRY\", \"INTERVAL_S\");\n\naddField(\"batteryTelemetry\", \"Battery Telemetry\", \"BATTERY\", \"TELEMETRY\");\naddField(\"batteryAvailable\", \"Battery Available\", \"BATTERY\", \"AVAILABLE\");\naddField(\"chargeCurrentA\", \"Charge Current (A)\", \"BATTERY\", \"CHARGE_CURRENT_A\");\naddField(\"chargeVoltageV\", \"Charge Voltage (V)\", \"BATTERY\", \"CHARGE_VOLTAGE_V\");\naddField(\"chargePercentP\", \"Charge Percent (%)\", \"BATTERY\", \"CHARGE_PERCENT_P\");\naddField(\"batteryVoltage\", \"Battery Voltage (V)\", \"BATTERY\", \"VOLTAGE_V\");\n\naddField(\"statusHeartbeatValue\", \"Heartbeat Counter\", \"STATUS\", \"HEARTBEAT_N\");\n\naddField(\"gpsEnable\", \"GPS Enable\", \"GPS\", \"ENABLE\");\naddField(\"gpsAvailable\", \"GPS Available\", \"GPS\", \"AVAILABLE\");\naddField(\"gpsLatitude\", \"GPS Latitude\", \"GPS\", \"LATITUDE_D\");\naddField(\"gpsLongitude\", \"GPS Longitude\", \"GPS\", \"LONGITUDE_D\");\naddField(\"gpsAltitude\", \"GPS Altitude\", \"GPS\", \"ALTITUDE_M\");\naddField(\"gpsSpeed\", \"GPS Speed\", \"GPS\", \"SPEED_KPH\");\naddField(\"gpsSatellites\", \"GPS Satellites\", \"GPS\", \"SATELLITES_N\");\naddField(\"gpsTelemetry\", \"GPS Telemetry Enabled\", \"GPS\", \"TELEMETRY\");\n\nmsg.payload = payload;\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\nconst freshnessThresholdMs = 30000;\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nlet payload = {\n    time: s.time || \"\",\n    freshnessThresholdMs,\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nfunction addField(key, label, target, parameter) {\n    payload[key] = getValue(target, parameter);\n    payload[key + \"Label\"] = label;\n    payload[key + \"Time\"] = getTime(target, parameter);\n}\n\naddField(\"rtcCurrentTime\", \"Current Time\", \"RTC\", \"CURRENT_TIME\");\naddField(\"rtcSync\", \"Clock Sync\", \"RTC\", \"SYNC\");\naddField(\"rtcTelemetry\", \"TLM\", \"RTC\", \"TELEMETRY\");\n\naddField(\"ledEnable\", \"Enabled\", \"LED\", \"ENABLE\");\naddField(\"ledState\", \"State\", \"LED\", \"STATE\");\naddField(\"ledColor\", \"Color\", \"LED\", \"COLOR\");\naddField(\"ledTelemetry\", \"TLM\", \"LED\", \"TELEMETRY\");\n\naddField(\"telemetryEnable\", \"Enable\", \"TELEMETRY\", \"ENABLE\");\naddField(\"telemetryTelemetry\", \"TLM\", \"TELEMETRY\", \"TELEMETRY\");\naddField(\"telemetryInterval\", \"Interval\", \"TELEMETRY\", \"INTERVAL_S\");\n\naddField(\"batteryTelemetry\", \"Battery Telemetry\", \"BATTERY\", \"TELEMETRY\");\naddField(\"batteryAvailable\", \"Battery Available\", \"BATTERY\", \"AVAILABLE\");\naddField(\"chargeCurrentA\", \"Charge Current (A)\", \"BATTERY\", \"CHARGE_CURRENT_A\");\naddField(\"chargeVoltageV\", \"Charge Voltage (V)\", \"BATTERY\", \"CHARGE_VOLTAGE_V\");\naddField(\"chargePercentP\", \"Charge Percent (%)\", \"BATTERY\", \"CHARGE_PERCENT_P\");\naddField(\"batteryVoltage\", \"Battery Voltage (V)\", \"BATTERY\", \"VOLTAGE_V\");\n\naddField(\"statusHeartbeatValue\", \"Heartbeat Counter\", \"STATUS\", \"HEARTBEAT_N\");\n\naddField(\"gpsEnable\", \"Enabled\", \"GPS\", \"ENABLE\");\naddField(\"gpsAvailable\", \"Available\", \"GPS\", \"AVAILABLE\");\naddField(\"gpsLatitude\", \"Latitude\", \"GPS\", \"LATITUDE_D\");\naddField(\"gpsLongitude\", \"Longitude\", \"GPS\", \"LONGITUDE_D\");\naddField(\"gpsAltitude\", \"Altitude\", \"GPS\", \"ALTITUDE_M\");\naddField(\"gpsSpeed\", \"Speed\", \"GPS\", \"SPEED_KPH\");\naddField(\"gpsSatellites\", \"Satellites\", \"GPS\", \"SATELLITES_N\");\naddField(\"gpsTelemetry\", \"TLM\", \"GPS\", \"TELEMETRY\");\n\nmsg.payload = payload;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -293,31 +293,17 @@
         "y": 760,
         "wires": [
             [
-                "353ea91c8195f24d",
                 "e801888fd08475bd",
-                "b8a99bc218fbe40e",
                 "0b2ea32d4b67bf0d",
                 "40b71589d101899b",
                 "ce81e4884bf62a13",
                 "7b54df25ad4ef61f",
-                "c720218d514f0575",
                 "0533515e80ab7a66",
                 "909594e5ba8c37c2",
                 "fe6c806c0622a520",
-                "d506d2be422b81e6",
                 "93d87df78233859c",
-                "fb2a49fa8d6ad39d",
-                "51f5a5dcfe3e5cd8",
-                "89175a9d63aee81c",
-                "baab0a7f141ded66",
-                "560cda290dd1172b",
-                "d1b702a46a0467e7",
-                "466689066fb07c4c",
-                "376077d2878f2dba",
-                "9c0a224cc277b77e",
                 "a1a18baa0c4bd1de",
-                "727ebe425479c8ad",
-                "e9d3310445ccf4a0",
+                "baab0a7f141ded66",
                 "ce3a285745eb4602",
                 "1adbe36cd8830cab",
                 "9b67958256975ec3",
@@ -328,55 +314,11 @@
         ]
     },
     {
-        "id": "353ea91c8195f24d",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract Last TLM",
-        "func": "msg.payload = msg.payload.time || \"\"; return msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1030,
-        "y": 480,
-        "wires": [
-            [
-                "aa35e6502e80f6ca"
-            ]
-        ]
-    },
-    {
-        "id": "aa35e6502e80f6ca",
-        "type": "ui-text",
-        "z": "3b521b08f4388c2f",
-        "group": "87c6d1cd17eff6d5",
-        "order": 7,
-        "width": "2",
-        "height": 1,
-        "name": "",
-        "label": "Last TLM",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#717171",
-        "wrapText": false,
-        "className": "",
-        "value": "payload",
-        "valueType": "msg",
-        "x": 1280,
-        "y": 480,
-        "wires": []
-    },
-    {
         "id": "e801888fd08475bd",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "extract Telemetry Enable",
-        "func": "msg.payload = {\n    label: msg.payload.telemetryEnableLabel || \"\",\n    value: msg.payload.telemetryEnable || \"\",\n    time: msg.payload.telemetryEnableTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
+        "name": "extract Telemetry Summary",
+        "func": "function item(label, value, time) {\n    return {\n        label: label || \"\",\n        value: value || \"\",\n        time: time || \"\"\n    };\n}\n\nmsg.payload = {\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000,\n    statusItems: [\n        item(msg.payload.telemetryEnableLabel, msg.payload.telemetryEnable, msg.payload.telemetryEnableTime),\n        item(msg.payload.telemetryTelemetryLabel, msg.payload.telemetryTelemetry, msg.payload.telemetryTelemetryTime),\n        item(msg.payload.telemetryIntervalLabel, msg.payload.telemetryInterval, msg.payload.telemetryIntervalTime)\n    ],\n    metricRows: []\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -388,26 +330,6 @@
         "wires": [
             [
                 "0909b96a0a73a827"
-            ]
-        ]
-    },
-    {
-        "id": "b8a99bc218fbe40e",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract Telemetry Interval (s)",
-        "func": "msg.payload = {\n    label: msg.payload.telemetryIntervalLabel || \"\",\n    value: msg.payload.telemetryInterval || \"\",\n    time: msg.payload.telemetryIntervalTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1060,
-        "y": 440,
-        "wires": [
-            [
-                "e5510a7192e55937"
             ]
         ]
     },
@@ -793,28 +715,8 @@
         "id": "09db1906c0e09412",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "send LED RED",
-        "func": "msg.payload = \"SET,LED,COLOR,RED\\n\";\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 640,
-        "wires": [
-            [
-                "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "3344e17230a6d9f7",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "send LED GREEN",
-        "func": "msg.payload = \"SET,LED,COLOR,GREEN\\n\";\nreturn msg;",
+        "name": "send Set LED Color",
+        "func": "let color = String(msg.payload || \"\").toUpperCase();\nif (![\"RED\", \"GREEN\", \"BLUE\"].includes(color)) {\n    return null;\n}\nmsg.payload = \"SET,LED,COLOR,\" + color + \"\\n\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -822,27 +724,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 680,
-        "wires": [
-            [
-                "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "e595103df12ca554",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "send LED OFF",
-        "func": "msg.payload = \"SET,LED,COLOR,BLUE\\n\";\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 720,
+        "y": 640,
         "wires": [
             [
                 "a407349444f312cf"
@@ -855,9 +737,9 @@
         "z": "3b521b08f4388c2f",
         "group": "33c8b33051afe822",
         "name": "",
-        "label": "Get LED",
-        "order": 1,
-        "width": "1",
+        "label": "Poll",
+        "order": 2,
+        "width": "2",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -894,8 +776,8 @@
         "z": "3b521b08f4388c2f",
         "group": "33c8b33051afe822",
         "name": "",
-        "label": "LED Enable",
-        "order": 4,
+        "label": "Enable",
+        "order": 3,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -909,7 +791,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
+        "buttonColor": "#2e7d32",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -933,8 +815,8 @@
         "z": "3b521b08f4388c2f",
         "group": "33c8b33051afe822",
         "name": "",
-        "label": "LED Disable",
-        "order": 5,
+        "label": "Disable",
+        "order": 4,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -948,7 +830,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
+        "buttonColor": "#c62828",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -972,8 +854,8 @@
         "z": "3b521b08f4388c2f",
         "group": "33c8b33051afe822",
         "name": "",
-        "label": "LED On",
-        "order": 6,
+        "label": "On",
+        "order": 7,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -987,7 +869,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
+        "buttonColor": "#7cb342",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1011,8 +893,8 @@
         "z": "3b521b08f4388c2f",
         "group": "33c8b33051afe822",
         "name": "",
-        "label": "LED Off",
-        "order": 7,
+        "label": "Off",
+        "order": 8,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1026,7 +908,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
+        "buttonColor": "#ff7043",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1046,118 +928,47 @@
     },
     {
         "id": "83580219a5452c9f",
-        "type": "ui-button",
+        "type": "ui-dropdown",
         "z": "3b521b08f4388c2f",
         "group": "33c8b33051afe822",
-        "name": "",
-        "label": "LED Red",
-        "order": 8,
-        "width": "1",
-        "height": "1",
-        "emulateClick": false,
+        "name": "LED Color Option",
+        "label": "Set LED Color",
         "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
+        "order": 9,
+        "width": "3",
+        "height": "1",
+        "passthru": false,
+        "multiple": false,
+        "chips": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Red",
+                "value": "RED",
+                "type": "str"
+            },
+            {
+                "label": "Green",
+                "value": "GREEN",
+                "type": "str"
+            },
+            {
+                "label": "Blue",
+                "value": "BLUE",
+                "type": "str"
+            }
+        ],
         "payload": "",
-        "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 180,
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 150,
         "y": 640,
         "wires": [
             [
                 "09db1906c0e09412"
-            ]
-        ]
-    },
-    {
-        "id": "92593f204215f76a",
-        "type": "ui-button",
-        "z": "3b521b08f4388c2f",
-        "group": "33c8b33051afe822",
-        "name": "",
-        "label": "LED Green",
-        "order": 9,
-        "width": "1",
-        "height": "1",
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 170,
-        "y": 680,
-        "wires": [
-            [
-                "3344e17230a6d9f7"
-            ]
-        ]
-    },
-    {
-        "id": "460e7af6b396f3ae",
-        "type": "ui-button",
-        "z": "3b521b08f4388c2f",
-        "group": "33c8b33051afe822",
-        "name": "",
-        "label": "LED Blue",
-        "order": 10,
-        "width": "1",
-        "height": "1",
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 180,
-        "y": 720,
-        "wires": [
-            [
-                "e595103df12ca554"
             ]
         ]
     },
@@ -1167,9 +978,9 @@
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
         "name": "",
-        "label": "Disable All TLM",
-        "order": 6,
-        "width": "2",
+        "label": "Disable",
+        "order": 4,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1182,7 +993,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "#FFCCCB",
+        "buttonColor": "#c62828",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1192,7 +1003,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 160,
+        "x": 140,
         "y": 940,
         "wires": [
             [
@@ -1206,9 +1017,9 @@
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
         "name": "",
-        "label": "Enable All TLM",
-        "order": 5,
-        "width": "2",
+        "label": "Enable",
+        "order": 3,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1221,7 +1032,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "#88e788",
+        "buttonColor": "#2e7d32",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1231,7 +1042,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 160,
+        "x": 130,
         "y": 980,
         "wires": [
             [
@@ -1245,9 +1056,9 @@
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
         "name": "tlmInterval",
-        "label": "Set TLM Interval",
-        "order": 4,
-        "width": "1",
+        "label": "Set Interval",
+        "order": 7,
+        "width": "6",
         "height": "1",
         "topic": "topic",
         "topicType": "msg",
@@ -1307,7 +1118,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 760,
+        "y": 680,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1320,9 +1131,9 @@
         "z": "3b521b08f4388c2f",
         "group": "33c8b33051afe822",
         "name": "",
-        "label": "LED TLM Enable",
-        "order": 2,
-        "width": "2",
+        "label": "TLM On",
+        "order": 5,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1335,7 +1146,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "green",
+        "buttonColor": "#66bb6a",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1346,7 +1157,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 150,
-        "y": 760,
+        "y": 680,
         "wires": [
             [
                 "62553b58fa79262f"
@@ -1366,7 +1177,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 800,
+        "y": 720,
         "wires": [
             [
                 "a407349444f312cf"
@@ -1379,9 +1190,9 @@
         "z": "3b521b08f4388c2f",
         "group": "33c8b33051afe822",
         "name": "",
-        "label": "LED TLM Disable",
-        "order": 3,
-        "width": "2",
+        "label": "TLM Off",
+        "order": 6,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1394,7 +1205,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "red",
+        "buttonColor": "#ef5350",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1405,7 +1216,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 150,
-        "y": 800,
+        "y": 720,
         "wires": [
             [
                 "893873e9865c78e7"
@@ -1416,8 +1227,8 @@
         "id": "7b54df25ad4ef61f",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "extract RTC Current Time",
-        "func": "msg.payload = {\n    label: msg.payload.rtcCurrentTimeLabel || \"\",\n    value: msg.payload.rtcCurrentTime || \"\",\n    time: msg.payload.rtcCurrentTimeTime || \"\"\n};\nreturn msg;",
+        "name": "extract RTC Summary",
+        "func": "function item(label, value, time) {\n    return {\n        label: label || \"\",\n        value: value || \"\",\n        time: time || \"\"\n    };\n}\n\nmsg.payload = {\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000,\n    statusItems: [\n        item(msg.payload.rtcCurrentTimeLabel, msg.payload.rtcCurrentTime, msg.payload.rtcCurrentTimeTime),\n        item(msg.payload.rtcSyncLabel, msg.payload.rtcSync, msg.payload.rtcSyncTime),\n        item(msg.payload.rtcTelemetryLabel, msg.payload.rtcTelemetry, msg.payload.rtcTelemetryTime)\n    ],\n    metricRows: []\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1426,26 +1237,6 @@
         "libs": [],
         "x": 1050,
         "y": 540,
-        "wires": [
-            [
-                "6e9381da23ab29f4"
-            ]
-        ]
-    },
-    {
-        "id": "c720218d514f0575",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract RTC Sync",
-        "func": "msg.payload = {\n    label: msg.payload.rtcSyncLabel || \"\",\n    value: msg.payload.rtcSync || \"\",\n    time: msg.payload.rtcSyncTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1030,
-        "y": 580,
         "wires": [
             [
                 "bd735e5dcb4579f4"
@@ -1459,19 +1250,19 @@
         "group": "1f22eb0bf52ef7c6",
         "page": "",
         "ui": "",
-        "name": "Clock Sync",
-        "order": 7,
-        "width": "2",
-        "height": 1,
+        "name": "RTC Summary",
+        "order": 1,
+        "width": "6",
+        "height": 2,
         "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\">\n    <div class=\"freshness-label\">{{ displayLabel }}</div>\n    <div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    displayLabel() {\n      return this.payloadData.label || '';\n    },\n    displayValue() {\n      return this.payloadData.value || '';\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    receivedMs() {\n      const timestamp = this.payloadData.time;\n      if (!timestamp) {\n        return null;\n      }\n\n      const parsed = Date.parse(timestamp);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh() {\n      if (!this.displayValue || this.receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - this.receivedMs) <= this.maxAgeMs;\n    },\n    valueClass() {\n      if (!this.displayValue) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
+        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status-3\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1290,
-        "y": 580,
+        "x": 1300,
+        "y": 540,
         "wires": [
             []
         ]
@@ -1502,9 +1293,9 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "name": "",
-        "label": "Get RTC",
-        "order": 1,
-        "width": "1",
+        "label": "Poll",
+        "order": 2,
+        "width": "2",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1561,8 +1352,8 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "name": "",
-        "label": "Sync RTC Local",
-        "order": 4,
+        "label": "Sync Local",
+        "order": 3,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -1576,7 +1367,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
+        "buttonColor": "#42a5f5",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1659,9 +1450,9 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "name": "",
-        "label": "RTC TLM Enable",
-        "order": 2,
-        "width": "2",
+        "label": "TLM On",
+        "order": 5,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1674,7 +1465,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "green",
+        "buttonColor": "#66bb6a",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1718,9 +1509,9 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "name": "",
-        "label": "RTC TLM Disable",
-        "order": 3,
-        "width": "2",
+        "label": "TLM Off",
+        "order": 6,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -1733,7 +1524,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "red",
+        "buttonColor": "#ef5350",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -1839,7 +1630,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "Batt TLM Enable",
-        "order": 2,
+        "order": 4,
         "width": "2",
         "height": "1",
         "emulateClick": false,
@@ -1898,7 +1689,7 @@
         "group": "50860bfd06fffa7a",
         "name": "",
         "label": "Batt TLM Disable",
-        "order": 3,
+        "order": 2,
         "width": "2",
         "height": "1",
         "emulateClick": false,
@@ -2071,7 +1862,7 @@
         "id": "0370a1a51410027a",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "function 2",
+        "name": "custCommand",
         "func": "let command = String(msg.payload) + \"\\n\";\n\nflow.set(\"custCommand\", command);\n\nmsg.payload = command;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -2079,7 +1870,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
+        "x": 380,
         "y": 340,
         "wires": [
             [
@@ -2127,12 +1918,12 @@
         "group": "87c6d1cd17eff6d5",
         "page": "",
         "ui": "",
-        "name": "TLM Telemetry Enable",
-        "order": 8,
-        "width": "2",
-        "height": 1,
+        "name": "Telemetry Summary",
+        "order": 1,
+        "width": "6",
+        "height": 2,
         "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\">\n    <div class=\"freshness-label\">{{ displayLabel }}</div>\n    <div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    displayLabel() {\n      return this.payloadData.label || '';\n    },\n    displayValue() {\n      return this.payloadData.value || '';\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    receivedMs() {\n      const timestamp = this.payloadData.time;\n      if (!timestamp) {\n        return null;\n      }\n\n      const parsed = Date.parse(timestamp);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh() {\n      if (!this.displayValue || this.receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - this.receivedMs) <= this.maxAgeMs;\n    },\n    valueClass() {\n      if (!this.displayValue) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
+        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status-3\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
@@ -2145,34 +1936,10 @@
         ]
     },
     {
-        "id": "e5510a7192e55937",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "87c6d1cd17eff6d5",
-        "page": "",
-        "ui": "",
-        "name": "Telemetry Interval",
-        "order": 9,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\">\n    <div class=\"freshness-label\">{{ displayLabel }}</div>\n    <div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    displayLabel() {\n      return this.payloadData.label || '';\n    },\n    displayValue() {\n      return this.payloadData.value || '';\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    receivedMs() {\n      const timestamp = this.payloadData.time;\n      if (!timestamp) {\n        return null;\n      }\n\n      const parsed = Date.parse(timestamp);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh() {\n      if (!this.displayValue || this.receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - this.receivedMs) <= this.maxAgeMs;\n    },\n    valueClass() {\n      if (!this.displayValue) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1310,
-        "y": 440,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "ae52786b457f50e3",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "send TLM TLM Enable",
+        "name": "send TLM Self Enable",
         "func": "msg.payload = \"SET,TELEMETRY,TELEMETRY,ENABLE\\n\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -2194,9 +1961,9 @@
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
         "name": "",
-        "label": "TLM TLM Enable",
-        "order": 2,
-        "width": "2",
+        "label": "TLM On",
+        "order": 5,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -2209,7 +1976,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "green",
+        "buttonColor": "#66bb6a",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -2219,7 +1986,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
+        "x": 120,
         "y": 1020,
         "wires": [
             [
@@ -2231,7 +1998,7 @@
         "id": "c3309c0c60ec49bd",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "send TLM TLM Disable",
+        "name": "send TLM Self Disable",
         "func": "msg.payload = \"SET,TELEMETRY,TELEMETRY,DISABLE\\n\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -2253,9 +2020,9 @@
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
         "name": "",
-        "label": "TLM TLM Disable",
-        "order": 3,
-        "width": "2",
+        "label": "TLM Off",
+        "order": 6,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -2268,7 +2035,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "red",
+        "buttonColor": "#ef5350",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -2278,7 +2045,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 150,
+        "x": 120,
         "y": 1060,
         "wires": [
             [
@@ -2312,9 +2079,9 @@
         "z": "3b521b08f4388c2f",
         "group": "87c6d1cd17eff6d5",
         "name": "",
-        "label": "Get TLM",
-        "order": 1,
-        "width": "1",
+        "label": "Poll",
+        "order": 2,
+        "width": "2",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -2337,7 +2104,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 160,
+        "x": 150,
         "y": 900,
         "wires": [
             [
@@ -2434,63 +2201,19 @@
         ]
     },
     {
-        "id": "d506d2be422b81e6",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract RTC TLM",
-        "func": "msg.payload = {\n    label: msg.payload.rtcTelemetryLabel || \"\",\n    value: msg.payload.rtcTelemetry || \"\",\n    time: msg.payload.rtcTelemetryTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1030,
-        "y": 620,
-        "wires": [
-            [
-                "dc21974ebd615146"
-            ]
-        ]
-    },
-    {
-        "id": "dc21974ebd615146",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "1f22eb0bf52ef7c6",
-        "page": "",
-        "ui": "",
-        "name": "RTC Telemetry Enable",
-        "order": 8,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\">\n    <div class=\"freshness-label\">{{ displayLabel }}</div>\n    <div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() { return { nowMs: Date.now(), timerId: null }; },\n  computed: {\n    payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; },\n    displayLabel() { return this.payloadData.label || ''; },\n    displayValue() { return this.payloadData.value || ''; },\n    maxAgeMs() { return this.payloadData.maxAgeMs || 30000; },\n    receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; },\n    isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; },\n    valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; }\n  },\n  mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); },\n  unmounted() { if (this.timerId) { clearInterval(this.timerId); } }\n};\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1320,
-        "y": 620,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "93d87df78233859c",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "extract LED Enable",
-        "func": "msg.payload = {\n    label: msg.payload.ledEnableLabel || \"\",\n    value: msg.payload.ledEnable || \"\",\n    time: msg.payload.ledEnableTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
+        "name": "extract LED Summary",
+        "func": "function item(label, value, time) {\n    return {\n        label: label || \"\",\n        value: value || \"\",\n        time: time || \"\"\n    };\n}\n\nmsg.payload = {\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000,\n    statusItems: [\n        item(msg.payload.ledEnableLabel, msg.payload.ledEnable, msg.payload.ledEnableTime),\n        item(msg.payload.ledStateLabel, msg.payload.ledState, msg.payload.ledStateTime),\n        item(msg.payload.ledColorLabel, msg.payload.ledColor, msg.payload.ledColorTime),\n        item(msg.payload.ledTelemetryLabel, msg.payload.ledTelemetry, msg.payload.ledTelemetryTime)\n    ],\n    metricRows: []\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
-        "y": 680,
+        "x": 1040,
+        "y": 600,
         "wires": [
             [
                 "244fb5d509b779a0"
@@ -2504,151 +2227,19 @@
         "group": "33c8b33051afe822",
         "page": "",
         "ui": "",
-        "name": "LED Enable",
-        "order": 11,
-        "width": "2",
-        "height": 1,
+        "name": "LED Summary",
+        "order": 1,
+        "width": "6",
+        "height": 2,
         "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
+        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 1290,
-        "y": 680,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "fb2a49fa8d6ad39d",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED State",
-        "func": "msg.payload = {\n    label: msg.payload.ledStateLabel || \"\",\n    value: msg.payload.ledState || \"\",\n    time: msg.payload.ledStateTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1030,
-        "y": 720,
-        "wires": [
-            [
-                "887b7ebf277dcbd2"
-            ]
-        ]
-    },
-    {
-        "id": "887b7ebf277dcbd2",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "33c8b33051afe822",
-        "page": "",
-        "ui": "",
-        "name": "LED State",
-        "order": 12,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1280,
-        "y": 720,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "51f5a5dcfe3e5cd8",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED Color",
-        "func": "msg.payload = {\n    label: msg.payload.ledColorLabel || \"\",\n    value: msg.payload.ledColor || \"\",\n    time: msg.payload.ledColorTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1030,
-        "y": 760,
-        "wires": [
-            [
-                "2f5caf09449c7d9c"
-            ]
-        ]
-    },
-    {
-        "id": "2f5caf09449c7d9c",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "33c8b33051afe822",
-        "page": "",
-        "ui": "",
-        "name": "LED Color",
-        "order": 14,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1290,
-        "y": 760,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "89175a9d63aee81c",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract LED TLM",
-        "func": "msg.payload = {\n    label: msg.payload.ledTelemetryLabel || \"\",\n    value: msg.payload.ledTelemetry || \"\",\n    time: msg.payload.ledTelemetryTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1030,
-        "y": 800,
-        "wires": [
-            [
-                "d7befc5a2714f9f5"
-            ]
-        ]
-    },
-    {
-        "id": "d7befc5a2714f9f5",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "33c8b33051afe822",
-        "page": "",
-        "ui": "",
-        "name": "LED Telemetry Enable",
-        "order": 13,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1320,
-        "y": 800,
+        "x": 1300,
+        "y": 600,
         "wires": [
             []
         ]
@@ -2716,7 +2307,7 @@
         "id": "99f6a6b4cde014ec",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "send Get RTC",
+        "name": "send Get GPS",
         "func": "msg.payload = \"GET,GPS,NONE,NONE\\n\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -2737,9 +2328,9 @@
         "type": "ui-button",
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
-        "name": "",
-        "label": "Get GPS",
-        "order": 1,
+        "name": "Poll GPS",
+        "label": "Poll",
+        "order": 2,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -2763,7 +2354,7 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 180,
+        "x": 190,
         "y": 1640,
         "wires": [
             [
@@ -2775,16 +2366,16 @@
         "id": "baab0a7f141ded66",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "extract GPS Enable",
-        "func": "msg.payload = {\n    label: msg.payload.gpsEnableLabel || \"\",\n    value: msg.payload.gpsEnable || \"\",\n    time: msg.payload.gpsEnableTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
+        "name": "extract GPS Summary",
+        "func": "function item(label, value, time) {\n    return {\n        label: label || \"\",\n        value: value || \"\",\n        time: time || \"\"\n    };\n}\n\nmsg.payload = {\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000,\n    statusItems: [\n        item(msg.payload.gpsEnableLabel, msg.payload.gpsEnable, msg.payload.gpsEnableTime),\n        item(msg.payload.gpsAvailableLabel, msg.payload.gpsAvailable, msg.payload.gpsAvailableTime),\n        item(msg.payload.gpsSatellitesLabel, msg.payload.gpsSatellites, msg.payload.gpsSatellitesTime),\n        item(msg.payload.gpsTelemetryLabel, msg.payload.gpsTelemetry, msg.payload.gpsTelemetryTime)\n    ],\n    metricRows: [\n        [\n            item(msg.payload.gpsLatitudeLabel, msg.payload.gpsLatitude, msg.payload.gpsLatitudeTime),\n            item(msg.payload.gpsLongitudeLabel, msg.payload.gpsLongitude, msg.payload.gpsLongitudeTime)\n        ],\n        [\n            item(msg.payload.gpsAltitudeLabel, msg.payload.gpsAltitude, msg.payload.gpsAltitudeTime),\n            item(msg.payload.gpsSpeedLabel, msg.payload.gpsSpeed, msg.payload.gpsSpeedTime)\n        ]\n    ]\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
-        "y": 960,
+        "x": 1040,
+        "y": 660,
         "wires": [
             [
                 "6c1abf38ce1d10c7"
@@ -2798,151 +2389,19 @@
         "group": "a02eb05c11bee1d4",
         "page": "",
         "ui": "",
-        "name": "GPS Enable",
-        "order": 6,
-        "width": "1",
-        "height": 1,
+        "name": "GPS Summary",
+        "order": 1,
+        "width": "6",
+        "height": 3,
         "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1290,
-        "y": 960,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "560cda290dd1172b",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract GPS Available",
-        "func": "msg.payload = {\n    label: msg.payload.gpsAvailableLabel || \"\",\n    value: msg.payload.gpsAvailable || \"\",\n    time: msg.payload.gpsAvailableTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1000,
-        "wires": [
-            [
-                "b042ec8b96e713d5"
-            ]
-        ]
-    },
-    {
-        "id": "b042ec8b96e713d5",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "a02eb05c11bee1d4",
-        "page": "",
-        "ui": "",
-        "name": "GPS Available",
-        "order": 7,
-        "width": "1",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
+        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n    <div v-for=\"(row, index) in metricRows\" :key=\"index\" class=\"summary-grid summary-grid-metrics\">\n      <div v-for=\"item in row\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    },\n    metricRows() {\n      return this.payloadData.metricRows || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
         "x": 1300,
-        "y": 1000,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "d1b702a46a0467e7",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract GPS Latitude",
-        "func": "msg.payload = {\n    label: msg.payload.gpsLatitudeLabel || \"\",\n    value: msg.payload.gpsLatitude || \"\",\n    time: msg.payload.gpsLatitudeTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1040,
-        "wires": [
-            [
-                "b6470819b3315455"
-            ]
-        ]
-    },
-    {
-        "id": "b6470819b3315455",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "a02eb05c11bee1d4",
-        "page": "",
-        "ui": "",
-        "name": "GPS Latitude",
-        "order": 10,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1300,
-        "y": 1040,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "466689066fb07c4c",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract GPS Longitude",
-        "func": "msg.payload = {\n    label: msg.payload.gpsLongitudeLabel || \"\",\n    value: msg.payload.gpsLongitude || \"\",\n    time: msg.payload.gpsLongitudeTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1080,
-        "wires": [
-            [
-                "eae9694587c3e7dc"
-            ]
-        ]
-    },
-    {
-        "id": "eae9694587c3e7dc",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "a02eb05c11bee1d4",
-        "page": "",
-        "ui": "",
-        "name": "GPS Longitude",
-        "order": 11,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1300,
-        "y": 1080,
+        "y": 660,
         "wires": [
             []
         ]
@@ -2973,9 +2432,9 @@
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
         "name": "",
-        "label": "GPS TLM Enable",
-        "order": 2,
-        "width": "2",
+        "label": "TLM On",
+        "order": 5,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -2988,7 +2447,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "green",
+        "buttonColor": "#66bb6a",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -3010,7 +2469,7 @@
         "id": "b5ad1afa06be4a91",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "send TLM TLM Disable",
+        "name": "send GPS TLM Disable",
         "func": "msg.payload = \"SET,GPS,TELEMETRY,DISABLE\\n\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -3032,9 +2491,9 @@
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
         "name": "",
-        "label": "GPS TLM Disable",
-        "order": 3,
-        "width": "2",
+        "label": "TLM Off",
+        "order": 6,
+        "width": "1",
         "height": "1",
         "emulateClick": false,
         "tooltip": "",
@@ -3047,7 +2506,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "red",
+        "buttonColor": "#ef5350",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -3063,94 +2522,6 @@
             [
                 "b5ad1afa06be4a91"
             ]
-        ]
-    },
-    {
-        "id": "376077d2878f2dba",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract GPS Altitude",
-        "func": "msg.payload = {\n    label: msg.payload.gpsAltitudeLabel || \"\",\n    value: msg.payload.gpsAltitude || \"\",\n    time: msg.payload.gpsAltitudeTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1120,
-        "wires": [
-            [
-                "cfed0d97ebfc14a3"
-            ]
-        ]
-    },
-    {
-        "id": "cfed0d97ebfc14a3",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "a02eb05c11bee1d4",
-        "page": "",
-        "ui": "",
-        "name": "GPS Altitude",
-        "order": 12,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1290,
-        "y": 1120,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "9c0a224cc277b77e",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract GPS Speed",
-        "func": "msg.payload = {\n    label: msg.payload.gpsSpeedLabel || \"\",\n    value: msg.payload.gpsSpeed || \"\",\n    time: msg.payload.gpsSpeedTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1030,
-        "y": 1160,
-        "wires": [
-            [
-                "b7f376905d9c73b1"
-            ]
-        ]
-    },
-    {
-        "id": "b7f376905d9c73b1",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "a02eb05c11bee1d4",
-        "page": "",
-        "ui": "",
-        "name": "GPS Speed",
-        "order": 13,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1290,
-        "y": 1160,
-        "wires": [
-            []
         ]
     },
     {
@@ -3182,7 +2553,7 @@
         "mapopt": "",
         "mapwms": false,
         "x": 1280,
-        "y": 1300,
+        "y": 700,
         "wires": []
     },
     {
@@ -3198,55 +2569,11 @@
         "finalize": "",
         "libs": [],
         "x": 1050,
-        "y": 1300,
+        "y": 700,
         "wires": [
             [
                 "22b2e0d2b7246c22"
             ]
-        ]
-    },
-    {
-        "id": "727ebe425479c8ad",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract GPS Satellites",
-        "func": "msg.payload = {\n    label: msg.payload.gpsSatellitesLabel || \"\",\n    value: msg.payload.gpsSatellites || \"\",\n    time: msg.payload.gpsSatellitesTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1200,
-        "wires": [
-            [
-                "06afafc30dc21a79"
-            ]
-        ]
-    },
-    {
-        "id": "06afafc30dc21a79",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "a02eb05c11bee1d4",
-        "page": "",
-        "ui": "",
-        "name": "GPS Satellites",
-        "order": 8,
-        "width": "1",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1300,
-        "y": 1200,
-        "wires": [
-            []
         ]
     },
     {
@@ -3275,8 +2602,8 @@
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
         "name": "",
-        "label": "GPS Enable",
-        "order": 4,
+        "label": "Enable",
+        "order": 3,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -3290,7 +2617,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
+        "buttonColor": "#2e7d32",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -3334,8 +2661,8 @@
         "z": "3b521b08f4388c2f",
         "group": "a02eb05c11bee1d4",
         "name": "",
-        "label": "GPS Disable",
-        "order": 5,
+        "label": "Disable",
+        "order": 4,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -3349,7 +2676,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
+        "buttonColor": "#c62828",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -3375,7 +2702,7 @@
         "name": "GPS Get Option",
         "label": "GET GPS Parameter",
         "tooltip": "",
-        "order": 14,
+        "order": 7,
         "width": "6",
         "height": "1",
         "passthru": false,
@@ -3442,7 +2769,7 @@
         "id": "51704248b4f8e452",
         "type": "function",
         "z": "3b521b08f4388c2f",
-        "name": "send Get RTC",
+        "name": "send Get GPS",
         "func": "let option = String(msg.payload);\nlet command = String(\"GET,GPS,\" + option + \",NONE\\n\");\n\nflow.set(\"gpsGet\", command);\nmsg.payload = command;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -3540,50 +2867,6 @@
         ]
     },
     {
-        "id": "e9d3310445ccf4a0",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "name": "extract GPS Telemetry",
-        "func": "msg.payload = {\n    label: msg.payload.gpsTelemetryLabel || \"\",\n    value: msg.payload.gpsTelemetry || \"\",\n    time: msg.payload.gpsTelemetryTime || \"\",\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000\n};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1240,
-        "wires": [
-            [
-                "1fdadcfe6f92960a"
-            ]
-        ]
-    },
-    {
-        "id": "1fdadcfe6f92960a",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "a02eb05c11bee1d4",
-        "page": "",
-        "ui": "",
-        "name": "GPS Telemetry Enable",
-        "order": 9,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\"><div class=\"freshness-label\">{{ displayLabel }}</div><div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div></div></template>\n\n<script>\nexport default { data() { return { nowMs: Date.now(), timerId: null }; }, computed: { payloadData() { return this.msg && this.msg.payload ? this.msg.payload : {}; }, displayLabel() { return this.payloadData.label || ''; }, displayValue() { return this.payloadData.value || ''; }, maxAgeMs() { return this.payloadData.maxAgeMs || 30000; }, receivedMs() { const t = this.payloadData.time; if (!t) return null; const p = Date.parse(t); return Number.isNaN(p) ? null : p; }, isFresh() { if (!this.displayValue || this.receivedMs === null) return false; return (this.nowMs - this.receivedMs) <= this.maxAgeMs; }, valueClass() { if (!this.displayValue) return 'freshness-empty'; return this.isFresh ? 'freshness-fresh' : 'freshness-stale'; } }, mounted() { this.timerId = setInterval(() => { this.nowMs = Date.now(); }, 1000); }, unmounted() { if (this.timerId) { clearInterval(this.timerId); } } };\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1320,
-        "y": 1240,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "39c0663b772f6f4b",
         "type": "ui-dropdown",
         "z": "3b521b08f4388c2f",
@@ -3591,7 +2874,7 @@
         "name": "RTC Get Option",
         "label": "GET RTC Parameter",
         "tooltip": "",
-        "order": 9,
+        "order": 7,
         "width": "6",
         "height": "1",
         "passthru": false,
@@ -3657,7 +2940,7 @@
         "name": "LED Get Option",
         "label": "GET LED Parameter",
         "tooltip": "",
-        "order": 15,
+        "order": 10,
         "width": "6",
         "height": "1",
         "passthru": false,
@@ -3693,7 +2976,7 @@
         "typeIsComboBox": true,
         "msgTrigger": "onChange",
         "x": 160,
-        "y": 840,
+        "y": 760,
         "wires": [
             [
                 "4505d0c755a203ee"
@@ -3713,7 +2996,7 @@
         "finalize": "",
         "libs": [],
         "x": 400,
-        "y": 840,
+        "y": 760,
         "wires": [
             [
                 "a407349444f312cf"
@@ -3728,7 +3011,7 @@
         "name": "TLM Get Option",
         "label": "GET TLM Parameter",
         "tooltip": "",
-        "order": 10,
+        "order": 8,
         "width": "6",
         "height": "1",
         "passthru": false,
@@ -3783,67 +3066,6 @@
         "wires": [
             [
                 "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "cdda8c29f1dc0e57",
-        "type": "function",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "name": "send custCommand",
-        "func": "let command = flow.get(\"custCommand\");\n\nmsg.payload = command;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 400,
-        "y": 380,
-        "wires": [
-            [
-                "a407349444f312cf"
-            ]
-        ]
-    },
-    {
-        "id": "a19d0a499361ec6c",
-        "type": "ui-button",
-        "z": "3b521b08f4388c2f",
-        "d": true,
-        "group": "0c10ce94c624bca1",
-        "name": "Send custCommand",
-        "label": "Send",
-        "order": 9,
-        "width": "1",
-        "height": "1",
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 140,
-        "y": 380,
-        "wires": [
-            [
-                "cdda8c29f1dc0e57"
             ]
         ]
     },
@@ -3932,8 +3154,8 @@
         "z": "3b521b08f4388c2f",
         "group": "1f22eb0bf52ef7c6",
         "name": "",
-        "label": "Sync RTC GPS",
-        "order": 5,
+        "label": "Sync GPS",
+        "order": 4,
         "width": "1",
         "height": "1",
         "emulateClick": false,
@@ -3947,7 +3169,7 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
+        "buttonColor": "#64b5f6",
         "textColor": "",
         "iconColor": "",
         "enableClick": true,
@@ -3977,38 +3199,14 @@
         "width": "0",
         "height": "0",
         "head": "",
-        "format": ".freshness-widget {\n    height: 100%;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    justify-content: center;\n    text-align: center;\n    overflow: hidden;\n    padding: 0.1rem 0;\n    box-sizing: border-box;\n}\n\n.freshness-label {\n    font-size: 0.85rem;\n    color: #FFFFFF;\n    line-height: 1.1;\n    margin: 0;\n}\n\n.freshness-value {\n    margin-top: 0.1rem;\n    font-size: 0.95rem;\n    font-weight: 600;\n    line-height: 1.05;\n    transition: color 0.2s ease;\n}\n\n.freshness-fresh {\n    color: #2e7d32;\n}\n\n.freshness-stale {\n    color: #d32f2f;\n}\n\n.freshness-empty {\n    color: #717171;\n}",
+        "format": ".freshness-widget {\n    height: 100%;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    justify-content: center;\n    text-align: center;\n    overflow: hidden;\n    padding: 0.1rem 0;\n    box-sizing: border-box;\n}\n\n.freshness-label {\n    font-size: 0.85rem;\n    color: #FFFFFF;\n    line-height: 1.1;\n    margin: 0;\n}\n\n.freshness-value {\n    margin-top: 0.1rem;\n    font-size: 0.95rem;\n    font-weight: 600;\n    line-height: 1.05;\n    transition: color 0.2s ease;\n}\n\n.freshness-fresh {\n    color: #2e7d32;\n}\n\n.freshness-stale {\n    color: #d32f2f;\n}\n\n.freshness-empty {\n    color: #717171;\n}\n\n.summary-card {\n    display: flex;\n    flex-direction: column;\n    gap: 0.45rem;\n    height: 100%;\n    padding: 0.2rem 0;\n    box-sizing: border-box;\n}\n\n.summary-grid {\n    display: grid;\n    gap: 0.35rem 0.6rem;\n    align-items: stretch;\n}\n\n.summary-grid-status {\n    grid-template-columns: repeat(4, minmax(0, 1fr));\n}\n\n.summary-grid-status-3 {\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n}\n\n.summary-grid-metrics {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n}\n\n.summary-item {\n    min-height: 0;\n}",
         "storeOutMessages": false,
         "passthru": false,
         "resendOnRefresh": true,
         "templateScope": "page:style",
         "className": "",
-        "x": 190,
-        "y": 80,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "6e9381da23ab29f4",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "1f22eb0bf52ef7c6",
-        "page": "",
-        "ui": "",
-        "name": "RTC Current Time",
-        "order": 6,
-        "width": "2",
-        "height": 1,
-        "head": "",
-        "format": "<template>\n  <div class=\"freshness-widget\">\n    <div class=\"freshness-label\">{{ displayLabel }}</div>\n    <div class=\"freshness-value\" :class=\"valueClass\">{{ displayValue }}</div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    displayLabel() {\n      return this.payloadData.label || '';\n    },\n    displayValue() {\n      return this.payloadData.value || '';\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    receivedMs() {\n      const timestamp = this.payloadData.time;\n      if (!timestamp) {\n        return null;\n      }\n\n      const parsed = Date.parse(timestamp);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh() {\n      if (!this.displayValue || this.receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - this.receivedMs) <= this.maxAgeMs;\n    },\n    valueClass() {\n      if (!this.displayValue) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1310,
-        "y": 540,
+        "x": 130,
+        "y": 160,
         "wires": [
             []
         ]
@@ -4026,7 +3224,7 @@
         "finalize": "",
         "libs": [],
         "x": 1040,
-        "y": 1360,
+        "y": 940,
         "wires": [
             [
                 "902c416c219dd801"
@@ -4041,7 +3239,7 @@
         "page": "",
         "ui": "",
         "name": "Batt Available",
-        "order": 4,
+        "order": 3,
         "width": "1",
         "height": 1,
         "head": "",
@@ -4052,7 +3250,7 @@
         "templateScope": "local",
         "className": "",
         "x": 1300,
-        "y": 1360,
+        "y": 940,
         "wires": [
             []
         ]
@@ -4070,7 +3268,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 1400,
+        "y": 980,
         "wires": [
             [
                 "69af21a5b485e3e9"
@@ -4096,7 +3294,7 @@
         "templateScope": "local",
         "className": "",
         "x": 1320,
-        "y": 1400,
+        "y": 980,
         "wires": [
             []
         ]
@@ -4114,7 +3312,7 @@
         "finalize": "",
         "libs": [],
         "x": 1060,
-        "y": 1440,
+        "y": 1020,
         "wires": [
             [
                 "2d3845ca76ac01f8"
@@ -4140,7 +3338,7 @@
         "templateScope": "local",
         "className": "",
         "x": 1320,
-        "y": 1440,
+        "y": 1020,
         "wires": [
             []
         ]
@@ -4158,7 +3356,7 @@
         "finalize": "",
         "libs": [],
         "x": 1060,
-        "y": 1480,
+        "y": 1060,
         "wires": [
             [
                 "dce7627a1e966373"
@@ -4184,7 +3382,7 @@
         "templateScope": "local",
         "className": "",
         "x": 1320,
-        "y": 1480,
+        "y": 1060,
         "wires": [
             []
         ]
@@ -4202,7 +3400,7 @@
         "finalize": "",
         "libs": [],
         "x": 1060,
-        "y": 1520,
+        "y": 1100,
         "wires": [
             [
                 "0e1db750190549e3"
@@ -4228,7 +3426,7 @@
         "templateScope": "local",
         "className": "",
         "x": 1320,
-        "y": 1520,
+        "y": 1100,
         "wires": [
             []
         ]
@@ -4246,7 +3444,7 @@
         "finalize": "",
         "libs": [],
         "x": 1030,
-        "y": 1560,
+        "y": 1140,
         "wires": [
             [
                 "a3f22085dd57dbdd"
@@ -4272,7 +3470,7 @@
         "templateScope": "local",
         "className": "",
         "x": 1290,
-        "y": 1560,
+        "y": 1140,
         "wires": [
             []
         ]
