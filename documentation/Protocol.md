@@ -76,6 +76,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 ## Generic Command Rules
 
 - `GET,<target>,NONE,NONE` returns the full implemented telemetry set for that target.
+- `GET,NONE,NONE,NONE` returns a one-time full snapshot across all implemented targets.
 - `GET,<target>,<parameter>,NONE` returns one telemetry line for that parameter when supported by that target.
 - Per-target telemetry disable only removes that target from periodic snapshots.
 - `SET,<target>,TELEMETRY,<value>` currently accepts either `ENABLE` and `DISABLE` or `TRUE` and `FALSE`.
@@ -156,6 +157,7 @@ Additional target-specific errors are documented on the relevant target pages.
 ## Examples
 
 ```text
+GET,NONE,NONE,NONE
 GET,GPS,LATITUDE_D,NONE
 SET,RTC,SYNC,GPS
 SET,TELEMETRY,ENABLE,FALSE

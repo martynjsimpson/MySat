@@ -17,8 +17,33 @@
 
 namespace
 {
+  void handleSystemWideGet(const Command &cmd)
+  {
+    if (cmd.parameter != PARAM_NONE || cmd.value != VALUE_NONE)
+    {
+      sendError("BAD_FORMAT");
+      return;
+    }
+
+    handleGetTelemetry({CMD_GET, TARGET_TELEMETRY, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    handleGetRtc({CMD_GET, TARGET_RTC, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    handleGetLed({CMD_GET, TARGET_LED, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    handleGetBattery({CMD_GET, TARGET_BATTERY, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    handleGetGps({CMD_GET, TARGET_GPS, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    handleGetThermal({CMD_GET, TARGET_THERMAL, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    handleGetImu({CMD_GET, TARGET_IMU, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    handleGetAdcs({CMD_GET, TARGET_ADCS, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    reportStatusHeartbeat(false);
+  }
+
   void handleGet(const Command &cmd)
   {
+    if (cmd.target == TARGET_NONE)
+    {
+      handleSystemWideGet(cmd);
+      return;
+    }
+
     switch (cmd.target)
     {
     case TARGET_LED:

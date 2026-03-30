@@ -69,6 +69,7 @@ These events are target-specific and described in their target pages.
 
 - `STATUS` heartbeat is not per-target disableable
 - `LED`, `TELEMETRY`, `BATTERY`, `GPS`, `RTC`, `THERMAL`, `IMU`, and `ADCS` can each be included or omitted from periodic snapshots independently
+- `GET,NONE,NONE,NONE` emits a one-time full snapshot across all implemented targets, including `STATUS,HEARTBEAT_N`
 - `GET,<target>,NONE,NONE` returns the full implemented telemetry set for that target
 - `GET,<target>,<parameter>,NONE` returns a single telemetry line for that field when supported
 
