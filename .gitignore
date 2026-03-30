@@ -51,3 +51,4 @@ ground-station-dashboard/.config.runtime.json.backup
 
 .cache/
 ground-station-dashboard/flows/.main.json.backup
+compile_commands.json
