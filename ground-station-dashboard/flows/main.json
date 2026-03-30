@@ -132,7 +132,7 @@
         "page": "f97e68d451736993",
         "width": "6",
         "height": 1,
-        "order": 8,
+        "order": 9,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -224,6 +224,20 @@
         "groupType": "default"
     },
     {
+        "id": "6b23d8f2d6f14c91",
+        "type": "ui-group",
+        "name": "IMU",
+        "page": "f97e68d451736993",
+        "width": 6,
+        "height": "6",
+        "order": 8,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
         "id": "5124fb12bde93c6f",
         "type": "serial in",
         "z": "3b521b08f4388c2f",
@@ -295,7 +309,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\nconst freshnessThresholdMs = 10000;\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nlet payload = {\n    time: s.time || \"\",\n    freshnessThresholdMs,\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nfunction addField(key, label, target, parameter) {\n    payload[key] = getValue(target, parameter);\n    payload[key + \"Label\"] = label;\n    payload[key + \"Time\"] = getTime(target, parameter);\n}\n\naddField(\"rtcCurrentTime\", \"Current Time\", \"RTC\", \"CURRENT_TIME\");\naddField(\"rtcSync\", \"Clock Sync\", \"RTC\", \"SYNC\");\naddField(\"rtcTelemetry\", \"TLM\", \"RTC\", \"TELEMETRY\");\n\naddField(\"ledEnable\", \"Enabled\", \"LED\", \"ENABLE\");\naddField(\"ledState\", \"State\", \"LED\", \"STATE\");\naddField(\"ledColor\", \"Color\", \"LED\", \"COLOR\");\naddField(\"ledTelemetry\", \"TLM\", \"LED\", \"TELEMETRY\");\n\naddField(\"telemetryEnable\", \"Enable\", \"TELEMETRY\", \"ENABLE\");\naddField(\"telemetryTelemetry\", \"TLM\", \"TELEMETRY\", \"TELEMETRY\");\naddField(\"telemetryInterval\", \"Interval (s)\", \"TELEMETRY\", \"INTERVAL_S\");\n\naddField(\"batteryTelemetry\", \"Battery Telemetry\", \"BATTERY\", \"TELEMETRY\");\naddField(\"batteryAvailable\", \"Battery Available\", \"BATTERY\", \"AVAILABLE\");\naddField(\"chargeCurrentA\", \"Charge Current (A)\", \"BATTERY\", \"CHARGE_CURRENT_A\");\naddField(\"chargeVoltageV\", \"Charge Voltage (V)\", \"BATTERY\", \"CHARGE_VOLTAGE_V\");\naddField(\"chargePercentP\", \"Charge Percent (%)\", \"BATTERY\", \"CHARGE_PERCENT_P\");\naddField(\"batteryVoltage\", \"Battery Voltage (V)\", \"BATTERY\", \"VOLTAGE_V\");\n\naddField(\"statusHeartbeatValue\", \"Heartbeat Counter\", \"STATUS\", \"HEARTBEAT_N\");\n\naddField(\"gpsEnable\", \"Enabled\", \"GPS\", \"ENABLE\");\naddField(\"gpsAvailable\", \"Available\", \"GPS\", \"AVAILABLE\");\naddField(\"gpsLatitude\", \"Latitude\", \"GPS\", \"LATITUDE_D\");\naddField(\"gpsLongitude\", \"Longitude\", \"GPS\", \"LONGITUDE_D\");\naddField(\"gpsAltitude\", \"Altitude (m)\", \"GPS\", \"ALTITUDE_M\");\naddField(\"gpsSpeed\", \"Speed (km/h)\", \"GPS\", \"SPEED_KPH\");\naddField(\"gpsSatellites\", \"Satellites\", \"GPS\", \"SATELLITES_N\");\naddField(\"gpsTelemetry\", \"TLM\", \"GPS\", \"TELEMETRY\");\n\naddField(\"thermalEnable\", \"Enabled\", \"THERMAL\", \"ENABLE\");\naddField(\"thermalAvailable\", \"Available\", \"THERMAL\", \"AVAILABLE\");\naddField(\"thermalTemperatureC\", \"Temperature (°C)\", \"THERMAL\", \"TEMPERATURE_C\");\naddField(\"thermalHumidityP\", \"Humidity (%RH)\", \"THERMAL\", \"HUMIDITY_P\");\naddField(\"thermalTelemetry\", \"TLM\", \"THERMAL\", \"TELEMETRY\");\n\nmsg.payload = payload;\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\nconst freshnessThresholdMs = 10000;\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nlet payload = {\n    time: s.time || \"\",\n    freshnessThresholdMs,\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nfunction addField(key, label, target, parameter) {\n    payload[key] = getValue(target, parameter);\n    payload[key + \"Label\"] = label;\n    payload[key + \"Time\"] = getTime(target, parameter);\n}\n\naddField(\"rtcCurrentTime\", \"Current Time\", \"RTC\", \"CURRENT_TIME\");\naddField(\"rtcSync\", \"Clock Sync\", \"RTC\", \"SYNC\");\naddField(\"rtcTelemetry\", \"TLM\", \"RTC\", \"TELEMETRY\");\n\naddField(\"ledEnable\", \"Enabled\", \"LED\", \"ENABLE\");\naddField(\"ledState\", \"State\", \"LED\", \"STATE\");\naddField(\"ledColor\", \"Color\", \"LED\", \"COLOR\");\naddField(\"ledTelemetry\", \"TLM\", \"LED\", \"TELEMETRY\");\n\naddField(\"telemetryEnable\", \"Enable\", \"TELEMETRY\", \"ENABLE\");\naddField(\"telemetryTelemetry\", \"TLM\", \"TELEMETRY\", \"TELEMETRY\");\naddField(\"telemetryInterval\", \"Interval (s)\", \"TELEMETRY\", \"INTERVAL_S\");\n\naddField(\"batteryTelemetry\", \"Battery Telemetry\", \"BATTERY\", \"TELEMETRY\");\naddField(\"batteryAvailable\", \"Battery Available\", \"BATTERY\", \"AVAILABLE\");\naddField(\"chargeCurrentA\", \"Charge Current (A)\", \"BATTERY\", \"CHARGE_CURRENT_A\");\naddField(\"chargeVoltageV\", \"Charge Voltage (V)\", \"BATTERY\", \"CHARGE_VOLTAGE_V\");\naddField(\"chargePercentP\", \"Charge Percent (%)\", \"BATTERY\", \"CHARGE_PERCENT_P\");\naddField(\"batteryVoltage\", \"Battery Voltage (V)\", \"BATTERY\", \"VOLTAGE_V\");\n\naddField(\"statusHeartbeatValue\", \"Heartbeat Counter\", \"STATUS\", \"HEARTBEAT_N\");\n\naddField(\"gpsEnable\", \"Enabled\", \"GPS\", \"ENABLE\");\naddField(\"gpsAvailable\", \"Available\", \"GPS\", \"AVAILABLE\");\naddField(\"gpsLatitude\", \"Latitude\", \"GPS\", \"LATITUDE_D\");\naddField(\"gpsLongitude\", \"Longitude\", \"GPS\", \"LONGITUDE_D\");\naddField(\"gpsAltitude\", \"Altitude (m)\", \"GPS\", \"ALTITUDE_M\");\naddField(\"gpsSpeed\", \"Speed (km/h)\", \"GPS\", \"SPEED_KPH\");\naddField(\"gpsSatellites\", \"Satellites\", \"GPS\", \"SATELLITES_N\");\naddField(\"gpsTelemetry\", \"TLM\", \"GPS\", \"TELEMETRY\");\n\naddField(\"thermalEnable\", \"Enabled\", \"THERMAL\", \"ENABLE\");\naddField(\"thermalAvailable\", \"Available\", \"THERMAL\", \"AVAILABLE\");\naddField(\"thermalTemperatureC\", \"Temperature (°C)\", \"THERMAL\", \"TEMPERATURE_C\");\naddField(\"thermalHumidityP\", \"Humidity (%RH)\", \"THERMAL\", \"HUMIDITY_P\");\naddField(\"thermalTelemetry\", \"TLM\", \"THERMAL\", \"TELEMETRY\");\n\naddField(\"imuEnable\", \"Enabled\", \"IMU\", \"ENABLE\");\naddField(\"imuAvailable\", \"Available\", \"IMU\", \"AVAILABLE\");\naddField(\"imuXMs2\", \"X (m/s²)\", \"IMU\", \"X_MS2\");\naddField(\"imuYMs2\", \"Y (m/s²)\", \"IMU\", \"Y_MS2\");\naddField(\"imuZMs2\", \"Z (m/s²)\", \"IMU\", \"Z_MS2\");\naddField(\"imuGyroXDps\", \"Gyro X (dps)\", \"IMU\", \"GYRO_X_DPS\");\naddField(\"imuGyroYDps\", \"Gyro Y (dps)\", \"IMU\", \"GYRO_Y_DPS\");\naddField(\"imuGyroZDps\", \"Gyro Z (dps)\", \"IMU\", \"GYRO_Z_DPS\");\naddField(\"imuTelemetry\", \"TLM\", \"IMU\", \"TELEMETRY\");\n\nmsg.payload = payload;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -317,6 +331,7 @@
                 "a1a18baa0c4bd1de",
                 "baab0a7f141ded66",
                 "c1a5e6f4b9d24731",
+                "5fb2251db7cd4cf2",
                 "ce3a285745eb4602",
                 "1adbe36cd8830cab",
                 "9b67958256975ec3",
@@ -3454,7 +3469,7 @@
         "width": "6",
         "height": 3,
         "head": "",
-        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status-3\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n    <div v-for=\"(row, index) in metricRows\" :key=\"index\" class=\"summary-grid summary-grid-metrics\">\n      <div v-for=\"item in row\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    },\n    metricRows() {\n      return this.payloadData.metricRows || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
+        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status-3\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n    <div v-for=\"(row, index) in metricRows\" :key=\"index\" class=\"summary-grid imu-summary-grid-metrics\">\n      <div v-for=\"item in row\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    },\n    metricRows() {\n      return this.payloadData.metricRows || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>\n\n<style>\n.imu-summary-grid-metrics {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n}\n</style>",
         "storeOutMessages": true,
         "passthru": true,
         "resendOnRefresh": true,
@@ -3831,6 +3846,441 @@
         "libs": [],
         "x": 420,
         "y": 2020,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "5fb2251db7cd4cf2",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract IMU Summary",
+        "func": "function item(label, value, time) {\n    return {\n        label: label || \"\",\n        value: value || \"\",\n        time: time || \"\"\n    };\n}\n\nmsg.payload = {\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000,\n    statusItems: [\n        item(msg.payload.imuEnableLabel, msg.payload.imuEnable, msg.payload.imuEnableTime),\n        item(msg.payload.imuAvailableLabel, msg.payload.imuAvailable, msg.payload.imuAvailableTime),\n        item(msg.payload.imuTelemetryLabel, msg.payload.imuTelemetry, msg.payload.imuTelemetryTime)\n    ],\n    metricRows: [\n        [\n            item(msg.payload.imuXMs2Label, msg.payload.imuXMs2, msg.payload.imuXMs2Time),\n            item(msg.payload.imuYMs2Label, msg.payload.imuYMs2, msg.payload.imuYMs2Time),\n            item(msg.payload.imuZMs2Label, msg.payload.imuZMs2, msg.payload.imuZMs2Time)\n        ],\n        [\n            item(msg.payload.imuGyroXDpsLabel, msg.payload.imuGyroXDps, msg.payload.imuGyroXDpsTime),\n            item(msg.payload.imuGyroYDpsLabel, msg.payload.imuGyroYDps, msg.payload.imuGyroYDpsTime),\n            item(msg.payload.imuGyroZDpsLabel, msg.payload.imuGyroZDps, msg.payload.imuGyroZDpsTime)\n        ]\n    ]\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 740,
+        "wires": [
+            [
+                "823cd835985ef459"
+            ]
+        ]
+    },
+    {
+        "id": "823cd835985ef459",
+        "type": "ui-template",
+        "z": "3b521b08f4388c2f",
+        "group": "6b23d8f2d6f14c91",
+        "page": "",
+        "ui": "",
+        "name": "IMU Summary",
+        "order": 1,
+        "width": "6",
+        "height": 3,
+        "head": "",
+        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status-3\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n    <div v-for=\"(row, index) in metricRows\" :key=\"index\" class=\"summary-grid\" style=\"grid-template-columns: repeat(3, minmax(0, 1fr));\">\n      <div v-for=\"item in row\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    },\n    metricRows() {\n      return this.payloadData.metricRows || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1340,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cf54d2ffd3044ff3",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get IMU",
+        "func": "msg.payload = \"GET,IMU,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 2100,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "d8cfd9403ce84777",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "6b23d8f2d6f14c91",
+        "name": "Poll IMU",
+        "label": "Poll",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "purple",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 2100,
+        "wires": [
+            [
+                "cf54d2ffd3044ff3"
+            ]
+        ]
+    },
+    {
+        "id": "fed95580df4f4200",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send IMU Enable",
+        "func": "msg.payload = \"SET,IMU,ENABLE,TRUE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 2140,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "188774edb3cc41ce",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "6b23d8f2d6f14c91",
+        "name": "",
+        "label": "Enable",
+        "order": 3,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#2e7d32",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 200,
+        "y": 2140,
+        "wires": [
+            [
+                "fed95580df4f4200"
+            ]
+        ]
+    },
+    {
+        "id": "ca3db94c74034f65",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send IMU Disable",
+        "func": "msg.payload = \"SET,IMU,ENABLE,FALSE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 2180,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "cf5df355c1d54b11",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "6b23d8f2d6f14c91",
+        "name": "",
+        "label": "Disable",
+        "order": 4,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#c62828",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 190,
+        "y": 2180,
+        "wires": [
+            [
+                "ca3db94c74034f65"
+            ]
+        ]
+    },
+    {
+        "id": "a19d16d11c4349b7",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send IMU TLM Enable",
+        "func": "msg.payload = \"SET,IMU,TELEMETRY,ENABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 2220,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "1cc9fcf5504e4e57",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "6b23d8f2d6f14c91",
+        "name": "",
+        "label": "TLM On",
+        "order": 5,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#66bb6a",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 190,
+        "y": 2220,
+        "wires": [
+            [
+                "a19d16d11c4349b7"
+            ]
+        ]
+    },
+    {
+        "id": "267a84e504fe417b",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send IMU TLM Disable",
+        "func": "msg.payload = \"SET,IMU,TELEMETRY,DISABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 2260,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "60b0f74f1a89491a",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "6b23d8f2d6f14c91",
+        "name": "",
+        "label": "TLM Off",
+        "order": 6,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#ef5350",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 190,
+        "y": 2260,
+        "wires": [
+            [
+                "267a84e504fe417b"
+            ]
+        ]
+    },
+    {
+        "id": "571e68d594fd4fb4",
+        "type": "ui-dropdown",
+        "z": "3b521b08f4388c2f",
+        "group": "6b23d8f2d6f14c91",
+        "name": "IMU Get Option",
+        "label": "GET IMU Parameter",
+        "tooltip": "",
+        "order": 7,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "multiple": false,
+        "chips": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Enable",
+                "value": "ENABLE",
+                "type": "str"
+            },
+            {
+                "label": "Available",
+                "value": "AVAILABLE",
+                "type": "str"
+            },
+            {
+                "label": "X Axis",
+                "value": "X_MS2",
+                "type": "str"
+            },
+            {
+                "label": "Y Axis",
+                "value": "Y_MS2",
+                "type": "str"
+            },
+            {
+                "label": "Z Axis",
+                "value": "Z_MS2",
+                "type": "str"
+            },
+            {
+                "label": "Gyro X",
+                "value": "GYRO_X_DPS",
+                "type": "str"
+            },
+            {
+                "label": "Gyro Y",
+                "value": "GYRO_Y_DPS",
+                "type": "str"
+            },
+            {
+                "label": "Gyro Z",
+                "value": "GYRO_Z_DPS",
+                "type": "str"
+            },
+            {
+                "label": "Telemetry",
+                "value": "TELEMETRY",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 180,
+        "y": 2300,
+        "wires": [
+            [
+                "5a19a5c3e94b43d0"
+            ]
+        ]
+    },
+    {
+        "id": "5a19a5c3e94b43d0",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get IMU Option",
+        "func": "let option = String(msg.payload);\nlet command = String(\"GET,IMU,\" + option + \",NONE\\n\");\n\nflow.set(\"imuGet\", command);\nmsg.payload = command;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 2300,
         "wires": [
             [
                 "a407349444f312cf"

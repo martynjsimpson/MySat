@@ -24,6 +24,7 @@ namespace Config
     constexpr bool defaultReportBattery = false;
     constexpr bool defaultReportGps = false;
     constexpr bool defaultReportThermal = false;
+    constexpr bool defaultReportImu = false;
     constexpr unsigned long defaultIntervalSeconds = 5;
     constexpr unsigned long minIntervalSeconds = 1;
     constexpr unsigned long maxIntervalSeconds = 3600;
@@ -73,6 +74,15 @@ namespace Config
     constexpr unsigned long minReadIntervalMs = 2000;
     constexpr uint8_t temperatureDecimalPlaces = 1;
     constexpr uint8_t humidityDecimalPlaces = 1;
+  }
+
+  namespace Imu
+  {
+    constexpr bool defaultEnabled = true;
+    constexpr uint8_t i2cAddress = 0x68;
+    constexpr unsigned long minReadIntervalMs = 100;
+    constexpr uint8_t accelerationDecimalPlaces = 3;
+    constexpr uint8_t gyroDecimalPlaces = 3;
   }
 }
 

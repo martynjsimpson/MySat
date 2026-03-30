@@ -12,6 +12,7 @@ Target-specific command and telemetry details are documented separately:
 - [GPS](./targets/GPS.md)
 - [RTC](./targets/RTC.md)
 - [THERMAL](./targets/THERMAL.md)
+- [IMU](./targets/IMU.md)
 - [STATUS](./targets/STATUS.md)
 
 Telemetry framing and snapshot behavior are documented in [Telemetry.md](./Telemetry.md).
@@ -105,6 +106,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 | `GPS` | GPS control and position reporting | [GPS.md](./targets/GPS.md) |
 | `RTC` | RTC time and sync control | [RTC.md](./targets/RTC.md) |
 | `THERMAL` | DHT11-based temperature and humidity reporting | [THERMAL.md](./targets/THERMAL.md) |
+| `IMU` | MPU-6050 acceleration and gyroscope reporting | [IMU.md](./targets/IMU.md) |
 | `STATUS` | Startup event and heartbeat reporting | [STATUS.md](./targets/STATUS.md) |
 
 ## Reserved Targets
@@ -125,7 +127,7 @@ These tokens are implemented in the parser today and are used by one or more tar
 
 | Kind | Tokens |
 |---|---|
-| Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `COLOR`, `AVAILABLE`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `CHARGE_PERCENT_P`, `VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N`, `TEMPERATURE_C`, `HUMIDITY_P` |
+| Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `COLOR`, `AVAILABLE`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `CHARGE_PERCENT_P`, `VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N`, `TEMPERATURE_C`, `HUMIDITY_P`, `X_MS2`, `Y_MS2`, `Z_MS2`, `GYRO_X_DPS`, `GYRO_Y_DPS`, `GYRO_Z_DPS` |
 | Values | `NONE`, `TRUE`, `FALSE`, `ENABLE`, `DISABLE`, `ON`, `OFF`, `RED`, `GREEN`, `BLUE` |
 
 ## Reserved Generic Tokens

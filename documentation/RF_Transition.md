@@ -51,7 +51,7 @@ These are the parts of the current system we are deliberately trying to preserve
 
 - the current logical command model: `COMMAND,TARGET,PARAMETER,VALUE`
 - the response types (including any additional that exist at the time): `ACK`, `ERR`, `TLM`
-- the existing target model (including any additional that exist at the time): `LED`, `RTC`, `GPS`, `THERMAL`, `BATTERY`, `TELEMETRY`, `STATUS`
+- the existing target model (including any additional that exist at the time): `LED`, `RTC`, `GPS`, `THERMAL`, `IMU`, `BATTERY`, `TELEMETRY`, `STATUS`
 - the host-side serial workflow and dashboard expectations
 
 The intent is for RF to feel like a link substitution rather than a full protocol rewrite.

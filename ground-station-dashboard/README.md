@@ -97,7 +97,7 @@ Each field is flattened into a consistent trio:
 The dashboard now uses those flattened fields in two main ways:
 
 - direct freshness widgets for simple single-value displays
-- summary-card widgets that group related values for subsystems such as `GPS`, `LED`, `RTC`, `TELEMETRY`, and `THERMAL`
+- summary-card widgets that group related values for subsystems such as `GPS`, `LED`, `RTC`, `TELEMETRY`, `THERMAL`, and `IMU`
 
 Current `Flatten State` function:
 
@@ -170,6 +170,16 @@ addField("thermalTemperatureC", "Temperature (°C)", "THERMAL", "TEMPERATURE_C")
 addField("thermalHumidityP", "Humidity (%RH)", "THERMAL", "HUMIDITY_P");
 addField("thermalTelemetry", "TLM", "THERMAL", "TELEMETRY");
 
+addField("imuEnable", "Enabled", "IMU", "ENABLE");
+addField("imuAvailable", "Available", "IMU", "AVAILABLE");
+addField("imuXMs2", "X (m/s²)", "IMU", "X_MS2");
+addField("imuYMs2", "Y (m/s²)", "IMU", "Y_MS2");
+addField("imuZMs2", "Z (m/s²)", "IMU", "Z_MS2");
+addField("imuGyroXDps", "Gyro X (dps)", "IMU", "GYRO_X_DPS");
+addField("imuGyroYDps", "Gyro Y (dps)", "IMU", "GYRO_Y_DPS");
+addField("imuGyroZDps", "Gyro Z (dps)", "IMU", "GYRO_Z_DPS");
+addField("imuTelemetry", "TLM", "IMU", "TELEMETRY");
+
 msg.payload = payload;
 return msg;
 ```
@@ -230,6 +240,12 @@ The widget then colors the value based on how old the last telemetry timestamp i
 - grey when empty
 
 The shared CSS lives in a page-level `ui-template` called `Freshness Styles`, so individual widgets only need the template/script portion.
+
+The dashboard now includes an `IMU` group with:
+
+- a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, accelerometer axes, and gyroscope axes
+- `Poll`, `Enable`, `Disable`, `TLM On`, and `TLM Off` controls
+- a `GET IMU Parameter` dropdown for targeted polling
 
 Reusable freshness widget template:
 

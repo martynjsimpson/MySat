@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "imu.h"
 #include "config.h"
 #include "gps.h"
 #include "led.h"
@@ -19,6 +20,7 @@ void setup()
   setupBattery();
   setupGps();
   setupThermal();
+  setupImu();
   setupStatus();
   setupTelemetry();
   setupProtocol();
@@ -32,6 +34,7 @@ void loop()
 {
   updateGps();
   updateThermal();
+  updateImu();
   handleRtcAutoSync();
   readIncomingCommands();
   handlePeriodicTelemetry();

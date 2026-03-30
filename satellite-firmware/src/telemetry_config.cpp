@@ -12,6 +12,7 @@ namespace
   bool batteryTelemetryEnabled;
   bool gpsTelemetryEnabled;
   bool thermalTelemetryEnabled;
+  bool imuTelemetryEnabled;
   unsigned long telemetryIntervalSeconds;
 
   bool *getTargetTelemetryFlag(TargetType target)
@@ -30,6 +31,8 @@ namespace
       return &gpsTelemetryEnabled;
     case TARGET_THERMAL:
       return &thermalTelemetryEnabled;
+    case TARGET_IMU:
+      return &imuTelemetryEnabled;
     default:
       return nullptr;
     }
@@ -51,6 +54,8 @@ namespace
       return "GPS";
     case TARGET_THERMAL:
       return "THERMAL";
+    case TARGET_IMU:
+      return "IMU";
     default:
       return nullptr;
     }
@@ -66,6 +71,7 @@ void setupTelemetry()
   batteryTelemetryEnabled = Config::Telemetry::defaultReportBattery;
   gpsTelemetryEnabled = Config::Telemetry::defaultReportGps;
   thermalTelemetryEnabled = Config::Telemetry::defaultReportThermal;
+  imuTelemetryEnabled = Config::Telemetry::defaultReportImu;
   telemetryIntervalSeconds = Config::Telemetry::defaultIntervalSeconds;
 }
 

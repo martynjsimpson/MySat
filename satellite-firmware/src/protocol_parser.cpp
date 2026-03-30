@@ -57,6 +57,8 @@ namespace
       return TARGET_GPS;
     if (strcmp(token, "RTC") == 0)
       return TARGET_RTC;
+    if (strcmp(token, "IMU") == 0)
+      return TARGET_IMU;
     if (strcmp(token, "MODE") == 0)
       return TARGET_MODE;
     if (strcmp(token, "STATUS") == 0)
@@ -128,6 +130,18 @@ namespace
       return PARAM_TEMPERATURE_C;
     if (strcmp(token, "HUMIDITY_P") == 0)
       return PARAM_HUMIDITY_P;
+    if (strcmp(token, "X_MS2") == 0)
+      return PARAM_X_MS2;
+    if (strcmp(token, "Y_MS2") == 0)
+      return PARAM_Y_MS2;
+    if (strcmp(token, "Z_MS2") == 0)
+      return PARAM_Z_MS2;
+    if (strcmp(token, "GYRO_X_DPS") == 0)
+      return PARAM_GYRO_X_DPS;
+    if (strcmp(token, "GYRO_Y_DPS") == 0)
+      return PARAM_GYRO_Y_DPS;
+    if (strcmp(token, "GYRO_Z_DPS") == 0)
+      return PARAM_GYRO_Z_DPS;
     return PARAM_UNKNOWN;
   }
 

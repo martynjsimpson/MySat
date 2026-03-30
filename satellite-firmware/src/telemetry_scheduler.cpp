@@ -1,5 +1,6 @@
 #include "telemetry.h"
 
+#include "imu.h"
 #include "gps.h"
 #include "led.h"
 #include "pmic.h"
@@ -46,6 +47,10 @@ void sendTelemetrySnapshot()
   if (isTargetTelemetryEnabled(TARGET_THERMAL))
   {
     reportThermalStatus();
+  }
+  if (isTargetTelemetryEnabled(TARGET_IMU))
+  {
+    reportImuStatus();
   }
 }
 
