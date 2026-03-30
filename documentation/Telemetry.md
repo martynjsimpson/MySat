@@ -88,6 +88,7 @@ The current protocol uses a naming convention where the parameter name usually c
 | `_M` | metres |
 | `_MS2` | metres per second squared |
 | `_DPS` | degrees per second |
+| `_UT` | microtesla |
 | `_KPH` | kilometres per hour |
 
 ## Examples
@@ -99,5 +100,6 @@ The current protocol uses a naming convention where the parameter name usually c
 2026-03-27T12:00:00Z,TLM,BATTERY,VOLTAGE_V,4.010
 2026-03-27T12:00:00Z,TLM,GPS,LATITUDE_D,48.85837
 2026-03-27T12:00:00Z,TLM,IMU,Z_MS2,9.807
+2026-03-27T12:00:00Z,TLM,IMU,HEADING_DEG,183.4
 2026-03-27T12:00:00Z,TLM,ADCS,ROLL_DEG,-4.52
 ```

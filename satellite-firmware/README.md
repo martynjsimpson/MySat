@@ -33,7 +33,7 @@ platformio device monitor --environment mkrwifi1010
 - `include/gps.h` - GPS subsystem interface
 - `include/led.h` - LED subsystem interface
 - `include/pmic.h` - battery subsystem interface
-- `include/imu.h` - MPU-6050 IMU subsystem interface
+- `include/imu.h` - MPU-6050 and QMC5883L IMU subsystem interface
 - `include/adcs.h` - derived attitude subsystem interface
 - `include/protocol.h` - inbound command buffering and line-framing interface
 - `include/rtc.h` - RTC interface
@@ -60,7 +60,7 @@ platformio device monitor --environment mkrwifi1010
 - `src/rtc_sync.cpp` - RTC GPS sync behavior
 - `src/status.cpp` - startup and heartbeat reporting
 - `src/thermal.cpp` - DHT11 polling, caching, and reporting
-- `src/imu.cpp` - MPU-6050 polling, caching, and reporting
+- `src/imu.cpp` - MPU-6050 and QMC5883L polling, caching, and reporting
 - `src/adcs.cpp` - IMU-derived roll, pitch, and yaw-rate reporting
 - `src/sender.cpp` - wire-format message emission
 - `src/transport_serial.cpp` - current serial-backed transport implementation
@@ -73,7 +73,7 @@ platformio device monitor --environment mkrwifi1010
 - `GPS` - GPS control and position reporting
 - `RTC` - RTC time and synchronisation state
 - `THERMAL` - DHT11 temperature and humidity reporting
-- `IMU` - MPU-6050 acceleration and gyroscope reporting
+- `IMU` - MPU-6050 motion and QMC5883L magnetic field reporting
 - `ADCS` - IMU-derived attitude and yaw-rate reporting
 - `STATUS` - startup event and non-disableable heartbeat
 
@@ -81,7 +81,7 @@ The current GPS implementation is configured for the MKR GPS connected over the 
 
 The current thermal implementation is configured for a DHT11 on `D7`, with temperature and humidity reported through the `THERMAL` target.
 
-The current IMU implementation is configured for an MPU-6050 on the shared I2C bus, with acceleration and gyroscope data reported through the `IMU` target.
+The current IMU implementation is configured for an MPU-6050 and QMC5883L on the shared I2C bus, with acceleration, gyroscope, magnetic field, and heading data reported through the `IMU` target.
 
 The current ADCS implementation is derived from the `IMU` target and reports roll, pitch, and yaw-rate estimates through the `ADCS` target.
 

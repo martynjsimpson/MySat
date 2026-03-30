@@ -80,10 +80,13 @@ namespace Config
   namespace Imu
   {
     constexpr bool defaultEnabled = true;
-    constexpr uint8_t i2cAddress = 0x68;
+    constexpr uint8_t mpuI2cAddress = 0x68;
+    constexpr uint8_t magnetometerI2cAddress = 0x0D;
     constexpr unsigned long minReadIntervalMs = 100;
     constexpr uint8_t accelerationDecimalPlaces = 3;
     constexpr uint8_t gyroDecimalPlaces = 3;
+    constexpr uint8_t magneticDecimalPlaces = 2;
+    constexpr uint8_t headingDecimalPlaces = 1;
   }
 
   namespace Adcs

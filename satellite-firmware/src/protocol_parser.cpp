@@ -144,6 +144,14 @@ namespace
       return PARAM_GYRO_Y_DPS;
     if (strcmp(token, "GYRO_Z_DPS") == 0)
       return PARAM_GYRO_Z_DPS;
+    if (strcmp(token, "MAG_X_UT") == 0)
+      return PARAM_MAG_X_UT;
+    if (strcmp(token, "MAG_Y_UT") == 0)
+      return PARAM_MAG_Y_UT;
+    if (strcmp(token, "MAG_Z_UT") == 0)
+      return PARAM_MAG_Z_UT;
+    if (strcmp(token, "HEADING_DEG") == 0)
+      return PARAM_HEADING_DEG;
     if (strcmp(token, "ROLL_DEG") == 0)
       return PARAM_ROLL_DEG;
     if (strcmp(token, "PITCH_DEG") == 0)

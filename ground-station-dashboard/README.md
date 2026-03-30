@@ -178,6 +178,10 @@ addField("imuZMs2", "Z (m/s²)", "IMU", "Z_MS2");
 addField("imuGyroXDps", "Gyro X (dps)", "IMU", "GYRO_X_DPS");
 addField("imuGyroYDps", "Gyro Y (dps)", "IMU", "GYRO_Y_DPS");
 addField("imuGyroZDps", "Gyro Z (dps)", "IMU", "GYRO_Z_DPS");
+addField("imuMagXUt", "Mag X (uT)", "IMU", "MAG_X_UT");
+addField("imuMagYUt", "Mag Y (uT)", "IMU", "MAG_Y_UT");
+addField("imuMagZUt", "Mag Z (uT)", "IMU", "MAG_Z_UT");
+addField("imuHeadingDeg", "Heading (deg)", "IMU", "HEADING_DEG");
 addField("imuTelemetry", "TLM", "IMU", "TELEMETRY");
 
 addField("adcsEnable", "Enabled", "ADCS", "ENABLE");
@@ -250,7 +254,7 @@ The shared CSS lives in a page-level `ui-template` called `Freshness Styles`, so
 
 The dashboard now includes an `IMU` group with:
 
-- a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, accelerometer axes, and gyroscope axes
+- a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, accelerometer axes, gyroscope axes, magnetic field axes, and `HEADING_DEG`
 - `Poll`, `Enable`, `Disable`, `TLM On`, and `TLM Off` controls
 - a `GET IMU Parameter` dropdown for targeted polling
 

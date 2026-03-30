@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <math.h>
 
 #include "config.h"
 #include "sender.h"
@@ -9,50 +10,67 @@
 
 namespace
 {
-  constexpr uint8_t kPowerManagementRegister = 0x6B;
-  constexpr uint8_t kWhoAmIRegister = 0x75;
-  constexpr uint8_t kImuDataRegister = 0x3B;
-  constexpr uint8_t kExpectedWhoAmI = 0x68;
-  constexpr uint8_t kAlternateWhoAmI = 0x69;
+  constexpr uint8_t kMpuPowerManagementRegister = 0x6B;
+  constexpr uint8_t kMpuWhoAmIRegister = 0x75;
+  constexpr uint8_t kMpuDataRegister = 0x3B;
+  constexpr uint8_t kMpuExpectedWhoAmI = 0x68;
+  constexpr uint8_t kMpuAlternateWhoAmI = 0x69;
+  constexpr uint8_t kQmcDataRegister = 0x00;
+  constexpr uint8_t kQmcControl1Register = 0x09;
+  constexpr uint8_t kQmcControl2Register = 0x0A;
+  constexpr uint8_t kQmcSetResetPeriodRegister = 0x0B;
+  constexpr uint8_t kQmcChipIdRegister = 0x0D;
+  constexpr uint8_t kQmcExpectedChipId = 0xFF;
+  constexpr uint8_t kQmcContinuousMode = 0x15;
+  constexpr uint8_t kQmcSoftReset = 0x80;
+  constexpr uint8_t kQmcRecommendedSetResetPeriod = 0x01;
   constexpr float kStandardGravityMs2 = 9.80665f;
   constexpr float kImuScaleLsbPerG = 16384.0f;
   constexpr float kGyroScaleLsbPerDps = 131.0f;
+  constexpr float kQmcScaleLsbPerUt = 30.0f;
+  constexpr float kRadiansToDegrees = 57.2957795f;
 
   struct ImuState
   {
     bool enabled;
-    bool initialized;
+    bool motionInitialized;
+    bool magnetometerInitialized;
     bool available;
+    bool magnetometerAvailable;
     float xMs2;
     float yMs2;
     float zMs2;
     float gyroXDps;
     float gyroYDps;
     float gyroZDps;
+    float magXUt;
+    float magYUt;
+    float magZUt;
+    float headingDeg;
     unsigned long lastReadMs;
     bool hasAttemptedRead;
   };
 
   ImuState imuState{};
 
-  bool writeRegister(uint8_t reg, uint8_t value)
+  bool writeRegister(uint8_t address, uint8_t reg, uint8_t value)
   {
-    Wire.beginTransmission(Config::Imu::i2cAddress);
+    Wire.beginTransmission(address);
     Wire.write(reg);
     Wire.write(value);
     return Wire.endTransmission() == 0;
   }
 
-  bool readRegisters(uint8_t startRegister, uint8_t *buffer, size_t length)
+  bool readRegisters(uint8_t address, uint8_t startRegister, uint8_t *buffer, size_t length)
   {
-    Wire.beginTransmission(Config::Imu::i2cAddress);
+    Wire.beginTransmission(address);
     Wire.write(startRegister);
     if (Wire.endTransmission(false) != 0)
     {
       return false;
     }
 
-    const size_t bytesRead = Wire.requestFrom(static_cast<int>(Config::Imu::i2cAddress), static_cast<int>(length));
+    const size_t bytesRead = Wire.requestFrom(static_cast<int>(address), static_cast<int>(length));
     if (bytesRead != length)
     {
       return false;
@@ -79,6 +97,10 @@ namespace
     imuState.gyroXDps = 0.0f;
     imuState.gyroYDps = 0.0f;
     imuState.gyroZDps = 0.0f;
+    imuState.magXUt = 0.0f;
+    imuState.magYUt = 0.0f;
+    imuState.magZUt = 0.0f;
+    imuState.headingDeg = 0.0f;
   }
 
   bool canReadNow(unsigned long nowMs)
@@ -87,20 +109,56 @@ namespace
            (nowMs - imuState.lastReadMs) >= Config::Imu::minReadIntervalMs;
   }
 
-  bool initializeSensor()
+  void clearMagnetometerValues()
+  {
+    imuState.magXUt = 0.0f;
+    imuState.magYUt = 0.0f;
+    imuState.magZUt = 0.0f;
+    imuState.headingDeg = 0.0f;
+  }
+
+  bool initializeMotionSensor()
   {
     uint8_t whoAmI = 0;
-    if (!readRegisters(kWhoAmIRegister, &whoAmI, 1))
+    if (!readRegisters(Config::Imu::mpuI2cAddress, kMpuWhoAmIRegister, &whoAmI, 1))
     {
       return false;
     }
 
-    if (whoAmI != kExpectedWhoAmI && whoAmI != kAlternateWhoAmI)
+    if (whoAmI != kMpuExpectedWhoAmI && whoAmI != kMpuAlternateWhoAmI)
     {
       return false;
     }
 
-    return writeRegister(kPowerManagementRegister, 0x00);
+    return writeRegister(Config::Imu::mpuI2cAddress, kMpuPowerManagementRegister, 0x00);
+  }
+
+  bool initializeMagnetometer()
+  {
+    uint8_t chipId = 0;
+    if (!readRegisters(Config::Imu::magnetometerI2cAddress, kQmcChipIdRegister, &chipId, 1))
+    {
+      return false;
+    }
+
+    if (chipId != kQmcExpectedChipId)
+    {
+      return false;
+    }
+
+    if (!writeRegister(Config::Imu::magnetometerI2cAddress, kQmcControl2Register, kQmcSoftReset))
+    {
+      return false;
+    }
+
+    delay(1);
+
+    if (!writeRegister(Config::Imu::magnetometerI2cAddress, kQmcSetResetPeriodRegister, kQmcRecommendedSetResetPeriod))
+    {
+      return false;
+    }
+
+    return writeRegister(Config::Imu::magnetometerI2cAddress, kQmcControl1Register, kQmcContinuousMode);
   }
 
   void reportImuTelemetryStatus()
@@ -147,6 +205,26 @@ namespace
   {
     sendTelemetryFloat("IMU", "GYRO_Z_DPS", imuState.available ? imuState.gyroZDps : 0.0f, Config::Imu::gyroDecimalPlaces);
   }
+
+  void reportImuMagX()
+  {
+    sendTelemetryFloat("IMU", "MAG_X_UT", imuState.magnetometerAvailable ? imuState.magXUt : 0.0f, Config::Imu::magneticDecimalPlaces);
+  }
+
+  void reportImuMagY()
+  {
+    sendTelemetryFloat("IMU", "MAG_Y_UT", imuState.magnetometerAvailable ? imuState.magYUt : 0.0f, Config::Imu::magneticDecimalPlaces);
+  }
+
+  void reportImuMagZ()
+  {
+    sendTelemetryFloat("IMU", "MAG_Z_UT", imuState.magnetometerAvailable ? imuState.magZUt : 0.0f, Config::Imu::magneticDecimalPlaces);
+  }
+
+  void reportImuHeading()
+  {
+    sendTelemetryFloat("IMU", "HEADING_DEG", imuState.magnetometerAvailable ? imuState.headingDeg : 0.0f, Config::Imu::headingDecimalPlaces);
+  }
 }
 
 void setupImu()
@@ -154,8 +232,10 @@ void setupImu()
   Wire.begin();
 
   imuState.enabled = Config::Imu::defaultEnabled;
-  imuState.initialized = initializeSensor();
+  imuState.motionInitialized = initializeMotionSensor();
+  imuState.magnetometerInitialized = initializeMagnetometer();
   imuState.available = false;
+  imuState.magnetometerAvailable = false;
   imuState.lastReadMs = 0;
   imuState.hasAttemptedRead = false;
   clearImuValues();
@@ -166,16 +246,18 @@ void updateImu()
   if (!imuState.enabled)
   {
     imuState.available = false;
+    imuState.magnetometerAvailable = false;
     clearImuValues();
     return;
   }
 
-  if (!imuState.initialized)
+  if (!imuState.motionInitialized)
   {
-    imuState.initialized = initializeSensor();
-    if (!imuState.initialized)
+    imuState.motionInitialized = initializeMotionSensor();
+    if (!imuState.motionInitialized)
     {
       imuState.available = false;
+      imuState.magnetometerAvailable = false;
       clearImuValues();
       return;
     }
@@ -191,9 +273,10 @@ void updateImu()
   imuState.hasAttemptedRead = true;
 
   uint8_t rawData[14];
-  if (!readRegisters(kImuDataRegister, rawData, sizeof(rawData)))
+  if (!readRegisters(Config::Imu::mpuI2cAddress, kMpuDataRegister, rawData, sizeof(rawData)))
   {
     imuState.available = false;
+    imuState.magnetometerAvailable = false;
     clearImuValues();
     return;
   }
@@ -212,6 +295,43 @@ void updateImu()
   imuState.gyroYDps = static_cast<float>(rawGyroY) / kGyroScaleLsbPerDps;
   imuState.gyroZDps = static_cast<float>(rawGyroZ) / kGyroScaleLsbPerDps;
   imuState.available = true;
+
+  if (!imuState.magnetometerInitialized)
+  {
+    imuState.magnetometerInitialized = initializeMagnetometer();
+  }
+
+  if (!imuState.magnetometerInitialized)
+  {
+    imuState.magnetometerAvailable = false;
+    clearMagnetometerValues();
+    return;
+  }
+
+  uint8_t rawMagData[6];
+  if (!readRegisters(Config::Imu::magnetometerI2cAddress, kQmcDataRegister, rawMagData, sizeof(rawMagData)))
+  {
+    imuState.magnetometerAvailable = false;
+    clearMagnetometerValues();
+    return;
+  }
+
+  const int16_t rawMagX = static_cast<int16_t>((static_cast<uint16_t>(rawMagData[1]) << 8) | rawMagData[0]);
+  const int16_t rawMagY = static_cast<int16_t>((static_cast<uint16_t>(rawMagData[3]) << 8) | rawMagData[2]);
+  const int16_t rawMagZ = static_cast<int16_t>((static_cast<uint16_t>(rawMagData[5]) << 8) | rawMagData[4]);
+
+  imuState.magXUt = static_cast<float>(rawMagX) / kQmcScaleLsbPerUt;
+  imuState.magYUt = static_cast<float>(rawMagY) / kQmcScaleLsbPerUt;
+  imuState.magZUt = static_cast<float>(rawMagZ) / kQmcScaleLsbPerUt;
+
+  float headingDeg = atan2f(imuState.magYUt, imuState.magXUt) * kRadiansToDegrees;
+  if (headingDeg < 0.0f)
+  {
+    headingDeg += 360.0f;
+  }
+
+  imuState.headingDeg = headingDeg;
+  imuState.magnetometerAvailable = true;
 }
 
 void reportImuStatus()
@@ -227,6 +347,10 @@ void reportImuStatus()
   reportImuGyroX();
   reportImuGyroY();
   reportImuGyroZ();
+  reportImuMagX();
+  reportImuMagY();
+  reportImuMagZ();
+  reportImuHeading();
 }
 
 void handleGetImu(const Command &cmd)
@@ -281,6 +405,22 @@ void handleGetImu(const Command &cmd)
     reportImuGyroZ();
     break;
 
+  case PARAM_MAG_X_UT:
+    reportImuMagX();
+    break;
+
+  case PARAM_MAG_Y_UT:
+    reportImuMagY();
+    break;
+
+  case PARAM_MAG_Z_UT:
+    reportImuMagZ();
+    break;
+
+  case PARAM_HEADING_DEG:
+    reportImuHeading();
+    break;
+
   default:
     sendError("BAD_PARAMETER");
     break;
@@ -295,9 +435,13 @@ void handleSetImu(const Command &cmd)
     if (cmd.value == VALUE_TRUE)
     {
       imuState.enabled = true;
-      if (!imuState.initialized)
+      if (!imuState.motionInitialized)
       {
-        imuState.initialized = initializeSensor();
+        imuState.motionInitialized = initializeMotionSensor();
+      }
+      if (!imuState.magnetometerInitialized)
+      {
+        imuState.magnetometerInitialized = initializeMagnetometer();
       }
       sendAck("IMU", "ENABLE");
     }
@@ -305,6 +449,7 @@ void handleSetImu(const Command &cmd)
     {
       imuState.enabled = false;
       imuState.available = false;
+      imuState.magnetometerAvailable = false;
       clearImuValues();
       sendAck("IMU", "DISABLE");
     }
@@ -332,5 +477,9 @@ ImuReadings getImuReadings()
       imuState.zMs2,
       imuState.gyroXDps,
       imuState.gyroYDps,
-      imuState.gyroZDps};
+      imuState.gyroZDps,
+      imuState.magXUt,
+      imuState.magYUt,
+      imuState.magZUt,
+      imuState.headingDeg};
 }

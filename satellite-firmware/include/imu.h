@@ -13,6 +13,10 @@ struct ImuReadings
   float gyroXDps;
   float gyroYDps;
   float gyroZDps;
+  float magXUt;
+  float magYUt;
+  float magZUt;
+  float headingDeg;
 };
 
 void setupImu();
