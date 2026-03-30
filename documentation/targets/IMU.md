@@ -56,6 +56,7 @@
 
 - The current firmware wakes the MPU-6050 from sleep during startup and reads both accelerometer and gyroscope data over the shared I2C bus at address `0x68`.
 - The current firmware also configures a QMC5883L magnetometer on the same I2C bus at address `0x0D` and reports magnetic field plus a simple heading estimate.
+- On the current bench wiring, the QMC5883L appears to be mounted with a 90 degree in-plane rotation relative to the MPU-6050 body frame. Raw `IMU` magnetic fields remain in sensor frame; alignment compensation is applied later inside `ADCS`.
 - IMU sampling is enabled by default in firmware.
 - IMU periodic telemetry is disabled by default until explicitly enabled.
 - If the MPU-6050 does not respond on the expected I2C address, `AVAILABLE` remains `FALSE` and IMU values are reported as `0`.

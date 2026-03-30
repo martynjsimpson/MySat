@@ -74,7 +74,7 @@ platformio device monitor --environment mkrwifi1010
 - `RTC` - RTC time and synchronisation state
 - `THERMAL` - DHT11 temperature and humidity reporting
 - `IMU` - MPU-6050 motion and QMC5883L magnetic field reporting
-- `ADCS` - IMU-derived attitude and yaw-rate reporting
+- `ADCS` - IMU-derived attitude, heading, and yaw-rate reporting
 - `STATUS` - startup event and non-disableable heartbeat
 
 The current GPS implementation is configured for the MKR GPS connected over the I2C cable path.
@@ -83,7 +83,7 @@ The current thermal implementation is configured for a DHT11 on `D7`, with tempe
 
 The current IMU implementation is configured for an MPU-6050 and QMC5883L on the shared I2C bus, with acceleration, gyroscope, magnetic field, and heading data reported through the `IMU` target.
 
-The current ADCS implementation is derived from the `IMU` target and reports roll, pitch, and yaw-rate estimates through the `ADCS` target.
+The current ADCS implementation is derived from the `IMU` target and reports roll, pitch, tilt-compensated heading, and yaw-rate estimates through the `ADCS` target.
 
 ## Documentation Boundaries
 

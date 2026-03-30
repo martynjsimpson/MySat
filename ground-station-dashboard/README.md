@@ -189,6 +189,7 @@ addField("adcsAvailable", "Available", "ADCS", "AVAILABLE");
 addField("adcsRollDeg", "Roll (deg)", "ADCS", "ROLL_DEG");
 addField("adcsPitchDeg", "Pitch (deg)", "ADCS", "PITCH_DEG");
 addField("adcsYawRateDps", "Yaw Rate (dps)", "ADCS", "YAW_RATE_DPS");
+addField("adcsHeadingDeg", "Heading (deg)", "ADCS", "HEADING_DEG");
 addField("adcsTelemetry", "TLM", "ADCS", "TELEMETRY");
 
 msg.payload = payload;
@@ -260,7 +261,7 @@ The dashboard now includes an `IMU` group with:
 
 The dashboard also includes an `ADCS` group with:
 
-- a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, `ROLL_DEG`, `PITCH_DEG`, and `YAW_RATE_DPS`
+- a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, `ROLL_DEG`, `PITCH_DEG`, `YAW_RATE_DPS`, and `HEADING_DEG`
 - `Poll`, `Enable`, `Disable`, `TLM On`, and `TLM Off` controls
 - a `GET ADCS Parameter` dropdown for targeted polling
 

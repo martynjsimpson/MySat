@@ -7,6 +7,7 @@ struct ImuReadings
 {
   bool enabled;
   bool available;
+  bool magnetometerAvailable;
   float xMs2;
   float yMs2;
   float zMs2;

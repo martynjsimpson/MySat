@@ -94,6 +94,17 @@ namespace Config
     constexpr bool defaultEnabled = true;
     constexpr uint8_t attitudeDecimalPlaces = 2;
     constexpr uint8_t yawRateDecimalPlaces = 3;
+    constexpr uint8_t headingDecimalPlaces = 1;
+
+    // Current bench wiring appears to place the magnetometer 90 degrees
+    // in-plane from the MPU-6050 body frame. These mappings align raw
+    // magnetometer axes into the IMU body frame used by ADCS.
+    constexpr uint8_t magBodyXSourceAxis = 1;
+    constexpr uint8_t magBodyYSourceAxis = 0;
+    constexpr uint8_t magBodyZSourceAxis = 2;
+    constexpr int8_t magBodyXSign = 1;
+    constexpr int8_t magBodyYSign = -1;
+    constexpr int8_t magBodyZSign = 1;
   }
 }
 

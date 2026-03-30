@@ -472,6 +472,7 @@ ImuReadings getImuReadings()
   return ImuReadings{
       imuState.enabled,
       imuState.available,
+      imuState.magnetometerAvailable,
       imuState.xMs2,
       imuState.yMs2,
       imuState.zMs2,

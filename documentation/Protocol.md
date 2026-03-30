@@ -108,7 +108,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 | `RTC` | RTC time and sync control | [RTC.md](./targets/RTC.md) |
 | `THERMAL` | DHT11-based temperature and humidity reporting | [THERMAL.md](./targets/THERMAL.md) |
 | `IMU` | MPU-6050 motion and QMC5883L magnetic field reporting | [IMU.md](./targets/IMU.md) |
-| `ADCS` | Derived attitude and yaw-rate reporting | [ADCS.md](./targets/ADCS.md) |
+| `ADCS` | Derived attitude, heading, and yaw-rate reporting | [ADCS.md](./targets/ADCS.md) |
 | `STATUS` | Startup event and heartbeat reporting | [STATUS.md](./targets/STATUS.md) |
 
 ## Reserved Targets

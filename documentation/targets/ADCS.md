@@ -17,6 +17,7 @@
 | `GET,ADCS,ROLL_DEG,NONE` | Returns roll angle in degrees |
 | `GET,ADCS,PITCH_DEG,NONE` | Returns pitch angle in degrees |
 | `GET,ADCS,YAW_RATE_DPS,NONE` | Returns yaw rate in degrees per second |
+| `GET,ADCS,HEADING_DEG,NONE` | Returns tilt-compensated heading in degrees |
 
 ### SET
 
@@ -37,13 +38,16 @@
 | `ADCS,ROLL_DEG` | Roll angle estimate in degrees | float |
 | `ADCS,PITCH_DEG` | Pitch angle estimate in degrees | float |
 | `ADCS,YAW_RATE_DPS` | Yaw rate estimate in degrees per second | float |
+| `ADCS,HEADING_DEG` | Tilt-compensated heading estimate in degrees | float |
 
 ## Behavior Notes
 
 - The current ADCS implementation depends on the `IMU` target for its source data.
 - `ROLL_DEG` and `PITCH_DEG` are currently derived from accelerometer data.
 - `YAW_RATE_DPS` is currently derived from the IMU Z-axis gyroscope rate, not from an absolute yaw estimate.
-- If the IMU is disabled or unavailable, `ADCS,AVAILABLE` becomes `FALSE` and derived numeric values are reported as `0`.
+- `HEADING_DEG` is derived from aligned magnetometer data and uses the current roll/pitch estimate for tilt compensation.
+- The current ADCS implementation applies a fixed magnetometer-to-body-frame alignment to account for the QMC5883L being mounted 90 degrees in-plane from the MPU-6050.
+- If the IMU is disabled, unavailable, or missing usable magnetometer data, `ADCS,AVAILABLE` becomes `FALSE` and derived numeric values are reported as `0`.
 - ADCS processing is enabled by default in firmware.
 - ADCS periodic telemetry is disabled by default until explicitly enabled.
 - `GET` works even when ADCS periodic telemetry is disabled.
@@ -53,6 +57,7 @@
 ```text
 GET,ADCS,NONE,NONE
 GET,ADCS,ROLL_DEG,NONE
+GET,ADCS,HEADING_DEG,NONE
 GET,ADCS,YAW_RATE_DPS,NONE
 SET,ADCS,ENABLE,TRUE
 SET,ADCS,TELEMETRY,ENABLE
