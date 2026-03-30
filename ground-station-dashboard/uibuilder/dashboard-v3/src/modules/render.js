@@ -18,7 +18,20 @@ function tlmEntry(state, target, parameter) {
 
 function field(state, target, parameter, label) {
   const entry = tlmEntry(state, target, parameter)
-  return { key: `${target}-${parameter}`, label, value: entry.value || '', time: entry.time || '' }
+  return { key: `${target}-${parameter}`, parameter, label, value: entry.value || '', time: entry.time || '' }
+}
+
+function unitSuffix(parameter) {
+  if (parameter.endsWith('_MS2')) return 'm/s²'
+  if (parameter.endsWith('_DPS')) return 'dps'
+  if (parameter.endsWith('_UT')) return 'uT'
+  if (parameter.endsWith('_KPH')) return 'kph'
+  if (parameter.endsWith('_DEG')) return '°'
+  if (parameter.endsWith('_V')) return 'V'
+  if (parameter.endsWith('_A')) return 'A'
+  if (parameter.endsWith('_P')) return '%'
+  if (parameter.endsWith('_M')) return 'm'
+  return ''
 }
 
 function receivedMs(item) {
@@ -41,7 +54,8 @@ function freshnessClass(state, item) {
 
 function displayValue(item) {
   if (!item || item.value === '' || item.value === null || typeof item.value === 'undefined') return '--'
-  return String(item.value)
+  const unit = item.parameter ? unitSuffix(item.parameter) : ''
+  return `${item.value}${unit}`
 }
 
 function formatSummary(entry, type) {
