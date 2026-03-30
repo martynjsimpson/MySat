@@ -63,6 +63,19 @@ This project uses:
 - **Node-RED** for the dashboard / ground-station UI
 - structured Markdown documentation for shared protocol and telemetry definitions
 
+## Development approach
+
+This project has been developed with assistance from **OpenAI Codex** as a coding and documentation assistant.
+
+Codex has been used to help with tasks such as:
+
+- implementation and refactoring support
+- documentation drafting and cleanup
+- dashboard and firmware structure iteration
+- review of protocol and architecture changes
+
+Project direction, design decisions, hardware work, and final review remain human-led.
+
 ## Documentation map
 
 - [satellite-firmware/README.md](./satellite-firmware/README.md) — MKR WiFi 1010 firmware build, structure, and subsystem notes

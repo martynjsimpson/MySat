@@ -88,12 +88,23 @@ It also carries:
 
 This means widget extractors no longer need to know where telemetry is stored internally. They can read a single field family from the flattened payload and build a display message from it.
 
+Each field is flattened into a consistent trio:
+
+- `<field>`
+- `<field>Label`
+- `<field>Time`
+
+The dashboard now uses those flattened fields in two main ways:
+
+- direct freshness widgets for simple single-value displays
+- summary-card widgets that group related values for subsystems such as `GPS`, `LED`, `RTC`, `TELEMETRY`, and `THERMAL`
+
 Current `Flatten State` function:
 
 ```js
 let s = msg.state || {};
 let tlm = s.tlm || {};
-const freshnessThresholdMs = 30000;
+const freshnessThresholdMs = 10000;
 
 function getValue(target, parameter, fallback = "") {
     if (tlm[target] && tlm[target][parameter]) {
@@ -122,17 +133,18 @@ function addField(key, label, target, parameter) {
     payload[key + "Time"] = getTime(target, parameter);
 }
 
-addField("rtcCurrentTime", "RTC Current Time", "RTC", "CURRENT_TIME");
+addField("rtcCurrentTime", "Current Time", "RTC", "CURRENT_TIME");
 addField("rtcSync", "Clock Sync", "RTC", "SYNC");
-addField("rtcTelemetry", "RTC Telemetry Enabled", "RTC", "TELEMETRY");
+addField("rtcTelemetry", "TLM", "RTC", "TELEMETRY");
 
-addField("ledEnable", "LED Enable", "LED", "ENABLE");
-addField("ledState", "LED State", "LED", "STATE");
-addField("ledColor", "LED Color", "LED", "COLOR");
-addField("ledTelemetry", "LED Telemetry Enabled", "LED", "TELEMETRY");
+addField("ledEnable", "Enabled", "LED", "ENABLE");
+addField("ledState", "State", "LED", "STATE");
+addField("ledColor", "Color", "LED", "COLOR");
+addField("ledTelemetry", "TLM", "LED", "TELEMETRY");
 
-addField("telemetryEnable", "TLM Telemetry Enabled", "TELEMETRY", "TELEMETRY");
-addField("telemetryInterval", "Telemetry Interval", "TELEMETRY", "INTERVAL_S");
+addField("telemetryEnable", "Enable", "TELEMETRY", "ENABLE");
+addField("telemetryTelemetry", "TLM", "TELEMETRY", "TELEMETRY");
+addField("telemetryInterval", "Interval (s)", "TELEMETRY", "INTERVAL_S");
 
 addField("batteryTelemetry", "Battery Telemetry", "BATTERY", "TELEMETRY");
 addField("batteryAvailable", "Battery Available", "BATTERY", "AVAILABLE");
@@ -143,14 +155,20 @@ addField("batteryVoltage", "Battery Voltage (V)", "BATTERY", "VOLTAGE_V");
 
 addField("statusHeartbeatValue", "Heartbeat Counter", "STATUS", "HEARTBEAT_N");
 
-addField("gpsEnable", "GPS Enable", "GPS", "ENABLE");
-addField("gpsAvailable", "GPS Available", "GPS", "AVAILABLE");
-addField("gpsLatitude", "GPS Latitude", "GPS", "LATITUDE_D");
-addField("gpsLongitude", "GPS Longitude", "GPS", "LONGITUDE_D");
-addField("gpsAltitude", "GPS Altitude", "GPS", "ALTITUDE_M");
-addField("gpsSpeed", "GPS Speed", "GPS", "SPEED_KPH");
-addField("gpsSatellites", "GPS Satellites", "GPS", "SATELLITES_N");
-addField("gpsTelemetry", "GPS Telemetry Enabled", "GPS", "TELEMETRY");
+addField("gpsEnable", "Enabled", "GPS", "ENABLE");
+addField("gpsAvailable", "Available", "GPS", "AVAILABLE");
+addField("gpsLatitude", "Latitude", "GPS", "LATITUDE_D");
+addField("gpsLongitude", "Longitude", "GPS", "LONGITUDE_D");
+addField("gpsAltitude", "Altitude (m)", "GPS", "ALTITUDE_M");
+addField("gpsSpeed", "Speed (km/h)", "GPS", "SPEED_KPH");
+addField("gpsSatellites", "Satellites", "GPS", "SATELLITES_N");
+addField("gpsTelemetry", "TLM", "GPS", "TELEMETRY");
+
+addField("thermalEnable", "Enabled", "THERMAL", "ENABLE");
+addField("thermalAvailable", "Available", "THERMAL", "AVAILABLE");
+addField("thermalTemperatureC", "Temperature (°C)", "THERMAL", "TEMPERATURE_C");
+addField("thermalHumidityP", "Humidity (%RH)", "THERMAL", "HUMIDITY_P");
+addField("thermalTelemetry", "TLM", "THERMAL", "TELEMETRY");
 
 msg.payload = payload;
 return msg;
@@ -160,14 +178,47 @@ return msg;
 
 The dashboard now uses a reusable freshness-aware widget pattern for telemetry text fields.
 
-Each extractor function emits a payload shaped like:
+Simple freshness widgets still use a payload shaped like:
 
 ```js
 msg.payload = {
     label: msg.payload.rtcSyncLabel || "",
     value: msg.payload.rtcSync || "",
     time: msg.payload.rtcSyncTime || "",
-    maxAgeMs: msg.payload.freshnessThresholdMs || 30000
+    maxAgeMs: msg.payload.freshnessThresholdMs || 10000
+};
+return msg;
+```
+
+Summary-card widgets use grouped arrays instead:
+
+```js
+function item(label, value, time) {
+    return {
+        label: label || "",
+        value: value || "",
+        time: time || ""
+    };
+}
+
+msg.payload = {
+    maxAgeMs: msg.payload.freshnessThresholdMs || 10000,
+    statusItems: [
+        item(msg.payload.gpsEnableLabel, msg.payload.gpsEnable, msg.payload.gpsEnableTime),
+        item(msg.payload.gpsAvailableLabel, msg.payload.gpsAvailable, msg.payload.gpsAvailableTime),
+        item(msg.payload.gpsSatellitesLabel, msg.payload.gpsSatellites, msg.payload.gpsSatellitesTime),
+        item(msg.payload.gpsTelemetryLabel, msg.payload.gpsTelemetry, msg.payload.gpsTelemetryTime)
+    ],
+    metricRows: [
+        [
+            item(msg.payload.gpsLatitudeLabel, msg.payload.gpsLatitude, msg.payload.gpsLatitudeTime),
+            item(msg.payload.gpsLongitudeLabel, msg.payload.gpsLongitude, msg.payload.gpsLongitudeTime)
+        ],
+        [
+            item(msg.payload.gpsAltitudeLabel, msg.payload.gpsAltitude, msg.payload.gpsAltitudeTime),
+            item(msg.payload.gpsSpeedLabel, msg.payload.gpsSpeed, msg.payload.gpsSpeedTime)
+        ]
+    ]
 };
 return msg;
 ```
@@ -299,8 +350,9 @@ The current flow includes:
 - packet parsing and storage for `TLM`, `ACK`, and `ERR`
 - packet, ACK, and ERR log widgets
 - freshness-aware text widgets for key telemetry values
+- grouped summary-card widgets for subsystem dashboards
 - battery gauge and world map output
-- controls for `STATUS`, `RTC`, `TELEMETRY`, `LED`, `BATTERY`, and `GPS`
+- controls for `STATUS`, `RTC`, `TELEMETRY`, `LED`, `BATTERY`, `GPS`, and `THERMAL`
 
 Dashboard paths from the current flow:
 
