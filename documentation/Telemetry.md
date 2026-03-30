@@ -13,6 +13,7 @@ Target-specific telemetry fields are documented in:
 - [RTC](./targets/RTC.md)
 - [THERMAL](./targets/THERMAL.md)
 - [IMU](./targets/IMU.md)
+- [ADCS](./targets/ADCS.md)
 - [STATUS](./targets/STATUS.md)
 
 ## Telemetry Line Format
@@ -67,7 +68,7 @@ These events are target-specific and described in their target pages.
 ## Target Inclusion Rules
 
 - `STATUS` heartbeat is not per-target disableable
-- `LED`, `TELEMETRY`, `BATTERY`, `GPS`, `RTC`, `THERMAL`, and `IMU` can each be included or omitted from periodic snapshots independently
+- `LED`, `TELEMETRY`, `BATTERY`, `GPS`, `RTC`, `THERMAL`, `IMU`, and `ADCS` can each be included or omitted from periodic snapshots independently
 - `GET,<target>,NONE,NONE` returns the full implemented telemetry set for that target
 - `GET,<target>,<parameter>,NONE` returns a single telemetry line for that field when supported
 
@@ -83,6 +84,7 @@ The current protocol uses a naming convention where the parameter name usually c
 | `_A` | amps |
 | `_P` | percent |
 | `_D` | decimal degrees |
+| `_DEG` | degrees |
 | `_M` | metres |
 | `_MS2` | metres per second squared |
 | `_DPS` | degrees per second |
@@ -97,4 +99,5 @@ The current protocol uses a naming convention where the parameter name usually c
 2026-03-27T12:00:00Z,TLM,BATTERY,VOLTAGE_V,4.010
 2026-03-27T12:00:00Z,TLM,GPS,LATITUDE_D,48.85837
 2026-03-27T12:00:00Z,TLM,IMU,Z_MS2,9.807
+2026-03-27T12:00:00Z,TLM,ADCS,ROLL_DEG,-4.52
 ```

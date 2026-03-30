@@ -97,7 +97,7 @@ Each field is flattened into a consistent trio:
 The dashboard now uses those flattened fields in two main ways:
 
 - direct freshness widgets for simple single-value displays
-- summary-card widgets that group related values for subsystems such as `GPS`, `LED`, `RTC`, `TELEMETRY`, `THERMAL`, and `IMU`
+- summary-card widgets that group related values for subsystems such as `GPS`, `LED`, `RTC`, `TELEMETRY`, `THERMAL`, `IMU`, and `ADCS`
 
 Current `Flatten State` function:
 
@@ -180,6 +180,13 @@ addField("imuGyroYDps", "Gyro Y (dps)", "IMU", "GYRO_Y_DPS");
 addField("imuGyroZDps", "Gyro Z (dps)", "IMU", "GYRO_Z_DPS");
 addField("imuTelemetry", "TLM", "IMU", "TELEMETRY");
 
+addField("adcsEnable", "Enabled", "ADCS", "ENABLE");
+addField("adcsAvailable", "Available", "ADCS", "AVAILABLE");
+addField("adcsRollDeg", "Roll (deg)", "ADCS", "ROLL_DEG");
+addField("adcsPitchDeg", "Pitch (deg)", "ADCS", "PITCH_DEG");
+addField("adcsYawRateDps", "Yaw Rate (dps)", "ADCS", "YAW_RATE_DPS");
+addField("adcsTelemetry", "TLM", "ADCS", "TELEMETRY");
+
 msg.payload = payload;
 return msg;
 ```
@@ -246,6 +253,12 @@ The dashboard now includes an `IMU` group with:
 - a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, accelerometer axes, and gyroscope axes
 - `Poll`, `Enable`, `Disable`, `TLM On`, and `TLM Off` controls
 - a `GET IMU Parameter` dropdown for targeted polling
+
+The dashboard also includes an `ADCS` group with:
+
+- a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, `ROLL_DEG`, `PITCH_DEG`, and `YAW_RATE_DPS`
+- `Poll`, `Enable`, `Disable`, `TLM On`, and `TLM Off` controls
+- a `GET ADCS Parameter` dropdown for targeted polling
 
 Reusable freshness widget template:
 
@@ -368,7 +381,7 @@ The current flow includes:
 - freshness-aware text widgets for key telemetry values
 - grouped summary-card widgets for subsystem dashboards
 - battery gauge and world map output
-- controls for `STATUS`, `RTC`, `TELEMETRY`, `LED`, `BATTERY`, `GPS`, and `THERMAL`
+- controls for `STATUS`, `RTC`, `TELEMETRY`, `LED`, `BATTERY`, `GPS`, `THERMAL`, `IMU`, and `ADCS`
 
 Dashboard paths from the current flow:
 

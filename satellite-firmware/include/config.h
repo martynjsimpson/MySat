@@ -25,6 +25,7 @@ namespace Config
     constexpr bool defaultReportGps = false;
     constexpr bool defaultReportThermal = false;
     constexpr bool defaultReportImu = false;
+    constexpr bool defaultReportAdcs = false;
     constexpr unsigned long defaultIntervalSeconds = 5;
     constexpr unsigned long minIntervalSeconds = 1;
     constexpr unsigned long maxIntervalSeconds = 3600;
@@ -83,6 +84,13 @@ namespace Config
     constexpr unsigned long minReadIntervalMs = 100;
     constexpr uint8_t accelerationDecimalPlaces = 3;
     constexpr uint8_t gyroDecimalPlaces = 3;
+  }
+
+  namespace Adcs
+  {
+    constexpr bool defaultEnabled = true;
+    constexpr uint8_t attitudeDecimalPlaces = 2;
+    constexpr uint8_t yawRateDecimalPlaces = 3;
   }
 }
 

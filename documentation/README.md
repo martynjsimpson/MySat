@@ -28,6 +28,7 @@ Implemented target pages:
 - [RTC](./targets/RTC.md)
 - [THERMAL](./targets/THERMAL.md)
 - [IMU](./targets/IMU.md)
+- [ADCS](./targets/ADCS.md)
 - [STATUS](./targets/STATUS.md)
 
 ## Boundaries

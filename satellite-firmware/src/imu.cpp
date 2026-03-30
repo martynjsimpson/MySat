@@ -319,3 +319,18 @@ void handleSetImu(const Command &cmd)
     break;
   }
 }
+
+ImuReadings getImuReadings()
+{
+  updateImu();
+
+  return ImuReadings{
+      imuState.enabled,
+      imuState.available,
+      imuState.xMs2,
+      imuState.yMs2,
+      imuState.zMs2,
+      imuState.gyroXDps,
+      imuState.gyroYDps,
+      imuState.gyroZDps};
+}

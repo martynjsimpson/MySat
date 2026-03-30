@@ -1,5 +1,6 @@
 #include "telemetry.h"
 
+#include "adcs.h"
 #include "imu.h"
 #include "gps.h"
 #include "led.h"
@@ -51,6 +52,10 @@ void sendTelemetrySnapshot()
   if (isTargetTelemetryEnabled(TARGET_IMU))
   {
     reportImuStatus();
+  }
+  if (isTargetTelemetryEnabled(TARGET_ADCS))
+  {
+    reportAdcsStatus();
   }
 }
 

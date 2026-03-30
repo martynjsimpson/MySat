@@ -59,6 +59,8 @@ namespace
       return TARGET_RTC;
     if (strcmp(token, "IMU") == 0)
       return TARGET_IMU;
+    if (strcmp(token, "ADCS") == 0)
+      return TARGET_ADCS;
     if (strcmp(token, "MODE") == 0)
       return TARGET_MODE;
     if (strcmp(token, "STATUS") == 0)
@@ -142,6 +144,12 @@ namespace
       return PARAM_GYRO_Y_DPS;
     if (strcmp(token, "GYRO_Z_DPS") == 0)
       return PARAM_GYRO_Z_DPS;
+    if (strcmp(token, "ROLL_DEG") == 0)
+      return PARAM_ROLL_DEG;
+    if (strcmp(token, "PITCH_DEG") == 0)
+      return PARAM_PITCH_DEG;
+    if (strcmp(token, "YAW_RATE_DPS") == 0)
+      return PARAM_YAW_RATE_DPS;
     return PARAM_UNKNOWN;
   }
 

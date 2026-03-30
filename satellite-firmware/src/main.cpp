@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "adcs.h"
 #include "imu.h"
 #include "config.h"
 #include "gps.h"
@@ -21,6 +22,7 @@ void setup()
   setupGps();
   setupThermal();
   setupImu();
+  setupAdcs();
   setupStatus();
   setupTelemetry();
   setupProtocol();
@@ -35,6 +37,7 @@ void loop()
   updateGps();
   updateThermal();
   updateImu();
+  updateAdcs();
   handleRtcAutoSync();
   readIncomingCommands();
   handlePeriodicTelemetry();

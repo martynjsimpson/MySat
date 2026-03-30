@@ -238,6 +238,20 @@
         "groupType": "default"
     },
     {
+        "id": "f4d4cb7be84240a9",
+        "type": "ui-group",
+        "name": "ADCS",
+        "page": "f97e68d451736993",
+        "width": 6,
+        "height": "5",
+        "order": 9,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
         "id": "5124fb12bde93c6f",
         "type": "serial in",
         "z": "3b521b08f4388c2f",
@@ -309,7 +323,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\nconst freshnessThresholdMs = 10000;\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nlet payload = {\n    time: s.time || \"\",\n    freshnessThresholdMs,\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nfunction addField(key, label, target, parameter) {\n    payload[key] = getValue(target, parameter);\n    payload[key + \"Label\"] = label;\n    payload[key + \"Time\"] = getTime(target, parameter);\n}\n\naddField(\"rtcCurrentTime\", \"Current Time\", \"RTC\", \"CURRENT_TIME\");\naddField(\"rtcSync\", \"Clock Sync\", \"RTC\", \"SYNC\");\naddField(\"rtcTelemetry\", \"TLM\", \"RTC\", \"TELEMETRY\");\n\naddField(\"ledEnable\", \"Enabled\", \"LED\", \"ENABLE\");\naddField(\"ledState\", \"State\", \"LED\", \"STATE\");\naddField(\"ledColor\", \"Color\", \"LED\", \"COLOR\");\naddField(\"ledTelemetry\", \"TLM\", \"LED\", \"TELEMETRY\");\n\naddField(\"telemetryEnable\", \"Enable\", \"TELEMETRY\", \"ENABLE\");\naddField(\"telemetryTelemetry\", \"TLM\", \"TELEMETRY\", \"TELEMETRY\");\naddField(\"telemetryInterval\", \"Interval (s)\", \"TELEMETRY\", \"INTERVAL_S\");\n\naddField(\"batteryTelemetry\", \"Battery Telemetry\", \"BATTERY\", \"TELEMETRY\");\naddField(\"batteryAvailable\", \"Battery Available\", \"BATTERY\", \"AVAILABLE\");\naddField(\"chargeCurrentA\", \"Charge Current (A)\", \"BATTERY\", \"CHARGE_CURRENT_A\");\naddField(\"chargeVoltageV\", \"Charge Voltage (V)\", \"BATTERY\", \"CHARGE_VOLTAGE_V\");\naddField(\"chargePercentP\", \"Charge Percent (%)\", \"BATTERY\", \"CHARGE_PERCENT_P\");\naddField(\"batteryVoltage\", \"Battery Voltage (V)\", \"BATTERY\", \"VOLTAGE_V\");\n\naddField(\"statusHeartbeatValue\", \"Heartbeat Counter\", \"STATUS\", \"HEARTBEAT_N\");\n\naddField(\"gpsEnable\", \"Enabled\", \"GPS\", \"ENABLE\");\naddField(\"gpsAvailable\", \"Available\", \"GPS\", \"AVAILABLE\");\naddField(\"gpsLatitude\", \"Latitude\", \"GPS\", \"LATITUDE_D\");\naddField(\"gpsLongitude\", \"Longitude\", \"GPS\", \"LONGITUDE_D\");\naddField(\"gpsAltitude\", \"Altitude (m)\", \"GPS\", \"ALTITUDE_M\");\naddField(\"gpsSpeed\", \"Speed (km/h)\", \"GPS\", \"SPEED_KPH\");\naddField(\"gpsSatellites\", \"Satellites\", \"GPS\", \"SATELLITES_N\");\naddField(\"gpsTelemetry\", \"TLM\", \"GPS\", \"TELEMETRY\");\n\naddField(\"thermalEnable\", \"Enabled\", \"THERMAL\", \"ENABLE\");\naddField(\"thermalAvailable\", \"Available\", \"THERMAL\", \"AVAILABLE\");\naddField(\"thermalTemperatureC\", \"Temperature (°C)\", \"THERMAL\", \"TEMPERATURE_C\");\naddField(\"thermalHumidityP\", \"Humidity (%RH)\", \"THERMAL\", \"HUMIDITY_P\");\naddField(\"thermalTelemetry\", \"TLM\", \"THERMAL\", \"TELEMETRY\");\n\naddField(\"imuEnable\", \"Enabled\", \"IMU\", \"ENABLE\");\naddField(\"imuAvailable\", \"Available\", \"IMU\", \"AVAILABLE\");\naddField(\"imuXMs2\", \"X (m/s²)\", \"IMU\", \"X_MS2\");\naddField(\"imuYMs2\", \"Y (m/s²)\", \"IMU\", \"Y_MS2\");\naddField(\"imuZMs2\", \"Z (m/s²)\", \"IMU\", \"Z_MS2\");\naddField(\"imuGyroXDps\", \"Gyro X (dps)\", \"IMU\", \"GYRO_X_DPS\");\naddField(\"imuGyroYDps\", \"Gyro Y (dps)\", \"IMU\", \"GYRO_Y_DPS\");\naddField(\"imuGyroZDps\", \"Gyro Z (dps)\", \"IMU\", \"GYRO_Z_DPS\");\naddField(\"imuTelemetry\", \"TLM\", \"IMU\", \"TELEMETRY\");\n\nmsg.payload = payload;\nreturn msg;",
+        "func": "let s = msg.state || {};\nlet tlm = s.tlm || {};\nconst freshnessThresholdMs = 10000;\n\nfunction getValue(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].value;\n    }\n    return fallback;\n}\n\nfunction getTime(target, parameter, fallback = \"\") {\n    if (tlm[target] && tlm[target][parameter]) {\n        return tlm[target][parameter].time;\n    }\n    return fallback;\n}\n\nlet payload = {\n    time: s.time || \"\",\n    freshnessThresholdMs,\n    lastAck: s.lastAck,\n    lastErr: s.lastErr\n};\n\nfunction addField(key, label, target, parameter) {\n    payload[key] = getValue(target, parameter);\n    payload[key + \"Label\"] = label;\n    payload[key + \"Time\"] = getTime(target, parameter);\n}\n\naddField(\"rtcCurrentTime\", \"Current Time\", \"RTC\", \"CURRENT_TIME\");\naddField(\"rtcSync\", \"Clock Sync\", \"RTC\", \"SYNC\");\naddField(\"rtcTelemetry\", \"TLM\", \"RTC\", \"TELEMETRY\");\n\naddField(\"ledEnable\", \"Enabled\", \"LED\", \"ENABLE\");\naddField(\"ledState\", \"State\", \"LED\", \"STATE\");\naddField(\"ledColor\", \"Color\", \"LED\", \"COLOR\");\naddField(\"ledTelemetry\", \"TLM\", \"LED\", \"TELEMETRY\");\n\naddField(\"telemetryEnable\", \"Enable\", \"TELEMETRY\", \"ENABLE\");\naddField(\"telemetryTelemetry\", \"TLM\", \"TELEMETRY\", \"TELEMETRY\");\naddField(\"telemetryInterval\", \"Interval (s)\", \"TELEMETRY\", \"INTERVAL_S\");\n\naddField(\"batteryTelemetry\", \"Battery Telemetry\", \"BATTERY\", \"TELEMETRY\");\naddField(\"batteryAvailable\", \"Battery Available\", \"BATTERY\", \"AVAILABLE\");\naddField(\"chargeCurrentA\", \"Charge Current (A)\", \"BATTERY\", \"CHARGE_CURRENT_A\");\naddField(\"chargeVoltageV\", \"Charge Voltage (V)\", \"BATTERY\", \"CHARGE_VOLTAGE_V\");\naddField(\"chargePercentP\", \"Charge Percent (%)\", \"BATTERY\", \"CHARGE_PERCENT_P\");\naddField(\"batteryVoltage\", \"Battery Voltage (V)\", \"BATTERY\", \"VOLTAGE_V\");\n\naddField(\"statusHeartbeatValue\", \"Heartbeat Counter\", \"STATUS\", \"HEARTBEAT_N\");\n\naddField(\"gpsEnable\", \"Enabled\", \"GPS\", \"ENABLE\");\naddField(\"gpsAvailable\", \"Available\", \"GPS\", \"AVAILABLE\");\naddField(\"gpsLatitude\", \"Latitude\", \"GPS\", \"LATITUDE_D\");\naddField(\"gpsLongitude\", \"Longitude\", \"GPS\", \"LONGITUDE_D\");\naddField(\"gpsAltitude\", \"Altitude (m)\", \"GPS\", \"ALTITUDE_M\");\naddField(\"gpsSpeed\", \"Speed (km/h)\", \"GPS\", \"SPEED_KPH\");\naddField(\"gpsSatellites\", \"Satellites\", \"GPS\", \"SATELLITES_N\");\naddField(\"gpsTelemetry\", \"TLM\", \"GPS\", \"TELEMETRY\");\n\naddField(\"thermalEnable\", \"Enabled\", \"THERMAL\", \"ENABLE\");\naddField(\"thermalAvailable\", \"Available\", \"THERMAL\", \"AVAILABLE\");\naddField(\"thermalTemperatureC\", \"Temperature (°C)\", \"THERMAL\", \"TEMPERATURE_C\");\naddField(\"thermalHumidityP\", \"Humidity (%RH)\", \"THERMAL\", \"HUMIDITY_P\");\naddField(\"thermalTelemetry\", \"TLM\", \"THERMAL\", \"TELEMETRY\");\n\naddField(\"imuEnable\", \"Enabled\", \"IMU\", \"ENABLE\");\naddField(\"imuAvailable\", \"Available\", \"IMU\", \"AVAILABLE\");\naddField(\"imuXMs2\", \"X (m/s²)\", \"IMU\", \"X_MS2\");\naddField(\"imuYMs2\", \"Y (m/s²)\", \"IMU\", \"Y_MS2\");\naddField(\"imuZMs2\", \"Z (m/s²)\", \"IMU\", \"Z_MS2\");\naddField(\"imuGyroXDps\", \"Gyro X (dps)\", \"IMU\", \"GYRO_X_DPS\");\naddField(\"imuGyroYDps\", \"Gyro Y (dps)\", \"IMU\", \"GYRO_Y_DPS\");\naddField(\"imuGyroZDps\", \"Gyro Z (dps)\", \"IMU\", \"GYRO_Z_DPS\");\naddField(\"imuTelemetry\", \"TLM\", \"IMU\", \"TELEMETRY\");\n\naddField(\"adcsEnable\", \"Enabled\", \"ADCS\", \"ENABLE\");\naddField(\"adcsAvailable\", \"Available\", \"ADCS\", \"AVAILABLE\");\naddField(\"adcsRollDeg\", \"Roll (deg)\", \"ADCS\", \"ROLL_DEG\");\naddField(\"adcsPitchDeg\", \"Pitch (deg)\", \"ADCS\", \"PITCH_DEG\");\naddField(\"adcsYawRateDps\", \"Yaw Rate (dps)\", \"ADCS\", \"YAW_RATE_DPS\");\naddField(\"adcsTelemetry\", \"TLM\", \"ADCS\", \"TELEMETRY\");\n\nmsg.payload = payload;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -332,6 +346,7 @@
                 "baab0a7f141ded66",
                 "c1a5e6f4b9d24731",
                 "5fb2251db7cd4cf2",
+                "a2693ad274244fd6",
                 "ce3a285745eb4602",
                 "1adbe36cd8830cab",
                 "9b67958256975ec3",
@@ -4281,6 +4296,426 @@
         "libs": [],
         "x": 490,
         "y": 2300,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "a2693ad274244fd6",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "extract ADCS Summary",
+        "func": "function item(label, value, time) {\n    return {\n        label: label || \"\",\n        value: value || \"\",\n        time: time || \"\"\n    };\n}\n\nmsg.payload = {\n    maxAgeMs: msg.payload.freshnessThresholdMs || 30000,\n    statusItems: [\n        item(msg.payload.adcsEnableLabel, msg.payload.adcsEnable, msg.payload.adcsEnableTime),\n        item(msg.payload.adcsAvailableLabel, msg.payload.adcsAvailable, msg.payload.adcsAvailableTime),\n        item(msg.payload.adcsTelemetryLabel, msg.payload.adcsTelemetry, msg.payload.adcsTelemetryTime)\n    ],\n    metricRows: [\n        [\n            item(msg.payload.adcsRollDegLabel, msg.payload.adcsRollDeg, msg.payload.adcsRollDegTime),\n            item(msg.payload.adcsPitchDegLabel, msg.payload.adcsPitchDeg, msg.payload.adcsPitchDegTime),\n            item(msg.payload.adcsYawRateDpsLabel, msg.payload.adcsYawRateDps, msg.payload.adcsYawRateDpsTime)\n        ]\n    ]\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1120,
+        "y": 860,
+        "wires": [
+            [
+                "764e08cfb45f43ec"
+            ]
+        ]
+    },
+    {
+        "id": "764e08cfb45f43ec",
+        "type": "ui-template",
+        "z": "3b521b08f4388c2f",
+        "group": "f4d4cb7be84240a9",
+        "page": "",
+        "ui": "",
+        "name": "ADCS Summary",
+        "order": 1,
+        "width": "6",
+        "height": 3,
+        "head": "",
+        "format": "<template>\n  <div class=\"summary-card\">\n    <div class=\"summary-grid summary-grid-status-3\">\n      <div v-for=\"item in statusItems\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n    <div v-for=\"(row, index) in metricRows\" :key=\"index\" class=\"summary-grid\" style=\"grid-template-columns: repeat(3, minmax(0, 1fr));\">\n      <div v-for=\"item in row\" :key=\"item.label\" class=\"summary-item freshness-widget\">\n        <div class=\"freshness-label\">{{ item.label }}</div>\n        <div class=\"freshness-value\" :class=\"valueClass(item)\">{{ item.value || ' ' }}</div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    maxAgeMs() {\n      return this.payloadData.maxAgeMs || 30000;\n    },\n    statusItems() {\n      return this.payloadData.statusItems || [];\n    },\n    metricRows() {\n      return this.payloadData.metricRows || [];\n    }\n  },\n  methods: {\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || !item.value) {\n        return 'freshness-empty';\n      }\n\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1350,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "008fafad6a774b61",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get ADCS",
+        "func": "msg.payload = \"GET,ADCS,NONE,NONE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 2380,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "f45c934350984baf",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "f4d4cb7be84240a9",
+        "name": "Poll ADCS",
+        "label": "Poll",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "purple",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 2380,
+        "wires": [
+            [
+                "008fafad6a774b61"
+            ]
+        ]
+    },
+    {
+        "id": "3a50d0edfe9c4dd5",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send ADCS Enable",
+        "func": "msg.payload = \"SET,ADCS,ENABLE,TRUE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 2420,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "c304c00883864ad1",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "f4d4cb7be84240a9",
+        "name": "",
+        "label": "Enable",
+        "order": 3,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#2e7d32",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 190,
+        "y": 2420,
+        "wires": [
+            [
+                "3a50d0edfe9c4dd5"
+            ]
+        ]
+    },
+    {
+        "id": "d6993bf811af44da",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send ADCS Disable",
+        "func": "msg.payload = \"SET,ADCS,ENABLE,FALSE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 2460,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "c37d26f2d36e40ae",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "f4d4cb7be84240a9",
+        "name": "",
+        "label": "Disable",
+        "order": 4,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#c62828",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 180,
+        "y": 2460,
+        "wires": [
+            [
+                "d6993bf811af44da"
+            ]
+        ]
+    },
+    {
+        "id": "cf0685f7e79d4354",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send ADCS TLM Enable",
+        "func": "msg.payload = \"SET,ADCS,TELEMETRY,ENABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 2500,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "f4c573b324ca45c9",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "f4d4cb7be84240a9",
+        "name": "",
+        "label": "TLM On",
+        "order": 5,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#66bb6a",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 180,
+        "y": 2500,
+        "wires": [
+            [
+                "cf0685f7e79d4354"
+            ]
+        ]
+    },
+    {
+        "id": "cfb7bf4f4cd84ca5",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send ADCS TLM Disable",
+        "func": "msg.payload = \"SET,ADCS,TELEMETRY,DISABLE\\n\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 2540,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "4476b0d3270b49f3",
+        "type": "ui-button",
+        "z": "3b521b08f4388c2f",
+        "group": "f4d4cb7be84240a9",
+        "name": "",
+        "label": "TLM Off",
+        "order": 6,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "#ef5350",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 180,
+        "y": 2540,
+        "wires": [
+            [
+                "cfb7bf4f4cd84ca5"
+            ]
+        ]
+    },
+    {
+        "id": "31f30df6313e4c34",
+        "type": "ui-dropdown",
+        "z": "3b521b08f4388c2f",
+        "group": "f4d4cb7be84240a9",
+        "name": "ADCS Get Option",
+        "label": "GET ADCS Parameter",
+        "tooltip": "",
+        "order": 7,
+        "width": "6",
+        "height": "1",
+        "passthru": false,
+        "multiple": false,
+        "chips": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Enable",
+                "value": "ENABLE",
+                "type": "str"
+            },
+            {
+                "label": "Available",
+                "value": "AVAILABLE",
+                "type": "str"
+            },
+            {
+                "label": "Roll",
+                "value": "ROLL_DEG",
+                "type": "str"
+            },
+            {
+                "label": "Pitch",
+                "value": "PITCH_DEG",
+                "type": "str"
+            },
+            {
+                "label": "Yaw Rate",
+                "value": "YAW_RATE_DPS",
+                "type": "str"
+            },
+            {
+                "label": "Telemetry",
+                "value": "TELEMETRY",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 180,
+        "y": 2580,
+        "wires": [
+            [
+                "591e7e5cedde4937"
+            ]
+        ]
+    },
+    {
+        "id": "591e7e5cedde4937",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "send Get ADCS Option",
+        "func": "let option = String(msg.payload);\nlet command = String(\"GET,ADCS,\" + option + \",NONE\\n\");\n\nflow.set(\"adcsGet\", command);\nmsg.payload = command;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 2580,
         "wires": [
             [
                 "a407349444f312cf"

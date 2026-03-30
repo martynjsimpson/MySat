@@ -30,6 +30,7 @@ enum TargetType
   TARGET_RTC,
   TARGET_THERMAL,
   TARGET_IMU,
+  TARGET_ADCS,
   TARGET_STATUS,
 
   // Reserved
@@ -74,6 +75,9 @@ enum ParameterType
   PARAM_GYRO_X_DPS,
   PARAM_GYRO_Y_DPS,
   PARAM_GYRO_Z_DPS,
+  PARAM_ROLL_DEG,
+  PARAM_PITCH_DEG,
+  PARAM_YAW_RATE_DPS,
 
   // Reserved
   PARAM_MODE,

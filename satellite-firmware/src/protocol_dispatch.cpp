@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 
+#include "adcs.h"
 #include "imu.h"
 #include "config.h"
 #include "gps.h"
@@ -46,6 +47,10 @@ namespace
 
     case TARGET_IMU:
       handleGetImu(cmd);
+      break;
+
+    case TARGET_ADCS:
+      handleGetAdcs(cmd);
       break;
 
     case TARGET_STATUS:
@@ -95,6 +100,10 @@ namespace
 
     case TARGET_IMU:
       handleSetImu(cmd);
+      break;
+
+    case TARGET_ADCS:
+      handleSetAdcs(cmd);
       break;
 
     default:
