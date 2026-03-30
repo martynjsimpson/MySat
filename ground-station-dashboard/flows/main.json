@@ -208,7 +208,8 @@
         "y": 160,
         "wires": [
             [
-                "7d743cc8c8454d18"
+                "7d743cc8c8454d18",
+                "3f64f4d9c6b140f1"
             ]
         ]
     },
@@ -289,6 +290,79 @@
         "wires": [
             [
                 "a407349444f312cf"
+            ]
+        ]
+    },
+    {
+        "id": "3f64f4d9c6b140f1",
+        "type": "uibuilder",
+        "z": "3b521b08f4388c2f",
+        "name": "dashboard-v3",
+        "topic": "",
+        "url": "dashboard-v3",
+        "okToGo": true,
+        "fwdInMessages": false,
+        "allowScripts": false,
+        "allowStyles": false,
+        "copyIndex": false,
+        "templateFolder": "blank",
+        "extTemplate": "",
+        "showfolder": false,
+        "reload": true,
+        "sourceFolder": "src",
+        "deployedVersion": "7.5.0",
+        "showMsgUib": true,
+        "title": "Mission Control V3",
+        "descr": "MySat bespoke mission-control UI powered by uibuilder",
+        "editurl": "vscode://file/uibuilder/dashboard-v3/src/?windowId=_blank",
+        "x": 1120,
+        "y": 240,
+        "wires": [
+            [
+                "a407349444f312cf"
+            ],
+            [
+                "93464f2bde364fca"
+            ]
+        ]
+    },
+    {
+        "id": "93464f2bde364fca",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "V3 Control Router",
+        "func": "const isClientConnect = msg.uibuilderCtrl === \"client connect\";\nconst isStateSyncRequest = msg.topic === \"state-sync-request\";\n\nif (!isClientConnect && !isStateSyncRequest) {\n    return null;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1350,
+        "y": 240,
+        "wires": [
+            [
+                "5d4a978c35f7472a"
+            ]
+        ]
+    },
+    {
+        "id": "5d4a978c35f7472a",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "V3 Sync State",
+        "func": "let state = flow.get(\"satState\") || {};\nconst freshnessThresholdMs = 10000;\n\nmsg.topic = \"state-sync\";\nmsg.payload = {\n    time: state.time || \"\",\n    freshnessThresholdMs,\n    lastAck: state.lastAck || null,\n    lastErr: state.lastErr || null,\n    tlm: state.tlm || {},\n    ackLog: (flow.get(\"ackLog\") || []).slice(0, 12),\n    errorLog: (flow.get(\"errorLog\") || []).slice(0, 12),\n    packetLog: (flow.get(\"packetLog\") || []).slice(0, 40)\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1360,
+        "y": 280,
+        "wires": [
+            [
+                "3f64f4d9c6b140f1"
             ]
         ]
     }

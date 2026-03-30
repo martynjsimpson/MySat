@@ -1,0 +1,392 @@
+@import url("../uibuilder/uib-brand.min.css");
+
+:root {
+  --bg: #0b1016;
+  --panel: #111821;
+  --panel-2: #0b1016;
+  --border: #1e2936;
+  --border-soft: #1b2632;
+  --text: #d7dee7;
+  --text-muted: #8ea0b5;
+  --text-dim: #7f8d9c;
+  --green: #38b24a;
+  --red: #ff6b6b;
+  --grey: #677382;
+  --blue: #2f81f7;
+  --purple: #9c27b0;
+  --green-2: #2f9e44;
+  --green-soft: #5abf68;
+  --red-2: #d73a49;
+  --red-soft: #f05d5e;
+  --neutral: #394554;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", monospace;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 14px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.connection {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--grey);
+}
+
+.dot.connected {
+  background: var(--green);
+}
+
+.console {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.9fr) minmax(0, 1.7fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.systems-panel {
+  grid-column: 1 / -1;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.ops-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.stat-block,
+.log-card {
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 7px;
+  padding: 8px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.stat-wrap {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ops-buttons,
+.custom-command-row {
+  display: grid;
+  gap: 8px;
+}
+
+.ops-buttons {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.custom-command-row {
+  margin-top: 8px;
+  grid-template-columns: minmax(0, 1fr) 100px;
+}
+
+.cmd-btn,
+.mini-btn {
+  border: 0;
+  border-radius: 6px;
+  min-height: 34px;
+  padding: 8px 9px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  color: #f4f7fb;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mini-btn {
+  min-height: 30px;
+  padding: 6px 7px;
+  font-size: 10px;
+}
+
+.cmd-input,
+.mini-input,
+.mini-select {
+  width: 100%;
+  min-height: 34px;
+  border-radius: 6px;
+  border: 1px solid #2a3542;
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  padding: 7px 9px;
+}
+
+.mini-input,
+.mini-select {
+  min-height: 30px;
+  padding: 5px 7px;
+  font-size: 11px;
+}
+
+.inline-field {
+  width: 84px;
+}
+
+.logs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.packet-log-card {
+  grid-column: 1 / -1;
+}
+
+.log-body {
+  min-height: 112px;
+  max-height: 112px;
+  overflow: auto;
+}
+
+.log-body.small {
+  min-height: 80px;
+  max-height: 80px;
+}
+
+.log-line {
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.err-tone .log-line {
+  color: #f2b8b5;
+}
+
+.systems-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.systems-row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 580px;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid #18222d;
+}
+
+.systems-header {
+  font-size: 11px;
+  color: #718194;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-top: 0;
+  padding-top: 0;
+}
+
+.system-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f4f7fb;
+}
+
+.values-wrap {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px 10px;
+  overflow: hidden;
+}
+
+.field-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.field-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.field-value {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 36px) 84px 40px 156px;
+  gap: 4px;
+  align-items: center;
+  justify-content: end;
+}
+
+.control-gap {
+  min-height: 30px;
+}
+
+.select-shell {
+  position: relative;
+  width: 100%;
+}
+
+.select-shell.compact {
+  width: 84px;
+}
+
+.select-shell .mini-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 24px;
+  text-transform: uppercase;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9aa8b8;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.get-shell {
+  width: 156px;
+}
+
+.cmd-purple { background: var(--purple); }
+.cmd-blue { background: var(--blue); }
+.cmd-red { background: var(--red-2); }
+.cmd-green { background: var(--green-2); }
+.cmd-green-soft { background: var(--green-soft); }
+.cmd-red-soft { background: var(--red-soft); }
+.cmd-neutral { background: var(--neutral); }
+
+.freshness-fresh {
+  color: var(--green);
+}
+
+.freshness-stale {
+  color: var(--red);
+}
+
+.freshness-empty {
+  color: var(--grey);
+}
+
+@media (max-width: 1500px) {
+  .systems-row {
+    grid-template-columns: 68px minmax(0, 1fr) 544px;
+  }
+
+  .controls-grid {
+    grid-template-columns: repeat(7, 34px) 80px 38px 144px;
+  }
+}
+
+@media (max-width: 1300px) {
+  .console {
+    grid-template-columns: 1fr;
+  }
+
+  .systems-row {
+    grid-template-columns: 60px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .col-actions {
+    grid-column: 2;
+  }
+
+  .values-wrap {
+    flex-wrap: wrap;
+  }
+
+  .controls-grid {
+    justify-content: start;
+    margin-top: 6px;
+    grid-template-columns: repeat(5, 40px) repeat(2, 40px) 90px 44px 160px;
+  }
+}

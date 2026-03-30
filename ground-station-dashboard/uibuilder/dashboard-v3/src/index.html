@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../uibuilder/images/node-blue.ico">
+  <title>MySat Mission Control V3</title>
+  <meta name="description" content="MySat Mission Control dashboard v3 powered by Node-RED uibuilder">
+  <link type="text/css" rel="stylesheet" href="./index.css" media="all">
+  <script defer src="../uibuilder/uibuilder.iife.min.js"></script>
+  <script defer type="module" src="./index.mjs"></script>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Ground Station</div>
+        <h1>Mission Control V3</h1>
+      </div>
+      <div class="connection">
+        <span class="dot" id="conn-dot"></span>
+        <span id="conn-label">Connecting</span>
+      </div>
+    </header>
+
+    <main class="console">
+      <section class="panel ops-panel">
+        <div class="panel-title">Operations</div>
+        <div class="ops-stats">
+          <div class="stat-block">
+            <div class="stat-label">Heartbeat</div>
+            <div class="stat-value" id="heartbeat-value">--</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Last ACK</div>
+            <div class="stat-value stat-wrap" id="last-ack">--</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Last ERR</div>
+            <div class="stat-value stat-wrap" id="last-err">--</div>
+          </div>
+        </div>
+        <div class="ops-buttons">
+          <button class="cmd-btn cmd-blue" data-command="PING,NONE,NONE,NONE">PING</button>
+          <button class="cmd-btn cmd-blue" data-command="GET,STATUS,NONE,NONE">STATUS</button>
+          <button class="cmd-btn cmd-red" data-command="RESET,NONE,NONE,NONE">RESET</button>
+        </div>
+        <div class="custom-command-row">
+          <input id="custom-command" class="cmd-input" type="text" placeholder="Custom command">
+          <button id="custom-send" class="cmd-btn cmd-neutral">SEND</button>
+        </div>
+      </section>
+
+      <section class="panel logs-panel">
+        <div class="logs-grid">
+          <article class="log-card">
+            <div class="panel-title">ACK Log</div>
+            <div class="log-body small" id="ack-log"></div>
+          </article>
+          <article class="log-card">
+            <div class="panel-title">ERR Log</div>
+            <div class="log-body small err-tone" id="err-log"></div>
+          </article>
+          <article class="log-card packet-log-card">
+            <div class="panel-title">All Packet Log</div>
+            <div class="log-body" id="packet-log"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel systems-panel">
+        <div class="panel-title">Systems</div>
+        <div class="systems-table">
+          <div class="systems-row systems-header">
+            <div class="col-system">SYS</div>
+            <div class="col-values">Live Parameters</div>
+            <div class="col-actions">Controls</div>
+          </div>
+          <div id="systems-body"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
