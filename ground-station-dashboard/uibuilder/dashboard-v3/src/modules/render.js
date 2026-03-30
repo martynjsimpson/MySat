@@ -109,7 +109,9 @@ function renderSystems(state, systemConfigs) {
       </div>
     `
 
-    const enableControls = `<button class="mini-btn cmd-green" data-role="enable" data-target="${system.target}" data-value="TRUE">EN</button>
+    const enableControls = system.target === 'RTC'
+      ? '<div class="control-gap"></div><div class="control-gap"></div>'
+      : `<button class="mini-btn cmd-green" data-role="enable" data-target="${system.target}" data-value="TRUE">EN</button>
          <button class="mini-btn cmd-red" data-role="enable" data-target="${system.target}" data-value="FALSE">DIS</button>`
 
     let modeControls = '<div class="control-gap"></div><div class="control-gap"></div>'
