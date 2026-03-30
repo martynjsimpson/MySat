@@ -55,6 +55,13 @@ function formatSummary(entry, type) {
   return `${entry.time || ''} ${entry.error}${detail ? ` ${detail}` : ''}`.trim()
 }
 
+function lastTlmEntry(state) {
+  const rows = state.payload.packetLog || []
+  const row = rows.find((item) => item && item.packetType === 'TLM' && item.time)
+  if (!row) return null
+  return { value: row.time, time: row.time }
+}
+
 function optionMarkup(options, selected) {
   return options.map((option) => {
     const isSelected = option === selected ? ' selected' : ''
@@ -136,8 +143,12 @@ function renderSystems(state, systemConfigs) {
 
 export function renderDashboard(state, systemConfigs) {
   const heartbeat = field(state, 'STATUS', 'HEARTBEAT_N', 'N')
+  const lastTlm = lastTlmEntry(state)
   el('heartbeat-value').textContent = displayValue(heartbeat)
   el('heartbeat-value').className = `stat-value ${freshnessClass(state, heartbeat)}`
+
+  el('last-tlm').textContent = displayValue(lastTlm)
+  el('last-tlm').className = `stat-value ${freshnessClass(state, lastTlm)}`
 
   el('last-ack').textContent = formatSummary(state.payload.lastAck, 'ack')
   el('last-ack').className = `stat-value stat-wrap ${state.payload.lastAck ? 'freshness-fresh' : 'freshness-empty'}`
