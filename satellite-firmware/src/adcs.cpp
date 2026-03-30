@@ -144,8 +144,10 @@ void updateAdcs()
   const float y = imuReadings.yMs2;
   const float z = imuReadings.zMs2;
 
-  adcsState.rollDeg = atan2f(y, z) * kRadiansToDegrees;
-  adcsState.pitchDeg = atan2f(-x, sqrtf((y * y) + (z * z))) * kRadiansToDegrees;
+  // Body-frame convention for the current bench setup:
+  // short breadboard axis = roll, long breadboard axis = pitch.
+  adcsState.rollDeg = atan2f(-x, sqrtf((y * y) + (z * z))) * kRadiansToDegrees;
+  adcsState.pitchDeg = atan2f(y, z) * kRadiansToDegrees;
   adcsState.yawRateDps = imuReadings.gyroZDps;
 
   const float magBodyX = static_cast<float>(Config::Adcs::magBodyXSign) *

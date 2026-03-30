@@ -46,6 +46,7 @@
 
 - The current ADCS implementation depends on the `IMU` target for its source data.
 - `ROLL_DEG` and `PITCH_DEG` are currently derived from accelerometer data.
+- In the current bench convention, the short breadboard axis is treated as roll and the long breadboard axis is treated as pitch.
 - `YAW_RATE_DPS` is currently derived from the IMU Z-axis gyroscope rate, not from an absolute yaw estimate.
 - `HEADING_DEG` is derived from aligned magnetometer data and uses the current roll/pitch estimate for tilt compensation.
 - `SOURCE` reports the current ADCS input families as a status summary. The current implementation reports `ACCEL_GYRO_MAG` when the full solution is available, `ACCEL_GYRO` when only motion data is present, and `NONE` when ADCS cannot currently derive a solution.
