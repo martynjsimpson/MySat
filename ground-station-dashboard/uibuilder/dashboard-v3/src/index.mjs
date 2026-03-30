@@ -25,27 +25,35 @@ function applyPayload(payload) {
 function init() {
   bindEvents(state)
   bindPanelToggles()
-  renderDashboard(state, systemConfigs)
-  updateSatelliteStatus(satelliteMode())
-
-  window.uibuilder.start()
-
-  window.uibuilder.onChange('ioConnected', (connected) => {
-    const isConnected = Boolean(connected)
-    updateConnection(isConnected)
-    if (isConnected) requestStateSync()
-  })
-
-  window.uibuilder.onChange('msg', (msg) => {
-    if (!msg || !msg.payload || typeof msg.payload !== 'object') return
-    applyPayload(msg.payload)
-  })
-
-  window.setInterval(() => {
-    state.nowMs = Date.now()
-    refreshDashboardStatus(state, systemConfigs)
+  const startDashboard = () => {
+    renderDashboard(state, systemConfigs)
     updateSatelliteStatus(satelliteMode())
-  }, 1000)
+
+    window.uibuilder.start()
+
+    window.uibuilder.onChange('ioConnected', (connected) => {
+      const isConnected = Boolean(connected)
+      updateConnection(isConnected)
+      if (isConnected) requestStateSync()
+    })
+
+    window.uibuilder.onChange('msg', (msg) => {
+      if (!msg || !msg.payload || typeof msg.payload !== 'object') return
+      applyPayload(msg.payload)
+    })
+
+    window.setInterval(() => {
+      state.nowMs = Date.now()
+      refreshDashboardStatus(state, systemConfigs)
+      updateSatelliteStatus(satelliteMode())
+    }, 1000)
+  }
+
+  if (document.readyState === 'complete') {
+    startDashboard()
+  } else {
+    window.addEventListener('load', startDashboard, { once: true })
+  }
 }
 
 window.addEventListener('DOMContentLoaded', init)

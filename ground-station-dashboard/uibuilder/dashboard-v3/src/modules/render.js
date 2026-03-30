@@ -76,6 +76,61 @@ function lastTlmEntry(state) {
   return { value: row.time, time: row.time }
 }
 
+function gpsEntries(state) {
+  return {
+    latitude: tlmEntry(state, 'GPS', 'LATITUDE_D'),
+    longitude: tlmEntry(state, 'GPS', 'LONGITUDE_D'),
+    altitude: tlmEntry(state, 'GPS', 'ALTITUDE_M'),
+    satellites: tlmEntry(state, 'GPS', 'SATELLITES_N'),
+    available: tlmEntry(state, 'GPS', 'AVAILABLE'),
+  }
+}
+
+function gpsFix(state) {
+  const entries = gpsEntries(state)
+  if (entries.available.value !== 'TRUE') return null
+
+  const lat = Number(entries.latitude.value)
+  const lon = Number(entries.longitude.value)
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null
+
+  return {
+    lat,
+    lon,
+    altitude: entries.altitude.value || '--',
+    satellites: entries.satellites.value || '--',
+  }
+}
+
+function buildMapBounds(fix, deltaLat = 0.02, deltaLon = 0.04) {
+  const left = (fix.lon - deltaLon).toFixed(5)
+  const right = (fix.lon + deltaLon).toFixed(5)
+  const top = (fix.lat + deltaLat).toFixed(5)
+  const bottom = (fix.lat - deltaLat).toFixed(5)
+  return `${left}%2C${bottom}%2C${right}%2C${top}`
+}
+
+function updateGpsMap(state) {
+  const status = el('gps-map-status')
+  const frame = el('gps-map')
+  if (!status || !frame) return
+
+  const fix = gpsFix(state)
+  if (!fix) {
+    status.textContent = 'Awaiting fix'
+    frame.removeAttribute('src')
+    return
+  }
+
+  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${buildMapBounds(fix)}&layer=mapnik&marker=${fix.lat.toFixed(5)}%2C${fix.lon.toFixed(5)}`
+  if (frame.dataset.src !== src) {
+    frame.src = src
+    frame.dataset.src = src
+  }
+
+  status.textContent = `${fix.satellites} sats | ${fix.altitude}m`
+}
+
 function optionMarkup(options, selected) {
   return options.map((option) => {
     const isSelected = option === selected ? ' selected' : ''
@@ -185,6 +240,7 @@ export function refreshDashboardStatus(state, systemConfigs) {
   el('last-err').className = `stat-value stat-wrap ${state.payload.lastErr ? 'freshness-stale' : 'freshness-empty'}`
 
   refreshSystemValues(state, systemConfigs)
+  updateGpsMap(state)
 }
 
 export function renderDashboard(state, systemConfigs) {

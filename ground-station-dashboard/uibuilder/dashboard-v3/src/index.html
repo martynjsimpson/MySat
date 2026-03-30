@@ -66,13 +66,37 @@
 
       <section class="panel attitude-panel" data-panel="attitude">
         <div class="panel-header">
-          <div class="panel-title">Attitude Visual</div>
+          <div class="panel-title">Visuals</div>
           <button class="panel-toggle" type="button" data-panel-toggle aria-expanded="true" aria-controls="panel-attitude">Collapse</button>
         </div>
         <div class="panel-content" id="panel-attitude">
-          <div class="attitude-placeholder">
-            <div class="attitude-placeholder-title">Reserved For ADCS Visualisation</div>
-            <div class="attitude-placeholder-copy">Placeholder for a future rocket/orientation model driven by roll, pitch, heading, and yaw-rate data.</div>
+          <div class="visuals-grid">
+            <article class="visual-card map-card">
+              <div class="visual-card-header">
+                <div class="panel-title visual-title">GPS Map</div>
+                <div class="visual-meta" id="gps-map-status">Awaiting fix</div>
+              </div>
+              <div class="map-shell" data-darkreader-ignore="true">
+                <iframe
+                  id="gps-map"
+                  class="gps-map-frame"
+                  title="GPS map"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  data-darkreader-ignore="true"
+                ></iframe>
+              </div>
+            </article>
+            <article class="visual-card">
+              <div class="visual-card-header">
+                <div class="panel-title visual-title">ADCS Visual</div>
+                <div class="visual-meta">Reserved</div>
+              </div>
+              <div class="attitude-placeholder">
+                <div class="attitude-placeholder-title">Reserved For ADCS Visualisation</div>
+                <div class="attitude-placeholder-copy">Placeholder for a future rocket or orientation model driven by roll, pitch, heading, and yaw-rate data.</div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
