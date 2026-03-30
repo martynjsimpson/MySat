@@ -14,6 +14,7 @@ namespace
   {
     bool enabled;
     bool available;
+    const char *source;
     float rollDeg;
     float pitchDeg;
     float yawRateDps;
@@ -77,6 +78,11 @@ namespace
     sendTelemetry("ADCS", "AVAILABLE", adcsState.available ? "TRUE" : "FALSE");
   }
 
+  void reportAdcsSource()
+  {
+    sendTelemetry("ADCS", "SOURCE", adcsState.source);
+  }
+
   void reportAdcsRoll()
   {
     sendTelemetryFloat("ADCS", "ROLL_DEG", adcsState.available ? adcsState.rollDeg : 0.0f, Config::Adcs::attitudeDecimalPlaces);
@@ -102,6 +108,7 @@ void setupAdcs()
 {
   adcsState.enabled = Config::Adcs::defaultEnabled;
   adcsState.available = false;
+  adcsState.source = "NONE";
   clearAdcsValues();
 }
 
@@ -110,6 +117,7 @@ void updateAdcs()
   if (!adcsState.enabled)
   {
     adcsState.available = false;
+    adcsState.source = "NONE";
     clearAdcsValues();
     return;
   }
@@ -118,9 +126,12 @@ void updateAdcs()
   if (!imuReadings.enabled || !imuReadings.available)
   {
     adcsState.available = false;
+    adcsState.source = "NONE";
     clearAdcsValues();
     return;
   }
+
+  adcsState.source = imuReadings.magnetometerAvailable ? "ACCEL_GYRO_MAG" : "ACCEL_GYRO";
 
   if (!imuReadings.magnetometerAvailable)
   {
@@ -167,6 +178,7 @@ void reportAdcsStatus()
   reportAdcsTelemetryStatus();
   reportAdcsEnableStatus();
   reportAdcsAvailability();
+  reportAdcsSource();
   reportAdcsRoll();
   reportAdcsPitch();
   reportAdcsYawRate();
@@ -199,6 +211,10 @@ void handleGetAdcs(const Command &cmd)
 
   case PARAM_AVAILABLE:
     reportAdcsAvailability();
+    break;
+
+  case PARAM_SOURCE:
+    reportAdcsSource();
     break;
 
   case PARAM_ROLL_DEG:
@@ -237,6 +253,7 @@ void handleSetAdcs(const Command &cmd)
     {
       adcsState.enabled = false;
       adcsState.available = false;
+      adcsState.source = "NONE";
       clearAdcsValues();
       sendAck("ADCS", "DISABLE");
     }

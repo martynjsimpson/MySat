@@ -108,6 +108,8 @@ namespace
       return PARAM_UPTIME_S;
     if (strcmp(token, "COLOR") == 0)
       return PARAM_COLOR;
+    if (strcmp(token, "SOURCE") == 0)
+      return PARAM_SOURCE;
     if (strcmp(token, "AVAILABLE") == 0)
       return PARAM_AVAILABLE;
     if (strcmp(token, "CHARGE_CURRENT_A") == 0)

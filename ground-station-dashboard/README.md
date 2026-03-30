@@ -135,6 +135,7 @@ function addField(key, label, target, parameter) {
 
 addField("rtcCurrentTime", "Current Time", "RTC", "CURRENT_TIME");
 addField("rtcSync", "Clock Sync", "RTC", "SYNC");
+addField("rtcSource", "Source", "RTC", "SOURCE");
 addField("rtcTelemetry", "TLM", "RTC", "TELEMETRY");
 
 addField("ledEnable", "Enabled", "LED", "ENABLE");
@@ -186,6 +187,7 @@ addField("imuTelemetry", "TLM", "IMU", "TELEMETRY");
 
 addField("adcsEnable", "Enabled", "ADCS", "ENABLE");
 addField("adcsAvailable", "Available", "ADCS", "AVAILABLE");
+addField("adcsSource", "Source", "ADCS", "SOURCE");
 addField("adcsRollDeg", "Roll (deg)", "ADCS", "ROLL_DEG");
 addField("adcsPitchDeg", "Pitch (deg)", "ADCS", "PITCH_DEG");
 addField("adcsYawRateDps", "Yaw Rate (dps)", "ADCS", "YAW_RATE_DPS");
@@ -261,7 +263,7 @@ The dashboard now includes an `IMU` group with:
 
 The dashboard also includes an `ADCS` group with:
 
-- a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, `ROLL_DEG`, `PITCH_DEG`, `YAW_RATE_DPS`, and `HEADING_DEG`
+- a summary card for `ENABLE`, `AVAILABLE`, `SOURCE`, `TELEMETRY`, `ROLL_DEG`, `PITCH_DEG`, `YAW_RATE_DPS`, and `HEADING_DEG`
 - `Poll`, `Enable`, `Disable`, `TLM On`, and `TLM Off` controls
 - a `GET ADCS Parameter` dropdown for targeted polling
 

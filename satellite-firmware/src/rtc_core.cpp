@@ -9,6 +9,7 @@
 
 static RTCZero rtc;
 static bool clockSynchronized = false;
+static const char *rtcSource = "NONE";
 
 namespace
 {
@@ -211,6 +212,7 @@ void setupRtc()
   // The MCU RTC has no persistent "time source" metadata, so startup always
   // begins from the configured baseline and an unsynchronized state.
   clockSynchronized = false;
+  rtcSource = "NONE";
 }
 
 unsigned long getUptimeSeconds()
@@ -300,4 +302,14 @@ bool setCurrentTimeUnix(unsigned long epochSeconds)
 bool isClockSynchronized()
 {
   return clockSynchronized;
+}
+
+const char *getRtcSource()
+{
+  return rtcSource;
+}
+
+void setRtcSource(const char *source)
+{
+  rtcSource = (source == nullptr) ? "NONE" : source;
 }

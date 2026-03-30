@@ -44,6 +44,7 @@ void handleRtcAutoSync()
   {
     if (setCurrentTimeUnix(gpsEpochSeconds))
     {
+      setRtcSource("GPS");
       lastRtcResyncUptimeSeconds = now;
       emitRtcSyncTelemetryIfTransitioned(wasClockSynchronized);
     }
@@ -86,6 +87,7 @@ void handleRtcAutoSync()
 
   if (setCurrentTimeUnix(gpsEpochSeconds))
   {
+    setRtcSource("GPS");
     lastRtcResyncUptimeSeconds = now;
     driftResyncPending = false;
     reportRtcCurrentTime();

@@ -29,11 +29,17 @@ void reportRtcSyncStatus()
   sendTelemetry("RTC", "SYNC", isClockSynchronized() ? "TRUE" : "FALSE");
 }
 
+void reportRtcSource()
+{
+  sendTelemetry("RTC", "SOURCE", getRtcSource());
+}
+
 void reportRtcStatus()
 {
   reportRtcTelemetryStatus();
   reportRtcCurrentTime();
   reportRtcSyncStatus();
+  reportRtcSource();
 }
 
 void handleGetRtc(const Command &cmd)
@@ -62,6 +68,10 @@ void handleGetRtc(const Command &cmd)
     reportRtcSyncStatus();
     break;
 
+  case PARAM_SOURCE:
+    reportRtcSource();
+    break;
+
   default:
     sendError("BAD_PARAMETER");
     break;
@@ -81,6 +91,7 @@ void handleSetRtc(const Command &cmd)
       return;
     }
 
+    setRtcSource("LOCAL");
     emitRtcSyncTelemetryForTransition(wasClockSynchronized);
     sendAck("RTC", "CURRENT_TIME");
     break;
@@ -102,6 +113,7 @@ void handleSetRtc(const Command &cmd)
       return;
     }
 
+    setRtcSource("GPS");
     emitRtcSyncTelemetryForTransition(wasClockSynchronized);
     sendAck("RTC", "SYNC");
     break;
