@@ -8,6 +8,7 @@ This directory contains the shared documentation for the firmware and ground sta
 - [Protocol.md](./Protocol.md) defines the generic command and response protocol.
 - [Telemetry.md](./Telemetry.md) defines generic telemetry framing and snapshot behavior.
 - [RF_Transition.md](./RF_Transition.md) captures the planned move from serial-first to an RF-backed architecture.
+- [OTA_Proposal.md](./OTA_Proposal.md) captures the separate discussion around remote firmware update and why LoRa OTA is not part of the baseline RF plan.
 
 ## Target Reference
 
