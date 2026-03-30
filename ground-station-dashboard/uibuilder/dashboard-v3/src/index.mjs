@@ -1,7 +1,7 @@
 import { systemConfigs } from './modules/config.js'
 import { createState, stateActions } from './modules/state.js'
 import { bindEvents, bindPanelToggles, requestStateSync, updateConnection, updateSatelliteStatus } from './modules/commands.js'
-import { renderDashboard } from './modules/render.js'
+import { refreshDashboardStatus, renderDashboard } from './modules/render.js'
 
 const state = createState()
 
@@ -43,7 +43,7 @@ function init() {
 
   window.setInterval(() => {
     state.nowMs = Date.now()
-    renderDashboard(state, systemConfigs)
+    refreshDashboardStatus(state, systemConfigs)
     updateSatelliteStatus(satelliteMode())
   }, 1000)
 }

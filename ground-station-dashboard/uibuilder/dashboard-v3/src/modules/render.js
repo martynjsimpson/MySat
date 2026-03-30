@@ -83,7 +83,7 @@ function renderSystems(state, systemConfigs) {
   body.innerHTML = systemConfigs.map((system) => {
     const fields = system.fields.map(([parameter, label]) => field(state, system.target, parameter, label))
     const fieldMarkup = fields.map((item) => {
-      return `<div class="field-chip"><span class="field-label">${item.label}</span><span class="field-value ${freshnessClass(state, item)}">${escapeHtml(displayValue(item))}</span></div>`
+      return `<div class="field-chip"><span class="field-label">${item.label}</span><span class="field-value ${freshnessClass(state, item)}" data-field-key="${item.key}">${escapeHtml(displayValue(item))}</span></div>`
     }).join('')
 
     const getSelect = `
@@ -141,7 +141,19 @@ function renderSystems(state, systemConfigs) {
   }).join('')
 }
 
-export function renderDashboard(state, systemConfigs) {
+function refreshSystemValues(state, systemConfigs) {
+  systemConfigs.forEach((system) => {
+    system.fields.forEach(([parameter, label]) => {
+      const item = field(state, system.target, parameter, label)
+      const node = document.querySelector(`[data-field-key="${item.key}"]`)
+      if (!node) return
+      node.textContent = displayValue(item)
+      node.className = `field-value ${freshnessClass(state, item)}`
+    })
+  })
+}
+
+export function refreshDashboardStatus(state, systemConfigs) {
   const heartbeat = field(state, 'STATUS', 'HEARTBEAT_N', 'N')
   const lastTlm = lastTlmEntry(state)
   el('heartbeat-value').textContent = displayValue(heartbeat)
@@ -156,8 +168,16 @@ export function renderDashboard(state, systemConfigs) {
   el('last-err').textContent = formatSummary(state.payload.lastErr, 'err')
   el('last-err').className = `stat-value stat-wrap ${state.payload.lastErr ? 'freshness-stale' : 'freshness-empty'}`
 
+  refreshSystemValues(state, systemConfigs)
+}
+
+export function renderDashboard(state, systemConfigs) {
+  if (!el('systems-body').children.length) {
+    renderSystems(state, systemConfigs)
+  }
+
   renderLogs('ack-log', state.payload.ackLog, 'No acknowledgements yet')
   renderLogs('err-log', state.payload.errorLog, 'No errors yet')
   renderLogs('packet-log', state.payload.packetLog, 'No packets yet')
-  renderSystems(state, systemConfigs)
+  refreshDashboardStatus(state, systemConfigs)
 }
