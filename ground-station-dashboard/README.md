@@ -255,6 +255,12 @@ The widget then colors the value based on how old the last telemetry timestamp i
 
 The shared CSS lives in a page-level `ui-template` called `Freshness Styles`, so individual widgets only need the template/script portion.
 
+The dashboard includes an `RTC` group with:
+
+- a summary card for `CURRENT_TIME`, `SYNC`, `SOURCE`, and `TELEMETRY`
+- `Poll`, `Set Local`, `Sync GPS`, `TLM On`, and `TLM Off` controls
+- a `GET RTC Parameter` dropdown for targeted polling
+
 The dashboard now includes an `IMU` group with:
 
 - a summary card for `ENABLE`, `AVAILABLE`, `TELEMETRY`, accelerometer axes, gyroscope axes, magnetic field axes, and `HEADING_DEG`

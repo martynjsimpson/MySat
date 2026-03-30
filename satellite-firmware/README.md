@@ -61,7 +61,7 @@ platformio device monitor --environment mkrwifi1010
 - `src/status.cpp` - startup and heartbeat reporting
 - `src/thermal.cpp` - DHT11 polling, caching, and reporting
 - `src/imu.cpp` - MPU-6050 and QMC5883L polling, caching, and reporting
-- `src/adcs.cpp` - IMU-derived roll, pitch, and yaw-rate reporting
+- `src/adcs.cpp` - IMU-derived roll, pitch, heading, source, and yaw-rate reporting
 - `src/sender.cpp` - wire-format message emission
 - `src/transport_serial.cpp` - current serial-backed transport implementation
 
@@ -71,7 +71,7 @@ platformio device monitor --environment mkrwifi1010
 - `TELEMETRY` - telemetry scheduler control and reporting policy
 - `BATTERY` - PMIC-backed battery reporting
 - `GPS` - GPS control and position reporting
-- `RTC` - RTC time and synchronisation state
+- `RTC` - RTC time, synchronisation state, and clock source reporting
 - `THERMAL` - DHT11 temperature and humidity reporting
 - `IMU` - MPU-6050 motion and QMC5883L magnetic field reporting
 - `ADCS` - IMU-derived attitude, heading, and yaw-rate reporting
