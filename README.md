@@ -28,7 +28,7 @@ MySat currently consists of three cooperating parts:
    Firmware for an Arduino Mega 2560 acting as a hardware ground-station target.
 
 3. **Ground-station dashboard**  
-   A Node-RED dashboard used to parse, display, and interact with telemetry and commands.
+   A Node-RED-based ground-station UI used to parse, display, and interact with telemetry and commands. The current bespoke dashboard frontend is built with `uibuilder`.
 
 The system currently uses a structured serial protocol first, with the intention that the same logical message model could later be carried over RF.
 
@@ -60,7 +60,8 @@ That makes it both a practical personal engineering project and a reusable platf
 This project uses:
 
 - **PlatformIO** for the firmware projects
-- **Node-RED** for the dashboard / ground-station UI
+- **Node-RED** for the dashboard / ground-station UI backend
+- **Node-RED uibuilder** for the current bespoke dashboard frontend
 - structured Markdown documentation for shared protocol and telemetry definitions
 
 ## Development approach
@@ -90,7 +91,7 @@ Project direction, design decisions, hardware work, and final review remain huma
 ## Current direction
 
 - Firmware remains the system of record for protocol behaviour.
-- The dashboard is a source-controlled Node-RED project under `ground-station-dashboard/`.
+- The dashboard is a source-controlled Node-RED project under `ground-station-dashboard/`, with the current v3 UI implemented using `uibuilder`.
 - The ground-station firmware is maintained as a separate PlatformIO project.
 - Shared wire-format rules live in `documentation/`, not duplicated across multiple READMEs.
 - Target-specific commands and telemetry fields are documented separately under `documentation/targets/`.

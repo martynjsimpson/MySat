@@ -90,13 +90,39 @@ Dashboard v3 is served by `uibuilder` at:
 http://localhost:1880/dashboard-v3/
 ```
 
-The v3 client currently implements:
+The v3 client is a bespoke mission-control style console rather than a widget grid.
 
-- mission-control style operations panel
-- `ACK`, `ERR`, and all-packet logs
-- one-row-per-system status table
-- compact per-system controls that send the same command protocol as the current dashboard
-- freshness-aware parameter coloring
+Its current structure is:
+
+- `Operations`: heartbeat, last telemetry timestamp, last acknowledgement, last error, plus top-level `PING`, full-system `POLL`, `RESET`, and custom command send
+- `Attitude Visual`: reserved placeholder panel for future ADCS-driven visualisation
+- `Systems`: one compact row per target with live parameters on the left and controls on the right
+- `Logs`: side-by-side `ACK`, `ERR`, and all-packet logs
+
+The v3 interaction model is:
+
+- all panels are collapsible
+- system rows keep a consistent control grid so button columns align vertically across targets
+- shared live parameters are ordered first where applicable:
+  - `EN`
+  - status-like fields such as `STATE`, `AVL`, or `SYNC`
+  - `TLM`
+  - target-specific fields afterwards
+- live values are rendered as compact instrument-style readouts, with units appended in the value text where the parameter implies one
+- freshness colouring is used for live telemetry-derived values and the operations summary
+
+Current v3 control conventions:
+
+- `POL` on a system row sends `GET,<TARGET>,NONE,NONE`
+- top-level `POLL` sends `GET,NONE,NONE,NONE`
+- `EN` / `DIS` are shown only for targets that support firmware enable control
+- `RTC` intentionally does not expose `EN` / `DIS` because the RTC underpins message timestamps for the protocol
+
+Implementation notes:
+
+- incoming payload updates patch live system values in place instead of rebuilding the systems table
+- the one-second UI timer only refreshes freshness/status styling
+- this avoids open dropdowns being closed by routine UI updates while telemetry is streaming
 
 ## Notes
 
