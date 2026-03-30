@@ -35,6 +35,7 @@ export const systemConfigs = [
     target: 'BATTERY',
     title: 'BAT',
     fields: [
+      ['ENABLE', 'EN'],
       ['AVAILABLE', 'AVL'],
       ['TELEMETRY', 'TLM'],
       ['CHARGE_PERCENT_P', 'PCT'],
@@ -42,7 +43,7 @@ export const systemConfigs = [
       ['CHARGE_VOLTAGE_V', 'CHGV'],
       ['CHARGE_CURRENT_A', 'CHGA'],
     ],
-    getOptions: ['AVAILABLE', 'TELEMETRY', 'CHARGE_PERCENT_P', 'VOLTAGE_V', 'CHARGE_VOLTAGE_V', 'CHARGE_CURRENT_A'],
+    getOptions: ['ENABLE', 'AVAILABLE', 'TELEMETRY', 'CHARGE_PERCENT_P', 'VOLTAGE_V', 'CHARGE_VOLTAGE_V', 'CHARGE_CURRENT_A'],
   },
   {
     target: 'GPS',

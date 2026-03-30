@@ -103,7 +103,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 |---|---|---|
 | `LED` | Built-in LED control and status | [LED.md](./targets/LED.md) |
 | `TELEMETRY` | Global and per-target telemetry control | [TELEMETRY_TARGET.md](./targets/TELEMETRY_TARGET.md) |
-| `BATTERY` | PMIC-backed battery reporting | [BATTERY.md](./targets/BATTERY.md) |
+| `BATTERY` | PMIC-backed battery reporting and charge control | [BATTERY.md](./targets/BATTERY.md) |
 | `GPS` | GPS control and position reporting | [GPS.md](./targets/GPS.md) |
 | `RTC` | RTC time and sync control | [RTC.md](./targets/RTC.md) |
 | `THERMAL` | DHT11-based temperature and humidity reporting | [THERMAL.md](./targets/THERMAL.md) |

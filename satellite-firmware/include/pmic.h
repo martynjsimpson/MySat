@@ -5,6 +5,7 @@
 
 void setupBattery();
 void handleGetBattery(const Command &cmd);
+void handleSetBattery(const Command &cmd);
 void reportBatteryStatus();
 
 #endif

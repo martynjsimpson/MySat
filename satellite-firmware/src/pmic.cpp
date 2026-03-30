@@ -3,11 +3,13 @@
 #include <Arduino.h>
 #include <BQ24195.h>
 
+#include "config.h"
 #include "sender.h"
 #include "telemetry.h"
 
 namespace
 {
+  bool batteryEnabled = Config::Battery::defaultEnabled;
   float rawADC = 0.0f;
   float voltADC = 0.0f;
   float battVolt = 0.0f;
@@ -43,29 +45,34 @@ namespace
     sendTelemetry("BATTERY", "TELEMETRY", isTargetTelemetryEnabled(TARGET_BATTERY) ? "TRUE" : "FALSE");
   }
 
-  void reportBatteryAvailability(bool batteryConnected)
+  void reportBatteryEnableStatus()
   {
-    sendTelemetry("BATTERY", "AVAILABLE", batteryConnected ? "TRUE" : "FALSE");
+    sendTelemetry("BATTERY", "ENABLE", batteryEnabled ? "TRUE" : "FALSE");
   }
 
-  void reportBatteryChargeCurrent(bool batteryConnected)
+  void reportBatteryAvailability(bool batteryAvailable)
   {
-    sendTelemetryFloat("BATTERY", "CHARGE_CURRENT_A", batteryConnected ? PMIC.getChargeCurrent() : 0.0f, 3);
+    sendTelemetry("BATTERY", "AVAILABLE", batteryAvailable ? "TRUE" : "FALSE");
   }
 
-  void reportBatteryChargeVoltage(bool batteryConnected)
+  void reportBatteryChargeCurrent(bool batteryAvailable)
   {
-    sendTelemetryFloat("BATTERY", "CHARGE_VOLTAGE_V", batteryConnected ? PMIC.getChargeVoltage() : 0.0f, 3);
+    sendTelemetryFloat("BATTERY", "CHARGE_CURRENT_A", batteryAvailable ? PMIC.getChargeCurrent() : 0.0f, 3);
   }
 
-  void reportBatteryChargePercent(bool batteryConnected)
+  void reportBatteryChargeVoltage(bool batteryAvailable)
   {
-    sendTelemetryULong("BATTERY", "CHARGE_PERCENT_P", batteryConnected ? static_cast<unsigned long>(battPerc) : 0);
+    sendTelemetryFloat("BATTERY", "CHARGE_VOLTAGE_V", batteryAvailable ? PMIC.getChargeVoltage() : 0.0f, 3);
   }
 
-  void reportBatteryVoltage(bool batteryConnected)
+  void reportBatteryChargePercent(bool batteryAvailable)
   {
-    sendTelemetryFloat("BATTERY", "VOLTAGE_V", batteryConnected ? battVolt : 0.0f);
+    sendTelemetryULong("BATTERY", "CHARGE_PERCENT_P", batteryAvailable ? static_cast<unsigned long>(battPerc) : 0);
+  }
+
+  void reportBatteryVoltage(bool batteryAvailable)
+  {
+    sendTelemetryFloat("BATTERY", "VOLTAGE_V", batteryAvailable ? battVolt : 0.0f);
   }
 }
 
@@ -78,7 +85,15 @@ void setupBattery()
   PMIC.setMinimumSystemVoltage(batteryEmptyVoltage);
   PMIC.setChargeVoltage(batteryFullVoltage);
   PMIC.setChargeCurrent(batteryCapacity / 2);
-  PMIC.enableCharge();
+  batteryEnabled = Config::Battery::defaultEnabled;
+  if (batteryEnabled)
+  {
+    PMIC.enableCharge();
+  }
+  else
+  {
+    PMIC.disableCharge();
+  }
 
   maxSourceVoltage = static_cast<int>((3.3f * (R1 + R2)) / static_cast<float>(R2));
   (void)batteryCapacity; // reserved for future tuning
@@ -86,19 +101,20 @@ void setupBattery()
 
 void reportBatteryStatus()
 {
-  const bool batteryConnected = isBatteryConnected();
+  const bool batteryAvailable = batteryEnabled && isBatteryConnected();
 
-  if (batteryConnected)
+  if (batteryAvailable)
   {
     updateBatteryValues();
   }
 
   reportBatteryTelemetryStatus();
-  reportBatteryAvailability(batteryConnected);
-  reportBatteryChargeCurrent(batteryConnected);
-  reportBatteryChargeVoltage(batteryConnected);
-  reportBatteryChargePercent(batteryConnected);
-  reportBatteryVoltage(batteryConnected);
+  reportBatteryEnableStatus();
+  reportBatteryAvailability(batteryAvailable);
+  reportBatteryChargeCurrent(batteryAvailable);
+  reportBatteryChargeVoltage(batteryAvailable);
+  reportBatteryChargePercent(batteryAvailable);
+  reportBatteryVoltage(batteryAvailable);
 }
 
 void handleGetBattery(const Command &cmd)
@@ -109,8 +125,8 @@ void handleGetBattery(const Command &cmd)
     return;
   }
 
-  const bool batteryConnected = isBatteryConnected();
-  if (batteryConnected)
+  const bool batteryAvailable = batteryEnabled && isBatteryConnected();
+  if (batteryAvailable)
   {
     updateBatteryValues();
   }
@@ -125,24 +141,57 @@ void handleGetBattery(const Command &cmd)
     reportBatteryTelemetryStatus();
     break;
 
+  case PARAM_ENABLE:
+    reportBatteryEnableStatus();
+    break;
+
   case PARAM_AVAILABLE:
-    reportBatteryAvailability(batteryConnected);
+    reportBatteryAvailability(batteryAvailable);
     break;
 
   case PARAM_CHARGE_CURRENT_A:
-    reportBatteryChargeCurrent(batteryConnected);
+    reportBatteryChargeCurrent(batteryAvailable);
     break;
 
   case PARAM_CHARGE_VOLTAGE_V:
-    reportBatteryChargeVoltage(batteryConnected);
+    reportBatteryChargeVoltage(batteryAvailable);
     break;
 
   case PARAM_CHARGE_PERCENT_P:
-    reportBatteryChargePercent(batteryConnected);
+    reportBatteryChargePercent(batteryAvailable);
     break;
 
   case PARAM_VOLTAGE_V:
-    reportBatteryVoltage(batteryConnected);
+    reportBatteryVoltage(batteryAvailable);
+    break;
+
+  default:
+    sendError("BAD_PARAMETER");
+    break;
+  }
+}
+
+void handleSetBattery(const Command &cmd)
+{
+  switch (cmd.parameter)
+  {
+  case PARAM_ENABLE:
+    if (cmd.value == VALUE_TRUE)
+    {
+      batteryEnabled = true;
+      PMIC.enableCharge();
+      sendAck("BATTERY", "ENABLE");
+    }
+    else if (cmd.value == VALUE_FALSE)
+    {
+      batteryEnabled = false;
+      PMIC.disableCharge();
+      sendAck("BATTERY", "DISABLE");
+    }
+    else
+    {
+      sendError("BAD_VALUE");
+    }
     break;
 
   default:

@@ -68,6 +68,11 @@ namespace Config
     constexpr int coordinateDecimalPlaces = 5;
   }
 
+  namespace Battery
+  {
+    constexpr bool defaultEnabled = true;
+  }
+
   namespace Thermal
   {
     constexpr bool defaultEnabled = true;

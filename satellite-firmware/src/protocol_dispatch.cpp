@@ -90,6 +90,10 @@ namespace
       handleSetTelemetry(cmd);
       break;
 
+    case TARGET_BATTERY:
+      handleSetBattery(cmd);
+      break;
+
     case TARGET_RTC:
       handleSetRtc(cmd);
       break;
