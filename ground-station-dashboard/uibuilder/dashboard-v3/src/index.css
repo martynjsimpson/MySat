@@ -73,6 +73,14 @@ h1 {
   font-size: 12px;
 }
 
+.status-cluster {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .dot {
   width: 10px;
   height: 10px;
@@ -84,6 +92,14 @@ h1 {
   background: var(--green);
 }
 
+.dot.stale {
+  background: var(--red);
+}
+
+.dot.idle {
+  background: var(--grey);
+}
+
 .console {
   display: grid;
   grid-template-columns: minmax(340px, 0.9fr) minmax(0, 1.7fr);
@@ -91,8 +107,15 @@ h1 {
   align-items: start;
 }
 
+.ops-panel,
+.attitude-panel,
 .systems-panel {
   grid-column: 1 / -1;
+}
+
+.logs-panel {
+  grid-column: 1 / -1;
+  padding-top: 8px;
 }
 
 .panel {
@@ -102,13 +125,81 @@ h1 {
   padding: 10px;
 }
 
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
 .panel-title {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-muted);
-  margin-bottom: 8px;
+  margin-bottom: 0;
+}
+
+.panel-toggle {
+  border: 1px solid #2a3542;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  min-height: 28px;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+
+.panel-toggle:hover {
+  color: var(--text);
+  border-color: #3a4a5c;
+}
+
+.panel-content {
+  display: block;
+}
+
+.panel.is-collapsed .panel-content {
+  display: none;
+}
+
+.attitude-placeholder {
+  min-height: 140px;
+  border: 1px dashed #314152;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at top, rgba(98, 166, 255, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(17, 24, 33, 0.96), rgba(11, 16, 22, 0.96));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 18px;
+}
+
+.attitude-placeholder-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.attitude-placeholder-copy {
+  max-width: 720px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
 }
 
 .ops-stats {
@@ -124,6 +215,11 @@ h1 {
   border: 1px solid var(--border-soft);
   border-radius: 7px;
   padding: 8px;
+}
+
+.log-card {
+  margin: 0;
+  padding: 4px 8px 8px;
 }
 
 .stat-label {
@@ -144,19 +240,11 @@ h1 {
   word-break: break-word;
 }
 
-.ops-buttons,
-.custom-command-row {
+.ops-command-row {
   display: grid;
+  grid-template-columns: 108px 108px 108px minmax(0, 1fr) 100px;
   gap: 8px;
-}
-
-.ops-buttons {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.custom-command-row {
-  margin-top: 8px;
-  grid-template-columns: minmax(0, 1fr) 100px;
+  align-items: center;
 }
 
 .cmd-btn,
@@ -172,6 +260,7 @@ h1 {
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  box-shadow: none !important;
 }
 
 .mini-btn {
@@ -192,6 +281,7 @@ h1 {
   font: inherit;
   font-size: 12px;
   padding: 7px 9px;
+  box-shadow: none !important;
 }
 
 .mini-input,
@@ -207,12 +297,14 @@ h1 {
 
 .logs-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+  align-items: start;
+  margin-top: 0;
 }
 
-.packet-log-card {
-  grid-column: 1 / -1;
+.log-title {
+  margin-bottom: 4px;
 }
 
 .log-body {
@@ -221,9 +313,8 @@ h1 {
   overflow: auto;
 }
 
-.log-body.small {
-  min-height: 80px;
-  max-height: 80px;
+.logs-panel .panel-title {
+  margin-bottom: 4px;
 }
 
 .log-line {
@@ -234,8 +325,12 @@ h1 {
   text-overflow: ellipsis;
 }
 
+.ack-tone .log-line {
+  color: var(--green);
+}
+
 .err-tone .log-line {
-  color: #f2b8b5;
+  color: var(--red);
 }
 
 .systems-table {
@@ -371,6 +466,14 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .ops-command-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ops-command-row .cmd-input {
+    grid-column: 1 / span 2;
+  }
+
   .systems-row {
     grid-template-columns: 60px minmax(0, 1fr);
     align-items: start;
@@ -388,5 +491,9 @@ h1 {
     justify-content: start;
     margin-top: 6px;
     grid-template-columns: repeat(5, 40px) repeat(2, 40px) 90px 44px 160px;
+  }
+
+  .logs-grid {
+    grid-template-columns: 1fr;
   }
 }

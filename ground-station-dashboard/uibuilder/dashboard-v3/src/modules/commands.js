@@ -15,8 +15,44 @@ export function requestStateSync() {
 export function updateConnection(connected) {
   const dot = el('conn-dot')
   const label = el('conn-label')
-  dot.classList.toggle('connected', connected)
-  label.textContent = connected ? 'Connected' : 'Disconnected'
+  dot.classList.remove('connected', 'stale', 'idle')
+  dot.classList.add(connected ? 'connected' : 'stale')
+  label.textContent = connected ? 'Node-RED Connected' : 'Node-RED Disconnected'
+}
+
+export function bindPanelToggles() {
+  document.body.addEventListener('click', (event) => {
+    const toggle = event.target.closest('[data-panel-toggle]')
+    if (!toggle) return
+
+    const panel = toggle.closest('[data-panel]')
+    if (!panel) return
+
+    const collapsed = panel.classList.toggle('is-collapsed')
+    toggle.setAttribute('aria-expanded', String(!collapsed))
+    toggle.textContent = collapsed ? 'Expand' : 'Collapse'
+  })
+}
+
+export function updateSatelliteStatus(mode) {
+  const dot = el('sat-dot')
+  const label = el('sat-label')
+  dot.classList.remove('connected', 'stale', 'idle')
+
+  if (mode === 'live') {
+    dot.classList.add('connected')
+    label.textContent = 'Satellite Live'
+    return
+  }
+
+  if (mode === 'stale') {
+    dot.classList.add('stale')
+    label.textContent = 'Satellite Stale'
+    return
+  }
+
+  dot.classList.add('idle')
+  label.textContent = 'Satellite Unknown'
 }
 
 export function bindEvents(state) {

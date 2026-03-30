@@ -17,66 +17,99 @@
         <div class="eyebrow">Ground Station</div>
         <h1>Mission Control V3</h1>
       </div>
-      <div class="connection">
-        <span class="dot" id="conn-dot"></span>
-        <span id="conn-label">Connecting</span>
+      <div class="status-cluster">
+        <div class="connection">
+          <span class="dot" id="conn-dot"></span>
+          <span id="conn-label">Node-RED Connecting</span>
+        </div>
+        <div class="connection">
+          <span class="dot" id="sat-dot"></span>
+          <span id="sat-label">Satellite Unknown</span>
+        </div>
       </div>
     </header>
 
     <main class="console">
-      <section class="panel ops-panel">
-        <div class="panel-title">Operations</div>
-        <div class="ops-stats">
-          <div class="stat-block">
-            <div class="stat-label">Heartbeat</div>
-            <div class="stat-value" id="heartbeat-value">--</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-label">Last ACK</div>
-            <div class="stat-value stat-wrap" id="last-ack">--</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-label">Last ERR</div>
-            <div class="stat-value stat-wrap" id="last-err">--</div>
-          </div>
+      <section class="panel ops-panel" data-panel="operations">
+        <div class="panel-header">
+          <div class="panel-title">Operations</div>
+          <button class="panel-toggle" type="button" data-panel-toggle aria-expanded="true" aria-controls="panel-operations">Collapse</button>
         </div>
-        <div class="ops-buttons">
-          <button class="cmd-btn cmd-blue" data-command="PING,NONE,NONE,NONE">PING</button>
-          <button class="cmd-btn cmd-blue" data-command="GET,STATUS,NONE,NONE">STATUS</button>
-          <button class="cmd-btn cmd-red" data-command="RESET,NONE,NONE,NONE">RESET</button>
-        </div>
-        <div class="custom-command-row">
-          <input id="custom-command" class="cmd-input" type="text" placeholder="Custom command">
-          <button id="custom-send" class="cmd-btn cmd-neutral">SEND</button>
-        </div>
-      </section>
-
-      <section class="panel logs-panel">
-        <div class="logs-grid">
-          <article class="log-card">
-            <div class="panel-title">ACK Log</div>
-            <div class="log-body small" id="ack-log"></div>
-          </article>
-          <article class="log-card">
-            <div class="panel-title">ERR Log</div>
-            <div class="log-body small err-tone" id="err-log"></div>
-          </article>
-          <article class="log-card packet-log-card">
-            <div class="panel-title">All Packet Log</div>
-            <div class="log-body" id="packet-log"></div>
-          </article>
+        <div class="panel-content" id="panel-operations">
+          <div class="ops-stats">
+            <div class="stat-block">
+              <div class="stat-label">Heartbeat</div>
+              <div class="stat-value" id="heartbeat-value">--</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-label">Last ACK</div>
+              <div class="stat-value stat-wrap" id="last-ack">--</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-label">Last ERR</div>
+              <div class="stat-value stat-wrap" id="last-err">--</div>
+            </div>
+          </div>
+          <div class="ops-command-row">
+            <button class="cmd-btn cmd-blue" data-command="PING,NONE,NONE,NONE">PING</button>
+            <button class="cmd-btn cmd-blue" data-command="GET,STATUS,NONE,NONE">STATUS</button>
+            <button class="cmd-btn cmd-red" data-command="RESET,NONE,NONE,NONE">RESET</button>
+            <input id="custom-command" class="cmd-input" type="text" placeholder="Custom command">
+            <button id="custom-send" class="cmd-btn cmd-neutral">SEND</button>
+          </div>
         </div>
       </section>
 
-      <section class="panel systems-panel">
-        <div class="panel-title">Systems</div>
-        <div class="systems-table">
-          <div class="systems-row systems-header">
-            <div class="col-system">SYS</div>
-            <div class="col-values">Live Parameters</div>
-            <div class="col-actions">Controls</div>
+      <section class="panel attitude-panel" data-panel="attitude">
+        <div class="panel-header">
+          <div class="panel-title">Attitude Visual</div>
+          <button class="panel-toggle" type="button" data-panel-toggle aria-expanded="true" aria-controls="panel-attitude">Collapse</button>
+        </div>
+        <div class="panel-content" id="panel-attitude">
+          <div class="attitude-placeholder">
+            <div class="attitude-placeholder-title">Reserved For ADCS Visualisation</div>
+            <div class="attitude-placeholder-copy">Placeholder for a future rocket/orientation model driven by roll, pitch, heading, and yaw-rate data.</div>
           </div>
-          <div id="systems-body"></div>
+        </div>
+      </section>
+
+      <section class="panel systems-panel" data-panel="systems">
+        <div class="panel-header">
+          <div class="panel-title">Systems</div>
+          <button class="panel-toggle" type="button" data-panel-toggle aria-expanded="true" aria-controls="panel-systems">Collapse</button>
+        </div>
+        <div class="panel-content" id="panel-systems">
+          <div class="systems-table">
+            <div class="systems-row systems-header">
+              <div class="col-system">SYS</div>
+              <div class="col-values">Live Parameters</div>
+              <div class="col-actions">Controls</div>
+            </div>
+            <div id="systems-body"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel logs-panel" data-panel="logs">
+        <div class="panel-header">
+          <div class="panel-title">Logs</div>
+          <button class="panel-toggle" type="button" data-panel-toggle aria-expanded="true" aria-controls="panel-logs">Collapse</button>
+        </div>
+        <div class="panel-content" id="panel-logs">
+          <div class="logs-grid">
+            <article class="log-card">
+              <div class="panel-title log-title">ACK Log</div>
+              <div class="log-body ack-tone" id="ack-log"></div>
+            </article>
+            <article class="log-card">
+              <div class="panel-title log-title">ERR Log</div>
+              <div class="log-body err-tone" id="err-log"></div>
+            </article>
+            <article class="log-card">
+              <div class="panel-title log-title">All Packet Log</div>
+              <div class="log-body" id="packet-log"></div>
+            </article>
+          </div>
         </div>
       </section>
     </main>
