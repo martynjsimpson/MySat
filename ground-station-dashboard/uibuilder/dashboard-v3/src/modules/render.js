@@ -93,6 +93,44 @@ function setVisualMetric(state, id, item) {
   node.className = `metric-value ${freshnessClass(state, item)}`
 }
 
+function setAttitudeReadout(state, id, item) {
+  const node = el(id)
+  if (!node) return
+  node.textContent = displayValue(item)
+  node.className = `attitude-readout-value ${freshnessClass(state, item)}`
+}
+
+function updateAttitudeIndicator(state) {
+  const horizon = el('attitude-horizon')
+  const status = el('attitude-status')
+
+  const roll = field(state, 'ADCS', 'ROLL_DEG', 'ROL')
+  const pitch = field(state, 'ADCS', 'PITCH_DEG', 'PIT')
+  const heading = field(state, 'ADCS', 'HEADING_DEG', 'HDG')
+  const yaw = field(state, 'ADCS', 'YAW_RATE_DPS', 'YAW')
+
+  setAttitudeReadout(state, 'attitude-heading', heading)
+  setAttitudeReadout(state, 'attitude-roll', roll)
+  setAttitudeReadout(state, 'attitude-pitch', pitch)
+  setAttitudeReadout(state, 'attitude-yaw', yaw)
+
+  const rollValue = Number(roll.value)
+  const pitchValue = Number(pitch.value)
+  const attitudeFresh = isFresh(state, roll) || isFresh(state, pitch) || isFresh(state, heading)
+
+  if (status) {
+    status.textContent = attitudeFresh ? 'Live' : 'Stale'
+  }
+
+  if (!horizon || !Number.isFinite(rollValue) || !Number.isFinite(pitchValue)) {
+    return
+  }
+
+  const limitedPitch = Math.max(-45, Math.min(45, pitchValue))
+  const pitchOffset = (limitedPitch / 45) * 52
+  horizon.setAttribute('transform', `translate(0 ${pitchOffset.toFixed(2)}) rotate(${(-rollValue).toFixed(2)} 110 110)`)
+}
+
 function gpsFix(state) {
   const entries = gpsEntries(state)
   if (entries.available.value !== 'TRUE') return null
@@ -253,6 +291,7 @@ export function refreshDashboardStatus(state, systemConfigs) {
 
   refreshSystemValues(state, systemConfigs)
   updateGpsMap(state)
+  updateAttitudeIndicator(state)
 }
 
 export function renderDashboard(state, systemConfigs) {

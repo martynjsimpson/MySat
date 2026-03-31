@@ -113,12 +113,54 @@
             </article>
             <article class="visual-card">
               <div class="visual-card-header">
-                <div class="panel-title visual-title">ADCS Visual</div>
-                <div class="visual-meta">Reserved</div>
+                <div class="panel-title visual-title">Artificial Horizon</div>
+                <div class="visual-meta" id="attitude-status">Live</div>
               </div>
-              <div class="attitude-placeholder">
-                <div class="attitude-placeholder-title">Reserved For ADCS Visualisation</div>
-                <div class="attitude-placeholder-copy">Placeholder for a future rocket or orientation model driven by roll, pitch, heading, and yaw-rate data.</div>
+              <div class="attitude-widget">
+                <div class="attitude-visual">
+                  <svg class="attitude-svg" viewBox="24 24 172 172" aria-label="Attitude indicator">
+                    <defs>
+                      <clipPath id="attitude-clip">
+                        <path d="M56 38 H164 L182 56 V164 L164 182 H56 L38 164 V56 Z"></path>
+                      </clipPath>
+                    </defs>
+                    <rect class="attitude-bezel" x="20" y="20" width="180" height="180" rx="22"></rect>
+                    <path class="attitude-window-frame" d="M56 38 H164 L182 56 V164 L164 182 H56 L38 164 V56 Z"></path>
+                    <g clip-path="url(#attitude-clip)">
+                      <g id="attitude-horizon">
+                        <rect class="attitude-sky" x="0" y="-120" width="220" height="230"></rect>
+                        <rect class="attitude-ground" x="0" y="110" width="220" height="230"></rect>
+                        <line class="attitude-horizon-line" x1="0" y1="110" x2="220" y2="110"></line>
+                        <line class="attitude-ladder" x1="74" y1="74" x2="146" y2="74"></line>
+                        <line class="attitude-ladder" x1="84" y1="92" x2="136" y2="92"></line>
+                        <line class="attitude-ladder" x1="84" y1="128" x2="136" y2="128"></line>
+                        <line class="attitude-ladder" x1="74" y1="146" x2="146" y2="146"></line>
+                      </g>
+                    </g>
+                    <path class="attitude-ring" d="M56 38 H164 L182 56 V164 L164 182 H56 L38 164 V56 Z"></path>
+                    <path class="attitude-wing" d="M58 110 L92 110 L102 118 L118 118 L128 110 L162 110"></path>
+                    <circle class="attitude-center" cx="110" cy="110" r="4"></circle>
+                    <path class="attitude-pointer" d="M110 34 L102 50 L118 50 Z"></path>
+                  </svg>
+                </div>
+                <div class="attitude-readouts">
+                  <div class="attitude-readout">
+                    <span class="attitude-readout-label">HDG</span>
+                    <span class="attitude-readout-value freshness-empty" id="attitude-heading">--</span>
+                  </div>
+                  <div class="attitude-readout">
+                    <span class="attitude-readout-label">ROL</span>
+                    <span class="attitude-readout-value freshness-empty" id="attitude-roll">--</span>
+                  </div>
+                  <div class="attitude-readout">
+                    <span class="attitude-readout-label">PIT</span>
+                    <span class="attitude-readout-value freshness-empty" id="attitude-pitch">--</span>
+                  </div>
+                  <div class="attitude-readout">
+                    <span class="attitude-readout-label">YAW</span>
+                    <span class="attitude-readout-value freshness-empty" id="attitude-yaw">--</span>
+                  </div>
+                </div>
               </div>
             </article>
           </div>
