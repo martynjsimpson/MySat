@@ -3,14 +3,14 @@
 
 #include <stdint.h>
 
-#include "sender.h"
+#include "clock.h"
 
 struct GroundCommandContext
 {
   uint32_t currentEpochSeconds = 0;
   unsigned long heartbeatCount = 0;
   bool telemetryEnabled = false;
-  GroundClockSource clockSource = GROUND_CLOCK_SOURCE_UNSYNC;
+  ClockSource clockSource = CLOCK_SOURCE_UNSYNC;
   bool radioReady = false;
   bool pending = false;
   bool clockSynced = false;
@@ -19,12 +19,7 @@ struct GroundCommandContext
   unsigned long dropPacketCount = 0;
   unsigned long lastRetryAttempt = 0;
 
-  uint32_t *clockBaseEpochSeconds = nullptr;
-  unsigned long *clockBaseMillis = nullptr;
-  bool *clockSyncedState = nullptr;
-  GroundClockSource *clockSourceState = nullptr;
   bool *telemetryEnabledState = nullptr;
-
   void (*performReset)() = nullptr;
 };
 

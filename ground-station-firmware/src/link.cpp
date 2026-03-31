@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <string.h>
 
-#include "time_utils.h"
+#include "clock.h"
 
 void startPendingCommand(PendingCommandState &state, const char *line, unsigned long nowMs)
 {
@@ -41,19 +41,6 @@ bool payloadMatchesPendingResponse(const PendingCommandState &state, const char 
   }
 
   return payloadMatchesExpectedResponse(state.expectedResponse, payload);
-}
-
-bool formatPacketTimestamp(uint32_t timestampSeconds, char *timestampBuffer, size_t timestampBufferSize)
-{
-  if (timestampBuffer == nullptr || timestampBufferSize < 21)
-  {
-    return false;
-  }
-
-  formatIsoTimestamp(timestampSeconds == 0 ? kUnsyncedEpochSeconds : timestampSeconds,
-                     timestampBuffer,
-                     timestampBufferSize);
-  return true;
 }
 
 void forwardPayloadToHost(const char *payload, uint32_t timestampSeconds)

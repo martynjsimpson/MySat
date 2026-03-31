@@ -1,9 +1,17 @@
-#include "time_utils.h"
+#include "clock.h"
 
+#include <Arduino.h>
 #include <string.h>
+
+#include "config.h"
 
 namespace
 {
+  uint32_t clockBaseEpochSeconds = kUnsyncedEpochSeconds;
+  unsigned long clockBaseMillis = 0;
+  bool clockSynced = false;
+  ClockSource clockSource = CLOCK_SOURCE_UNSYNC;
+
   bool isLeapYear(int year)
   {
     return ((year % 4) == 0 && (year % 100) != 0) || ((year % 400) == 0);
@@ -59,7 +67,100 @@ namespace
 
     return true;
   }
-} // namespace
+
+  bool isTrustedSatelliteTimestamp(const char *timestamp)
+  {
+    if (timestamp == nullptr)
+    {
+      return false;
+    }
+
+    return strcmp(timestamp, Config::Clock::minTrustedSatelliteTimestamp) >= 0;
+  }
+}
+
+void setupClock()
+{
+  clockBaseEpochSeconds = kUnsyncedEpochSeconds;
+  clockBaseMillis = millis();
+  clockSynced = false;
+  clockSource = CLOCK_SOURCE_UNSYNC;
+}
+
+uint32_t currentEpochSeconds()
+{
+  return clockBaseEpochSeconds + ((millis() - clockBaseMillis) / 1000UL);
+}
+
+bool isClockSynchronized()
+{
+  return clockSynced;
+}
+
+ClockSource getClockSource()
+{
+  return clockSource;
+}
+
+const char *clockSourceToken(ClockSource source)
+{
+  switch (source)
+  {
+  case CLOCK_SOURCE_LOCAL:
+    return "LOCAL";
+  case CLOCK_SOURCE_SATELLITE:
+    return "SATELLITE";
+  case CLOCK_SOURCE_UNSYNC:
+  default:
+    return "UNSYNC";
+  }
+}
+
+bool setCurrentTimeIso(const char *timestamp)
+{
+  uint32_t epochSeconds = 0;
+  if (!parseIsoTimestamp(timestamp, epochSeconds))
+  {
+    return false;
+  }
+
+  clockBaseEpochSeconds = epochSeconds;
+  clockBaseMillis = millis();
+  clockSynced = true;
+  clockSource = CLOCK_SOURCE_LOCAL;
+  return true;
+}
+
+bool trySyncClockFromSatelliteTimestamp(uint32_t timestampSeconds)
+{
+  if (!Config::Clock::autoSyncFromSatellite || clockSource != CLOCK_SOURCE_UNSYNC)
+  {
+    return false;
+  }
+
+  char timestamp[21];
+  if (!formatPacketTimestamp(timestampSeconds, timestamp, sizeof(timestamp)))
+  {
+    return false;
+  }
+
+  if (!isTrustedSatelliteTimestamp(timestamp))
+  {
+    return false;
+  }
+
+  uint32_t epochSeconds = 0;
+  if (!parseIsoTimestamp(timestamp, epochSeconds))
+  {
+    return false;
+  }
+
+  clockBaseEpochSeconds = epochSeconds;
+  clockBaseMillis = millis();
+  clockSynced = true;
+  clockSource = CLOCK_SOURCE_SATELLITE;
+  return true;
+}
 
 bool parseIsoTimestamp(const char *timestamp, uint32_t &outEpochSeconds)
 {
@@ -161,4 +262,17 @@ void formatIsoTimestamp(uint32_t epochSeconds, char *buffer, size_t bufferSize)
   buffer[18] = static_cast<char>('0' + (second % 10));
   buffer[19] = 'Z';
   buffer[20] = '\0';
+}
+
+bool formatPacketTimestamp(uint32_t timestampSeconds, char *timestampBuffer, size_t timestampBufferSize)
+{
+  if (timestampBuffer == nullptr || timestampBufferSize < 21)
+  {
+    return false;
+  }
+
+  formatIsoTimestamp(timestampSeconds == 0 ? kUnsyncedEpochSeconds : timestampSeconds,
+                     timestampBuffer,
+                     timestampBufferSize);
+  return true;
 }

@@ -20,7 +20,6 @@ void startPendingCommand(PendingCommandState &state, const char *line, unsigned 
 void clearPendingCommand(PendingCommandState &state);
 bool payloadMatchesPendingResponse(const PendingCommandState &state, const char *payload);
 
-bool formatPacketTimestamp(uint32_t timestampSeconds, char *timestampBuffer, size_t timestampBufferSize);
 void forwardPayloadToHost(const char *payload, uint32_t timestampSeconds);
 
 bool shouldSuppressDuplicatePayload(const char *payload,

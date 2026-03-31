@@ -35,18 +35,20 @@ platformio device monitor --environment mkrwan1310
 - `include/radio.h` - LoRa radio bring-up and packet send/receive interface
 - `include/rf_envelope.h` - shared RF packet envelope and CRC helpers
 - `include/sender.h` - host-local `GROUND` `ACK`, `ERR`, and `TLM` emission helpers
-- `include/time_utils.h` - ISO timestamp parsing and formatting helpers
+- `include/clock.h` - local clock state, sync policy helpers, and ISO timestamp formatting
+- `include/led.h` - built-in LED activity pulse helper
 
 ### Source Files
 
-- `src/main.cpp` - top-level setup, loop, clock sync policy, and bridge orchestration
+- `src/main.cpp` - top-level setup, loop, and bridge orchestration
 - `src/commands.cpp` - host-local `GROUND` command handling
 - `src/link.cpp` - pending-command lifecycle, payload forwarding, and duplicate suppression
+- `src/clock.cpp` - local clock state, satellite time sync, and ISO formatting
+- `src/led.cpp` - built-in LED pulse behavior for RF activity
 - `src/protocol.cpp` - command parsing and pending-response classification helpers
 - `src/radio.cpp` - LoRa radio initialization and packet transport
 - `src/rf_envelope.cpp` - RF packet encode/decode helpers and CRC-16/CCITT-FALSE implementation
 - `src/sender.cpp` - host-local `GROUND` message emission
-- `src/time_utils.cpp` - time parsing and ISO formatting
 
 ## Responsibilities
 

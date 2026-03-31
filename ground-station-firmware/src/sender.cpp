@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 
-#include "time_utils.h"
+#include "clock.h"
 
 namespace
 {
@@ -56,28 +56,14 @@ namespace
   }
 } // namespace
 
-const char *groundClockSourceToken(GroundClockSource source)
-{
-  switch (source)
-  {
-  case GROUND_CLOCK_SOURCE_LOCAL:
-    return "LOCAL";
-  case GROUND_CLOCK_SOURCE_SATELLITE:
-    return "SATELLITE";
-  case GROUND_CLOCK_SOURCE_UNSYNC:
-  default:
-    return "UNSYNC";
-  }
-}
-
-void sendGroundAck(uint32_t epochSeconds, const char *value)
+void sendAck(uint32_t epochSeconds, const char *value)
 {
   writeTimestamp(epochSeconds);
   Serial.print(F(",ACK,GROUND,"));
   Serial.println(value);
 }
 
-void sendGroundError(uint32_t epochSeconds, const char *errorCode, const char *context)
+void sendError(uint32_t epochSeconds, const char *errorCode, const char *context)
 {
   writeTimestamp(epochSeconds);
   Serial.print(F(",ERR,"));
@@ -90,7 +76,7 @@ void sendGroundError(uint32_t epochSeconds, const char *errorCode, const char *c
   Serial.println();
 }
 
-void sendGroundTelemetry(uint32_t epochSeconds, const char *parameter, const char *value)
+void sendTelemetry(uint32_t epochSeconds, const char *parameter, const char *value)
 {
   writeTimestamp(epochSeconds);
   Serial.print(F(",TLM,GROUND,"));
@@ -99,7 +85,7 @@ void sendGroundTelemetry(uint32_t epochSeconds, const char *parameter, const cha
   Serial.println(value);
 }
 
-void sendGroundTelemetryULong(uint32_t epochSeconds, const char *parameter, unsigned long value)
+void sendTelemetryULong(uint32_t epochSeconds, const char *parameter, unsigned long value)
 {
   writeTimestamp(epochSeconds);
   Serial.print(F(",TLM,GROUND,"));
@@ -108,7 +94,7 @@ void sendGroundTelemetryULong(uint32_t epochSeconds, const char *parameter, unsi
   Serial.println(value);
 }
 
-void sendGroundStatusSnapshot(uint32_t epochSeconds, const GroundStatusSnapshot &snapshot)
+void sendStatusSnapshot(uint32_t epochSeconds, const GroundStatusSnapshot &snapshot)
 {
   char timestamp[21];
   formatIsoTimestamp(epochSeconds, timestamp, sizeof(timestamp));
@@ -121,7 +107,7 @@ void sendGroundStatusSnapshot(uint32_t epochSeconds, const GroundStatusSnapshot 
   Serial.println(snapshot.telemetryEnabled ? F("TRUE") : F("FALSE"));
   Serial.print(timestamp);
   Serial.print(F(",TLM,GROUND,SOURCE,"));
-  Serial.println(groundClockSourceToken(snapshot.clockSource));
+  Serial.println(clockSourceToken(snapshot.clockSource));
   Serial.print(timestamp);
   Serial.print(F(",TLM,GROUND,RADIO,"));
   Serial.println(snapshot.radioReady ? F("READY") : F("FAILED"));

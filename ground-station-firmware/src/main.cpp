@@ -5,13 +5,14 @@
 #include <string.h>
 
 #include "config.h"
+#include "clock.h"
 #include "commands.h"
+#include "led.h"
 #include "link.h"
-#include "sender.h"
 #include "protocol.h"
 #include "radio.h"
 #include "rf_envelope.h"
-#include "time_utils.h"
+#include "sender.h"
 
 namespace
 {
@@ -19,8 +20,6 @@ namespace
   char hostInputBuffer[kLineBufferSize];
   size_t hostInputLength = 0;
   unsigned long lastHostHeartbeatMs = 0;
-  unsigned long ledPulseStartMs = 0;
-  bool ledPulseActive = false;
   unsigned long txPacketCount = 0;
   unsigned long rxPacketCount = 0;
   unsigned long dropPacketCount = 0;
@@ -31,54 +30,17 @@ namespace
 
   char pendingCommandLine[kLineBufferSize]{};
   PendingCommandState pendingCommand{};
-  uint32_t clockBaseEpochSeconds = kUnsyncedEpochSeconds;
-  unsigned long clockBaseMillis = 0;
-  bool clockSynced = false;
-  GroundClockSource clockSource = GROUND_CLOCK_SOURCE_UNSYNC;
   bool groundTelemetryEnabled = Config::Telemetry::defaultEnabled;
-
-  void applyLedOutput()
-  {
-    digitalWrite(LED_BUILTIN, ledPulseActive ? HIGH : LOW);
-  }
-
-  void noteLedActivity()
-  {
-    ledPulseActive = true;
-    ledPulseStartMs = millis();
-    applyLedOutput();
-  }
-
-  void updateLed()
-  {
-    if (!ledPulseActive)
-    {
-      return;
-    }
-
-    if ((millis() - ledPulseStartMs) < Config::Led::activityPulseMs)
-    {
-      return;
-    }
-
-    ledPulseActive = false;
-    applyLedOutput();
-  }
-
-  uint32_t currentEpochSeconds()
-  {
-    return clockBaseEpochSeconds + ((millis() - clockBaseMillis) / 1000UL);
-  }
 
   GroundStatusSnapshot makeGroundStatusSnapshot()
   {
     GroundStatusSnapshot snapshot;
     snapshot.heartbeatCount = groundHeartbeatCount;
     snapshot.telemetryEnabled = groundTelemetryEnabled;
-    snapshot.clockSource = clockSource;
+    snapshot.clockSource = getClockSource();
     snapshot.radioReady = isGroundRadioReady();
     snapshot.pending = pendingCommand.active;
-    snapshot.clockSynced = clockSynced;
+    snapshot.clockSynced = isClockSynchronized();
     snapshot.txPacketCount = txPacketCount;
     snapshot.rxPacketCount = rxPacketCount;
     snapshot.dropPacketCount = dropPacketCount;
@@ -110,49 +72,8 @@ namespace
 
   void emitDropTelemetry(RfEnvelope::DecodeStatus status)
   {
-    sendGroundTelemetry(currentEpochSeconds(), "LAST_ERROR", decodeStatusLabel(status));
-    sendGroundTelemetryULong(currentEpochSeconds(), "DROP_PACKETS_N", dropPacketCount);
-  }
-
-  bool isTrustedSatelliteTimestamp(const char *timestamp)
-  {
-    if (timestamp == nullptr)
-    {
-      return false;
-    }
-
-    return strcmp(timestamp, Config::Clock::minTrustedSatelliteTimestamp) >= 0;
-  }
-
-  void maybeSyncClockFromSatelliteTimestamp(uint32_t timestampSeconds)
-  {
-    if (!Config::Clock::autoSyncFromSatellite || clockSource != GROUND_CLOCK_SOURCE_UNSYNC)
-    {
-      return;
-    }
-
-    char timestamp[21];
-    formatPacketTimestamp(timestampSeconds, timestamp, sizeof(timestamp));
-
-    if (!isTrustedSatelliteTimestamp(timestamp))
-    {
-      return;
-    }
-
-    uint32_t epochSeconds = 0;
-    if (!parseIsoTimestamp(timestamp, epochSeconds))
-    {
-      return;
-    }
-
-    clockBaseEpochSeconds = epochSeconds;
-    clockBaseMillis = millis();
-    clockSynced = true;
-    clockSource = GROUND_CLOCK_SOURCE_SATELLITE;
-
-    sendGroundTelemetry(currentEpochSeconds(), "CURRENT_TIME", timestamp);
-    sendGroundTelemetry(currentEpochSeconds(), "SOURCE", "SATELLITE");
-    sendGroundTelemetry(currentEpochSeconds(), "CLOCK_SYNC", "TRUE");
+    sendTelemetry(currentEpochSeconds(), "LAST_ERROR", decodeStatusLabel(status));
+    sendTelemetryULong(currentEpochSeconds(), "DROP_PACKETS_N", dropPacketCount);
   }
 
   void emitGroundHeartbeat()
@@ -165,13 +86,13 @@ namespace
 
     lastHostHeartbeatMs = now;
     groundHeartbeatCount++;
-    sendGroundTelemetryULong(currentEpochSeconds(), "HEARTBEAT_N", groundHeartbeatCount);
+    sendTelemetryULong(currentEpochSeconds(), "HEARTBEAT_N", groundHeartbeatCount);
     if (!groundTelemetryEnabled)
     {
       return;
     }
 
-    sendGroundStatusSnapshot(currentEpochSeconds(), makeGroundStatusSnapshot());
+    sendStatusSnapshot(currentEpochSeconds(), makeGroundStatusSnapshot());
   }
 
   void performGroundReset()
@@ -186,18 +107,14 @@ namespace
     context.currentEpochSeconds = currentEpochSeconds();
     context.heartbeatCount = groundHeartbeatCount;
     context.telemetryEnabled = groundTelemetryEnabled;
-    context.clockSource = clockSource;
+    context.clockSource = getClockSource();
     context.radioReady = isGroundRadioReady();
     context.pending = pendingCommand.active;
-    context.clockSynced = clockSynced;
+    context.clockSynced = isClockSynchronized();
     context.txPacketCount = txPacketCount;
     context.rxPacketCount = rxPacketCount;
     context.dropPacketCount = dropPacketCount;
     context.lastRetryAttempt = lastRetryAttempt;
-    context.clockBaseEpochSeconds = &clockBaseEpochSeconds;
-    context.clockBaseMillis = &clockBaseMillis;
-    context.clockSyncedState = &clockSynced;
-    context.clockSourceState = &clockSource;
     context.telemetryEnabledState = &groundTelemetryEnabled;
     context.performReset = performGroundReset;
     return handleGroundCommandLine(line, context);
@@ -229,7 +146,7 @@ namespace
             }
             else
             {
-              sendGroundError(currentEpochSeconds(), "LINK_DOWN", hostInputBuffer);
+              sendError(currentEpochSeconds(), "LINK_DOWN", hostInputBuffer);
             }
           }
         }
@@ -263,7 +180,14 @@ namespace
       return;
     }
 
-    maybeSyncClockFromSatelliteTimestamp(decodedPacket.timestampSeconds);
+    if (trySyncClockFromSatelliteTimestamp(decodedPacket.timestampSeconds))
+    {
+      char timestamp[21];
+      formatPacketTimestamp(decodedPacket.timestampSeconds, timestamp, sizeof(timestamp));
+      sendTelemetry(currentEpochSeconds(), "CURRENT_TIME", timestamp);
+      sendTelemetry(currentEpochSeconds(), "SOURCE", "SATELLITE");
+      sendTelemetry(currentEpochSeconds(), "CLOCK_SYNC", "TRUE");
+    }
     if (shouldSuppressDuplicatePayload(decodedPacket.payload,
                                        lastForwardedPayload,
                                        lastForwardedPayloadMs,
@@ -302,8 +226,8 @@ namespace
 
     if (pendingCommand.retryCount >= Config::Retry::maxCommandRetries)
     {
-      sendGroundTelemetryULong(currentEpochSeconds(), "LAST_RETRY_N", lastRetryAttempt);
-      sendGroundError(currentEpochSeconds(), "TIMEOUT", pendingCommand.line);
+      sendTelemetryULong(currentEpochSeconds(), "LAST_RETRY_N", lastRetryAttempt);
+      sendError(currentEpochSeconds(), "TIMEOUT", pendingCommand.line);
       clearPendingCommand(pendingCommand);
       return;
     }
@@ -315,26 +239,19 @@ namespace
       pendingCommand.lastSendMs = now;
       pendingCommand.retryCount++;
       lastRetryAttempt = pendingCommand.retryCount;
-      sendGroundTelemetryULong(currentEpochSeconds(), "LAST_RETRY_N", lastRetryAttempt);
+      sendTelemetryULong(currentEpochSeconds(), "LAST_RETRY_N", lastRetryAttempt);
     }
     else
     {
-      sendGroundError(currentEpochSeconds(), "RETRY_SEND_FAILED", pendingCommand.line);
+      sendError(currentEpochSeconds(), "RETRY_SEND_FAILED", pendingCommand.line);
     }
   }
 }
 
 void setup()
 {
-  pinMode(LED_BUILTIN, OUTPUT);
-  ledPulseActive = false;
-  ledPulseStartMs = 0;
-  applyLedOutput();
-
-  clockBaseEpochSeconds = kUnsyncedEpochSeconds;
-  clockBaseMillis = millis();
-  clockSynced = false;
-  clockSource = GROUND_CLOCK_SOURCE_UNSYNC;
+  setupLed();
+  setupClock();
   groundTelemetryEnabled = Config::Telemetry::defaultEnabled;
   pendingCommand.line = pendingCommandLine;
   pendingCommand.lineCapacity = sizeof(pendingCommandLine);
@@ -350,8 +267,8 @@ void setup()
 
   setupGroundRadio();
 
-  sendGroundTelemetry(currentEpochSeconds(), "STARTED", "TRUE");
-  sendGroundStatusSnapshot(currentEpochSeconds(), makeGroundStatusSnapshot());
+  sendTelemetry(currentEpochSeconds(), "STARTED", "TRUE");
+  sendStatusSnapshot(currentEpochSeconds(), makeGroundStatusSnapshot());
   lastHostHeartbeatMs = millis();
 }
 
