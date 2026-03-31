@@ -19,10 +19,10 @@ namespace Config
   {
     constexpr long loraFrequencyHz = 868000000L;
     constexpr int loraTxPowerDbm = 17;
-    constexpr long loraSignalBandwidthHz = 125E3;
+    constexpr long loraSignalBandwidthHz = 250E3;
     constexpr int loraSpreadingFactor = 7;
     constexpr int loraCodingRateDenominator = 5;
-    constexpr long loraPreambleLength = 8;
+    constexpr long loraPreambleLength = 6;
     constexpr uint8_t loraSyncWord = 0x12;
     constexpr unsigned long telemetryDeferAfterActivityMs = 250;
   }
