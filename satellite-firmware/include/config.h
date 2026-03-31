@@ -7,7 +7,7 @@ namespace Config
 {
   namespace Main
   {
-    constexpr unsigned long serialStartupDelayMs = 6000;
+    constexpr unsigned long serialStartupDelayMs = 0;
   }
 
   namespace Protocol
