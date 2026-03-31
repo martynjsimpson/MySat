@@ -6,6 +6,7 @@
 #include "gps.h"
 #include "pmic.h"
 #include "rtc.h"
+#include "sender.h"
 #include "status.h"
 #include "thermal.h"
 #include "telemetry_config_internal.h"
@@ -14,6 +15,62 @@
 namespace
 {
   unsigned long lastTelemetryTime = 0;
+
+  void sendModeBatch()
+  {
+    beginTelemetryBatch();
+    reportModeStatus();
+    endTelemetryBatch();
+  }
+
+  void sendRtcBatch()
+  {
+    beginTelemetryBatch();
+    reportRtcStatus();
+    endTelemetryBatch();
+  }
+
+  void sendTelemetryControlBatch()
+  {
+    beginTelemetryBatch();
+    reportTelemetryStatus();
+    endTelemetryBatch();
+  }
+
+  void sendBatteryBatch()
+  {
+    beginTelemetryBatch();
+    reportBatteryStatus();
+    endTelemetryBatch();
+  }
+
+  void sendGpsBatch()
+  {
+    beginTelemetryBatch();
+    reportGpsStatus();
+    endTelemetryBatch();
+  }
+
+  void sendThermalBatch()
+  {
+    beginTelemetryBatch();
+    reportThermalStatus();
+    endTelemetryBatch();
+  }
+
+  void sendImuBatch()
+  {
+    beginTelemetryBatch();
+    reportImuStatus();
+    endTelemetryBatch();
+  }
+
+  void sendAdcsBatch()
+  {
+    beginTelemetryBatch();
+    reportAdcsStatus();
+    endTelemetryBatch();
+  }
 }
 
 void resetTelemetrySchedule()
@@ -26,34 +83,34 @@ void sendTelemetrySnapshot()
   // STATUS heartbeat is always emitted so the ground side can distinguish
   // "telemetry disabled" from "link appears dead".
   reportStatusHeartbeat(true);
-  reportModeStatus();
+  sendModeBatch();
   if (isTargetTelemetryEnabled(TARGET_RTC))
   {
-    reportRtcStatus();
+    sendRtcBatch();
   }
   if (isTargetTelemetryEnabled(TARGET_TELEMETRY))
   {
-    reportTelemetryStatus();
+    sendTelemetryControlBatch();
   }
   if (isTargetTelemetryEnabled(TARGET_BATTERY))
   {
-    reportBatteryStatus();
+    sendBatteryBatch();
   }
   if (isTargetTelemetryEnabled(TARGET_GPS))
   {
-    reportGpsStatus();
+    sendGpsBatch();
   }
   if (isTargetTelemetryEnabled(TARGET_THERMAL))
   {
-    reportThermalStatus();
+    sendThermalBatch();
   }
   if (isTargetTelemetryEnabled(TARGET_IMU))
   {
-    reportImuStatus();
+    sendImuBatch();
   }
   if (isTargetTelemetryEnabled(TARGET_ADCS))
   {
-    reportAdcsStatus();
+    sendAdcsBatch();
   }
 }
 

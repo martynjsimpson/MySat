@@ -442,6 +442,20 @@ namespace
       return false;
     }
 
+    const char *firstNewline = strchr(payload, '\n');
+    if (firstNewline != nullptr)
+    {
+      const size_t length = static_cast<size_t>(firstNewline - payload);
+      if (length != 20 || length >= timestampBufferSize)
+      {
+        return false;
+      }
+
+      memcpy(timestampBuffer, payload, length);
+      timestampBuffer[length] = '\0';
+      return true;
+    }
+
     const char *firstComma = strchr(payload, ',');
     if (firstComma == nullptr)
     {
@@ -626,7 +640,68 @@ namespace
 
   void forwardPayloadToHost(const char *payload)
   {
-    Serial.println(payload);
+    if (payload == nullptr)
+    {
+      return;
+    }
+
+    const char *firstNewline = strchr(payload, '\n');
+    if (firstNewline != nullptr)
+    {
+      const size_t timestampLength = static_cast<size_t>(firstNewline - payload);
+      if (timestampLength == 20)
+      {
+        char timestamp[21];
+        memcpy(timestamp, payload, timestampLength);
+        timestamp[timestampLength] = '\0';
+
+        const char *lineStart = firstNewline + 1;
+        while (*lineStart != '\0')
+        {
+          const char *lineEnd = strchr(lineStart, '\n');
+          if (lineEnd == nullptr)
+          {
+            if (*lineStart != '\0')
+            {
+              Serial.print(timestamp);
+              Serial.print(',');
+              Serial.println(lineStart);
+            }
+            return;
+          }
+
+          if (lineEnd > lineStart)
+          {
+            Serial.print(timestamp);
+            Serial.print(',');
+            Serial.write(lineStart, static_cast<size_t>(lineEnd - lineStart));
+            Serial.println();
+          }
+
+          lineStart = lineEnd + 1;
+        }
+        return;
+      }
+    }
+
+    const char *lineStart = payload;
+    while (*lineStart != '\0')
+    {
+      const char *lineEnd = strchr(lineStart, '\n');
+      if (lineEnd == nullptr)
+      {
+        Serial.println(lineStart);
+        return;
+      }
+
+      if (lineEnd > lineStart)
+      {
+        Serial.write(lineStart, static_cast<size_t>(lineEnd - lineStart));
+        Serial.println();
+      }
+
+      lineStart = lineEnd + 1;
+    }
   }
 
   bool shouldSuppressDuplicatePayload(const char *payload)
