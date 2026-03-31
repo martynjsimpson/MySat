@@ -25,8 +25,8 @@ namespace Config
 
   namespace Retry
   {
-    constexpr unsigned long commandRetryDelayMs = 5000;
-    constexpr uint8_t maxCommandRetries = 3;
+    constexpr unsigned long commandRetryDelayMs = 3000;
+    constexpr uint8_t maxCommandRetries = 5;
   }
 
   namespace Receive
