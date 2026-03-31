@@ -4,6 +4,45 @@ function el(id) {
 
 let nextCommandControlId = 1
 
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+
+  const helper = document.createElement('textarea')
+  helper.value = text
+  helper.setAttribute('readonly', '')
+  helper.style.position = 'absolute'
+  helper.style.left = '-9999px'
+  document.body.appendChild(helper)
+  helper.select()
+  document.execCommand('copy')
+  document.body.removeChild(helper)
+}
+
+function markLogCopied(button) {
+  if (!button) return
+  const originalTitle = button.title
+  button.classList.add('is-copied')
+  button.title = 'Copied'
+  window.setTimeout(() => {
+    button.classList.remove('is-copied')
+    button.title = originalTitle
+  }, 1200)
+}
+
+function markLogCleared(button) {
+  if (!button) return
+  const originalTitle = button.title
+  button.classList.add('is-cleared')
+  button.title = 'Cleared'
+  window.setTimeout(() => {
+    button.classList.remove('is-cleared')
+    button.title = originalTitle
+  }, 1200)
+}
+
 function isGroundErrorRow(row) {
   const raw = String(row && row.raw ? row.raw : '')
   return raw.includes(',ERR,TIMEOUT') ||
@@ -165,6 +204,29 @@ export function bindEvents(state) {
 
     if (button.dataset.command) {
       sendCommand(button.dataset.command, state, button)
+      return
+    }
+
+    if (button.dataset.copyLog) {
+      const source = el(button.dataset.copyLog)
+      if (!source) return
+      const text = Array.from(source.querySelectorAll('.log-line'))
+        .map((node) => node.textContent || '')
+        .join('\n')
+        .trim()
+      if (!text) return
+      copyTextToClipboard(text)
+        .then(() => markLogCopied(button))
+        .catch(() => {})
+      return
+    }
+
+    if (button.dataset.clearLog) {
+      window.uibuilder.sendCtrl({
+        topic: 'log-clear-request',
+        payload: { log: button.dataset.clearLog }
+      })
+      markLogCleared(button)
       return
     }
 

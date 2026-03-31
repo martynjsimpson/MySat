@@ -34,7 +34,7 @@ export const systemConfigs = [
       ['TELEMETRY', 'TLM'],
       ['STATE', 'STATE'],
     ],
-    getOptions: ['LAUNCH', 'ORBIT', 'LOW_POWER'],
+    getOptions: ['INIT', 'LAUNCH', 'ORBIT', 'LOW_POWER', 'ALL'],
   },
   {
     target: 'TELEMETRY',

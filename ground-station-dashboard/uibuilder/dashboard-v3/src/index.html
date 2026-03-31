@@ -220,15 +220,63 @@
         <div class="panel-content" id="panel-logs">
           <div class="logs-grid">
             <article class="log-card">
-              <div class="panel-title log-title">ACK Log</div>
+              <div class="log-card-header">
+                <div class="panel-title log-title">ACK Log</div>
+                <div class="log-actions">
+                  <button class="log-action-btn" type="button" data-clear-log="ack" title="Clear ACK log" aria-label="Clear ACK log">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 1.5h4l.5 1H14v1H2v-1h3.5z"></path>
+                      <path d="M3.5 4.5h9l-.6 8.2A1.5 1.5 0 0 1 10.4 14H5.6a1.5 1.5 0 0 1-1.5-1.3z"></path>
+                    </svg>
+                  </button>
+                  <button class="log-action-btn" type="button" data-copy-log="ack-log" title="Copy ACK log" aria-label="Copy ACK log">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M5 2.5A1.5 1.5 0 0 1 6.5 1h6A1.5 1.5 0 0 1 14 2.5v8A1.5 1.5 0 0 1 12.5 12h-6A1.5 1.5 0 0 1 5 10.5z"></path>
+                      <path d="M2 5.5A1.5 1.5 0 0 1 3.5 4H4v1H3.5a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V12h1v.5A1.5 1.5 0 0 1 9.5 14h-6A1.5 1.5 0 0 1 2 12.5z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
               <div class="log-body ack-tone" id="ack-log"></div>
             </article>
             <article class="log-card">
-              <div class="panel-title log-title">ERR Log</div>
+              <div class="log-card-header">
+                <div class="panel-title log-title">ERR Log</div>
+                <div class="log-actions">
+                  <button class="log-action-btn" type="button" data-clear-log="error" title="Clear ERR log" aria-label="Clear ERR log">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 1.5h4l.5 1H14v1H2v-1h3.5z"></path>
+                      <path d="M3.5 4.5h9l-.6 8.2A1.5 1.5 0 0 1 10.4 14H5.6a1.5 1.5 0 0 1-1.5-1.3z"></path>
+                    </svg>
+                  </button>
+                  <button class="log-action-btn" type="button" data-copy-log="err-log" title="Copy ERR log" aria-label="Copy ERR log">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M5 2.5A1.5 1.5 0 0 1 6.5 1h6A1.5 1.5 0 0 1 14 2.5v8A1.5 1.5 0 0 1 12.5 12h-6A1.5 1.5 0 0 1 5 10.5z"></path>
+                      <path d="M2 5.5A1.5 1.5 0 0 1 3.5 4H4v1H3.5a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V12h1v.5A1.5 1.5 0 0 1 9.5 14h-6A1.5 1.5 0 0 1 2 12.5z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
               <div class="log-body err-tone" id="err-log"></div>
             </article>
             <article class="log-card">
-              <div class="panel-title log-title">All Packet Log</div>
+              <div class="log-card-header">
+                <div class="panel-title log-title">All Packet Log</div>
+                <div class="log-actions">
+                  <button class="log-action-btn" type="button" data-clear-log="packet" title="Clear packet log" aria-label="Clear packet log">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 1.5h4l.5 1H14v1H2v-1h3.5z"></path>
+                      <path d="M3.5 4.5h9l-.6 8.2A1.5 1.5 0 0 1 10.4 14H5.6a1.5 1.5 0 0 1-1.5-1.3z"></path>
+                    </svg>
+                  </button>
+                  <button class="log-action-btn" type="button" data-copy-log="packet-log" title="Copy packet log" aria-label="Copy packet log">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M5 2.5A1.5 1.5 0 0 1 6.5 1h6A1.5 1.5 0 0 1 14 2.5v8A1.5 1.5 0 0 1 12.5 12h-6A1.5 1.5 0 0 1 5 10.5z"></path>
+                      <path d="M2 5.5A1.5 1.5 0 0 1 3.5 4H4v1H3.5a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V12h1v.5A1.5 1.5 0 0 1 9.5 14h-6A1.5 1.5 0 0 1 2 12.5z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
               <div class="log-body" id="packet-log"></div>
             </article>
           </div>

@@ -108,7 +108,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Flatten State",
-        "func": "let state = msg.state || flow.get(\"satState\") || {};\nconst freshnessThresholdMs = 10000;\n\nmsg.payload = {\n    time: state.time || \"\",\n    freshnessThresholdMs,\n    lastAck: state.lastAck || null,\n    lastErr: state.lastErr || null,\n    tlm: state.tlm || {},\n    ackLog: (flow.get(\"ackLog\") || []).slice(0, 12),\n    errorLog: (flow.get(\"errorLog\") || []).slice(0, 12),\n    packetLog: (flow.get(\"packetLog\") || []).slice(0, 40)\n};\n\nreturn msg;",
+        "func": "let state = msg.state || flow.get(\"satState\") || {};\nconst freshnessThresholdMs = 10000;\n\nmsg.payload = {\n    time: state.time || \"\",\n    freshnessThresholdMs,\n    lastAck: state.lastAck || null,\n    lastErr: state.lastErr || null,\n    tlm: state.tlm || {},\n    ackLog: (flow.get(\"ackLog\") || []).slice(0, 12),\n    errorLog: (flow.get(\"errorLog\") || []).slice(0, 12),\n    packetLog: (flow.get(\"packetLog\") || []).slice(0, 58)\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -128,7 +128,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "Packet Log",
-        "func": "let packetLog = flow.get(\"packetLog\") || [];\n\npacketLog.unshift({\n    time: msg.time || \"\",\n    receivedAtMs: Date.now(),\n    packetType: msg.type || \"\",\n    target: msg.target || \"\",\n    parameter: msg.parameter || \"\",\n    value: msg.value || msg.error || \"\",\n    raw: msg.raw || \"\"\n});\n\npacketLog = packetLog.slice(0, 40);\nflow.set(\"packetLog\", packetLog);\nreturn null;",
+        "func": "let packetLog = flow.get(\"packetLog\") || [];\n\npacketLog.unshift({\n    time: msg.time || \"\",\n    receivedAtMs: Date.now(),\n    packetType: msg.type || \"\",\n    target: msg.target || \"\",\n    parameter: msg.parameter || \"\",\n    value: msg.value || msg.error || \"\",\n    raw: msg.raw || \"\"\n});\n\npacketLog = packetLog.slice(0, 58);\nflow.set(\"packetLog\", packetLog);\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -215,7 +215,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "V3 Control Router",
-        "func": "const isClientConnect = msg.uibuilderCtrl === \"client connect\";\nconst isStateSyncRequest = msg.topic === \"state-sync-request\";\n\nif (!isClientConnect && !isStateSyncRequest) {\n    return null;\n}\n\nreturn msg;",
+        "func": "const isClientConnect = msg.uibuilderCtrl === \"client connect\";\nconst isStateSyncRequest = msg.topic === \"state-sync-request\";\nconst isLogClearRequest = msg.topic === \"log-clear-request\";\n\nif (!isClientConnect && !isStateSyncRequest && !isLogClearRequest) {\n    return null;\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -224,6 +224,26 @@
         "libs": [],
         "x": 1310,
         "y": 200,
+        "wires": [
+            [
+                "8799877d11511c60"
+            ]
+        ]
+    },
+    {
+        "id": "8799877d11511c60",
+        "type": "function",
+        "z": "3b521b08f4388c2f",
+        "name": "V3 Clear Logs",
+        "func": "if (msg.topic !== \"log-clear-request\") {\n    return msg;\n}\n\nconst logName = String((msg.payload && msg.payload.log) || \"\");\n\nif (logName === \"ack\") {\n    flow.set(\"ackLog\", []);\n}\nelse if (logName === \"error\") {\n    flow.set(\"errorLog\", []);\n}\nelse if (logName === \"packet\") {\n    flow.set(\"packetLog\", []);\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1230,
+        "y": 260,
         "wires": [
             [
                 "5d4a978c35f7472a"
@@ -235,7 +255,7 @@
         "type": "function",
         "z": "3b521b08f4388c2f",
         "name": "V3 Sync State",
-        "func": "let state = flow.get(\"satState\") || {};\nconst freshnessThresholdMs = 10000;\n\nmsg.topic = \"state-sync\";\nmsg.payload = {\n    time: state.time || \"\",\n    freshnessThresholdMs,\n    lastAck: state.lastAck || null,\n    lastErr: state.lastErr || null,\n    tlm: state.tlm || {},\n    ackLog: (flow.get(\"ackLog\") || []).slice(0, 12),\n    errorLog: (flow.get(\"errorLog\") || []).slice(0, 12),\n    packetLog: (flow.get(\"packetLog\") || []).slice(0, 40)\n};\n\nreturn msg;",
+        "func": "let state = flow.get(\"satState\") || {};\nconst freshnessThresholdMs = 10000;\n\nmsg.topic = \"state-sync\";\nmsg.payload = {\n    time: state.time || \"\",\n    freshnessThresholdMs,\n    lastAck: state.lastAck || null,\n    lastErr: state.lastErr || null,\n    tlm: state.tlm || {},\n    ackLog: (flow.get(\"ackLog\") || []).slice(0, 12),\n    errorLog: (flow.get(\"errorLog\") || []).slice(0, 12),\n    packetLog: (flow.get(\"packetLog\") || []).slice(0, 58)\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,

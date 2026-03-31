@@ -13,10 +13,14 @@ namespace
   {
     switch (mode)
     {
+    case MODE_INIT:
+      return "INIT";
     case MODE_LAUNCH:
       return "LAUNCH";
     case MODE_LOW_POWER:
       return "LOW_POWER";
+    case MODE_ALL:
+      return "ALL";
     case MODE_ORBIT:
     default:
       return "ORBIT";
@@ -27,6 +31,9 @@ namespace
   {
     switch (cmd.value)
     {
+    case VALUE_INIT:
+      outMode = MODE_INIT;
+      return true;
     case VALUE_LAUNCH:
       outMode = MODE_LAUNCH;
       return true;
@@ -35,6 +42,9 @@ namespace
       return true;
     case VALUE_LOW_POWER:
       outMode = MODE_LOW_POWER;
+      return true;
+    case VALUE_ALL:
+      outMode = MODE_ALL;
       return true;
     default:
       return false;
@@ -45,6 +55,17 @@ namespace
   {
     switch (mode)
     {
+    case MODE_INIT:
+      setTargetTelemetryEnabledInternal(TARGET_MODE, Config::Mode::Init::reportMode);
+      setTargetTelemetryEnabledInternal(TARGET_TELEMETRY, Config::Mode::Init::reportTelemetry);
+      setTargetTelemetryEnabledInternal(TARGET_RTC, Config::Mode::Init::reportRtc);
+      setTargetTelemetryEnabledInternal(TARGET_BATTERY, Config::Mode::Init::reportBattery);
+      setTargetTelemetryEnabledInternal(TARGET_GPS, Config::Mode::Init::reportGps);
+      setTargetTelemetryEnabledInternal(TARGET_THERMAL, Config::Mode::Init::reportThermal);
+      setTargetTelemetryEnabledInternal(TARGET_IMU, Config::Mode::Init::reportImu);
+      setTargetTelemetryEnabledInternal(TARGET_ADCS, Config::Mode::Init::reportAdcs);
+      break;
+
     case MODE_LAUNCH:
       setTargetTelemetryEnabledInternal(TARGET_MODE, Config::Mode::Launch::reportMode);
       setTargetTelemetryEnabledInternal(TARGET_TELEMETRY, Config::Mode::Launch::reportTelemetry);
@@ -65,6 +86,17 @@ namespace
       setTargetTelemetryEnabledInternal(TARGET_THERMAL, Config::Mode::LowPower::reportThermal);
       setTargetTelemetryEnabledInternal(TARGET_IMU, Config::Mode::LowPower::reportImu);
       setTargetTelemetryEnabledInternal(TARGET_ADCS, Config::Mode::LowPower::reportAdcs);
+      break;
+
+    case MODE_ALL:
+      setTargetTelemetryEnabledInternal(TARGET_MODE, Config::Mode::All::reportMode);
+      setTargetTelemetryEnabledInternal(TARGET_TELEMETRY, Config::Mode::All::reportTelemetry);
+      setTargetTelemetryEnabledInternal(TARGET_RTC, Config::Mode::All::reportRtc);
+      setTargetTelemetryEnabledInternal(TARGET_BATTERY, Config::Mode::All::reportBattery);
+      setTargetTelemetryEnabledInternal(TARGET_GPS, Config::Mode::All::reportGps);
+      setTargetTelemetryEnabledInternal(TARGET_THERMAL, Config::Mode::All::reportThermal);
+      setTargetTelemetryEnabledInternal(TARGET_IMU, Config::Mode::All::reportImu);
+      setTargetTelemetryEnabledInternal(TARGET_ADCS, Config::Mode::All::reportAdcs);
       break;
 
     case MODE_ORBIT:

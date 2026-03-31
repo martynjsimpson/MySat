@@ -5,9 +5,11 @@
 
 enum MissionMode
 {
-  MODE_LAUNCH = 0,
+  MODE_INIT = 0,
+  MODE_LAUNCH,
   MODE_ORBIT,
-  MODE_LOW_POWER
+  MODE_LOW_POWER,
+  MODE_ALL
 };
 
 void setupMode();

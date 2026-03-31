@@ -20,9 +20,11 @@ In the current implementation, mission mode primarily drives the default periodi
 
 | Command | Result |
 |---|---|
+| `SET,MODE,STATE,INIT` | Applies minimal telemetry defaults |
 | `SET,MODE,STATE,LAUNCH` | Applies launch telemetry defaults |
 | `SET,MODE,STATE,ORBIT` | Applies orbit telemetry defaults |
 | `SET,MODE,STATE,LOW_POWER` | Applies low-power telemetry defaults |
+| `SET,MODE,STATE,ALL` | Applies all-systems telemetry defaults |
 | `SET,MODE,TELEMETRY,ENABLE` | Includes `MODE` in periodic telemetry |
 | `SET,MODE,TELEMETRY,DISABLE` | Omits `MODE` from periodic telemetry |
 
@@ -31,7 +33,7 @@ In the current implementation, mission mode primarily drives the default periodi
 | Field | Meaning | Values |
 |---|---|---|
 | `MODE,TELEMETRY` | Whether `MODE` is included in periodic telemetry | `TRUE`, `FALSE` |
-| `MODE,STATE` | Current mission mode | `LAUNCH`, `ORBIT`, `LOW_POWER` |
+| `MODE,STATE` | Current mission mode | `INIT`, `LAUNCH`, `ORBIT`, `LOW_POWER`, `ALL` |
 
 ## Behavior Notes
 
@@ -45,9 +47,11 @@ In the current implementation, mission mode primarily drives the default periodi
 
 | Mode | Default periodic targets |
 |---|---|
+| `INIT` | `MODE`, `STATUS` |
 | `LAUNCH` | `MODE`, `STATUS`, `RTC`, `BATTERY`, `IMU`, `ADCS` |
 | `ORBIT` | `MODE`, `STATUS`, `RTC`, `BATTERY`, `GPS`, `ADCS` |
 | `LOW_POWER` | `MODE`, `STATUS`, `RTC`, `BATTERY` |
+| `ALL` | `MODE`, `STATUS`, `TELEMETRY`, `RTC`, `BATTERY`, `GPS`, `THERMAL`, `IMU`, `ADCS` |
 
 `STATUS` heartbeat remains outside per-target telemetry control and continues even when normal global telemetry is disabled.
 
@@ -56,6 +60,8 @@ In the current implementation, mission mode primarily drives the default periodi
 ```text
 GET,MODE,NONE,NONE
 GET,MODE,STATE,NONE
+SET,MODE,STATE,INIT
 SET,MODE,STATE,LAUNCH
 SET,MODE,STATE,LOW_POWER
+SET,MODE,STATE,ALL
 ```

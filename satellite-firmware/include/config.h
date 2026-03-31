@@ -41,6 +41,18 @@ namespace Config
   {
     constexpr MissionMode defaultMissionMode = MODE_ORBIT;
 
+    namespace Init
+    {
+      constexpr bool reportMode = true;
+      constexpr bool reportTelemetry = false;
+      constexpr bool reportRtc = false;
+      constexpr bool reportBattery = false;
+      constexpr bool reportGps = false;
+      constexpr bool reportThermal = false;
+      constexpr bool reportImu = false;
+      constexpr bool reportAdcs = false;
+    }
+
     namespace Launch
     {
       constexpr bool reportMode = true;
@@ -75,6 +87,18 @@ namespace Config
       constexpr bool reportThermal = false;
       constexpr bool reportImu = false;
       constexpr bool reportAdcs = false;
+    }
+
+    namespace All
+    {
+      constexpr bool reportMode = true;
+      constexpr bool reportTelemetry = true;
+      constexpr bool reportRtc = true;
+      constexpr bool reportBattery = true;
+      constexpr bool reportGps = true;
+      constexpr bool reportThermal = true;
+      constexpr bool reportImu = true;
+      constexpr bool reportAdcs = true;
     }
   }
 
