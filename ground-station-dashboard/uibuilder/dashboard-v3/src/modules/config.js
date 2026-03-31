@@ -1,15 +1,5 @@
 export const systemConfigs = [
   {
-    target: 'TELEMETRY',
-    title: 'TLM',
-    fields: [
-      ['ENABLE', 'EN'],
-      ['INTERVAL_S', 'INT'],
-      ['TELEMETRY', 'TLM'],
-    ],
-    getOptions: ['ENABLE', 'TELEMETRY', 'INTERVAL_S'],
-  },
-  {
     target: 'RTC',
     title: 'RTC',
     fields: [
@@ -21,15 +11,14 @@ export const systemConfigs = [
     getOptions: ['CURRENT_TIME', 'SYNC', 'SOURCE', 'TELEMETRY'],
   },
   {
-    target: 'LED',
-    title: 'LED',
+    target: 'TELEMETRY',
+    title: 'TLM',
     fields: [
       ['ENABLE', 'EN'],
-      ['STATE', 'STATE'],
+      ['INTERVAL_S', 'INT'],
       ['TELEMETRY', 'TLM'],
-      ['COLOR', 'CLR'],
     ],
-    getOptions: ['ENABLE', 'STATE', 'COLOR', 'TELEMETRY'],
+    getOptions: ['ENABLE', 'TELEMETRY', 'INTERVAL_S'],
   },
   {
     target: 'BATTERY',
@@ -46,6 +35,18 @@ export const systemConfigs = [
     getOptions: ['ENABLE', 'AVAILABLE', 'TELEMETRY', 'CHARGE_PERCENT_P', 'VOLTAGE_V', 'CHARGE_VOLTAGE_V', 'CHARGE_CURRENT_A'],
   },
   {
+    target: 'THERMAL',
+    title: 'THM',
+    fields: [
+      ['ENABLE', 'EN'],
+      ['AVAILABLE', 'AVL'],
+      ['TELEMETRY', 'TLM'],
+      ['TEMPERATURE_C', 'TMP'],
+      ['HUMIDITY_P', 'RH'],
+    ],
+    getOptions: ['ENABLE', 'AVAILABLE', 'TEMPERATURE_C', 'HUMIDITY_P', 'TELEMETRY'],
+  },
+  {
     target: 'GPS',
     title: 'GPS',
     fields: [
@@ -59,18 +60,6 @@ export const systemConfigs = [
       ['SPEED_KPH', 'SPD'],
     ],
     getOptions: ['ENABLE', 'AVAILABLE', 'SATELLITES_N', 'LATITUDE_D', 'LONGITUDE_D', 'ALTITUDE_M', 'SPEED_KPH', 'TELEMETRY'],
-  },
-  {
-    target: 'THERMAL',
-    title: 'THM',
-    fields: [
-      ['ENABLE', 'EN'],
-      ['AVAILABLE', 'AVL'],
-      ['TELEMETRY', 'TLM'],
-      ['TEMPERATURE_C', 'TMP'],
-      ['HUMIDITY_P', 'RH'],
-    ],
-    getOptions: ['ENABLE', 'AVAILABLE', 'TEMPERATURE_C', 'HUMIDITY_P', 'TELEMETRY'],
   },
   {
     target: 'IMU',
@@ -106,5 +95,16 @@ export const systemConfigs = [
       ['YAW_RATE_DPS', 'YAW'],
     ],
     getOptions: ['ENABLE', 'AVAILABLE', 'SOURCE', 'ROLL_DEG', 'PITCH_DEG', 'HEADING_DEG', 'YAW_RATE_DPS', 'TELEMETRY'],
+  },
+  {
+    target: 'LED',
+    title: 'LED',
+    fields: [
+      ['ENABLE', 'EN'],
+      ['STATE', 'STATE'],
+      ['TELEMETRY', 'TLM'],
+      ['COLOR', 'CLR'],
+    ],
+    getOptions: ['ENABLE', 'STATE', 'COLOR', 'TELEMETRY'],
   },
 ]
