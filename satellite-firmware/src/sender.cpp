@@ -15,6 +15,7 @@ namespace
   const char *errorContext = nullptr;
   bool telemetryBatchActive = false;
   char telemetryBatchBuffer[RfEnvelope::maxPayloadLength + 1]{};
+  char telemetryBatchTarget[16]{};
   size_t telemetryBatchLength = 0;
 
   unsigned long currentPacketTimestampSeconds()
@@ -74,6 +75,7 @@ namespace
   {
     telemetryBatchLength = 0;
     telemetryBatchBuffer[0] = '\0';
+    telemetryBatchTarget[0] = '\0';
   }
 
   void flushTelemetryBatch()
@@ -137,6 +139,59 @@ namespace
 
     if (telemetryBatchActive)
     {
+      if (telemetryBatchTarget[0] == '\0')
+      {
+        strncpy(telemetryBatchTarget, target, sizeof(telemetryBatchTarget) - 1);
+        telemetryBatchTarget[sizeof(telemetryBatchTarget) - 1] = '\0';
+
+        char targetHeader[24];
+        const int headerWritten = snprintf(targetHeader,
+                                           sizeof(targetHeader),
+                                           "TGT,%s",
+                                           telemetryBatchTarget);
+        if (headerWritten <= 0 || static_cast<size_t>(headerWritten) >= sizeof(targetHeader))
+        {
+          return;
+        }
+
+        if (!appendTelemetryLineToBatch(targetHeader))
+        {
+          return;
+        }
+      }
+      else if (strcmp(telemetryBatchTarget, target) != 0)
+      {
+        flushTelemetryBatch();
+
+        strncpy(telemetryBatchTarget, target, sizeof(telemetryBatchTarget) - 1);
+        telemetryBatchTarget[sizeof(telemetryBatchTarget) - 1] = '\0';
+
+        char targetHeader[24];
+        const int headerWritten = snprintf(targetHeader,
+                                           sizeof(targetHeader),
+                                           "TGT,%s",
+                                           telemetryBatchTarget);
+        if (headerWritten <= 0 || static_cast<size_t>(headerWritten) >= sizeof(targetHeader))
+        {
+          return;
+        }
+
+        if (!appendTelemetryLineToBatch(targetHeader))
+        {
+          return;
+        }
+      }
+
+      const int compactWritten = snprintf(lineBuffer,
+                                          sizeof(lineBuffer),
+                                          "%s,%s",
+                                          parameter,
+                                          value);
+      if (compactWritten <= 0 || static_cast<size_t>(compactWritten) >= sizeof(lineBuffer))
+      {
+        return;
+      }
+
       appendTelemetryLineToBatch(lineBuffer);
       return;
     }

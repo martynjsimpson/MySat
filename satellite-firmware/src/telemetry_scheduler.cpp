@@ -83,7 +83,10 @@ void sendTelemetrySnapshot()
   // STATUS heartbeat is always emitted so the ground side can distinguish
   // "telemetry disabled" from "link appears dead".
   reportStatusHeartbeat(true);
-  sendModeBatch();
+  if (isTargetTelemetryEnabled(TARGET_MODE))
+  {
+    sendModeBatch();
+  }
   if (isTargetTelemetryEnabled(TARGET_RTC))
   {
     sendRtcBatch();

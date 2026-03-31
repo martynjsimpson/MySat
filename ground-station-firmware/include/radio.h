@@ -7,5 +7,6 @@ bool setupGroundRadio();
 bool isGroundRadioReady();
 bool sendPayloadToSatellite(const char *payload, uint32_t timestampSeconds);
 RfEnvelope::DecodeStatus receivePacketForGround(RfEnvelope::DecodedPacket &outPacket);
+const char *lastGroundRadioErrorContext();
 
 #endif

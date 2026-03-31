@@ -15,7 +15,7 @@ namespace RfEnvelope
   constexpr size_t headerSize = 8;
   constexpr size_t crcSize = 2;
   constexpr size_t overheadSize = headerSize + crcSize;
-  constexpr size_t maxPayloadLength = 255;
+  constexpr size_t maxPayloadLength = 245;
   constexpr size_t maxPacketLength = overheadSize + maxPayloadLength;
 
   enum DecodeStatus

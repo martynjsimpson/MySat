@@ -72,6 +72,8 @@ namespace
 
   void emitDropTelemetry(RfEnvelope::DecodeStatus status)
   {
+    const char *context = lastGroundRadioErrorContext();
+    sendError(currentEpochSeconds(), decodeStatusLabel(status), (context != nullptr && *context != '\0') ? context : nullptr);
     sendTelemetry(currentEpochSeconds(), "LAST_ERROR", decodeStatusLabel(status));
     sendTelemetryULong(currentEpochSeconds(), "DROP_PACKETS_N", dropPacketCount);
   }

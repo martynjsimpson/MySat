@@ -53,24 +53,55 @@ void forwardPayloadToHost(const char *payload, uint32_t timestampSeconds)
   char timestamp[21];
   formatPacketTimestamp(timestampSeconds, timestamp, sizeof(timestamp));
 
+  char targetBuffer[16]{};
+  bool haveBatchTarget = false;
   const char *lineStart = payload;
   while (*lineStart != '\0')
   {
     const char *lineEnd = strchr(lineStart, '\n');
-    if (lineEnd == nullptr)
+    const size_t lineLength = (lineEnd == nullptr)
+                                ? strlen(lineStart)
+                                : static_cast<size_t>(lineEnd - lineStart);
+
+    if (lineLength > 0)
     {
-      Serial.print(timestamp);
-      Serial.print(',');
-      Serial.println(lineStart);
-      return;
+      if (lineLength > 4 && strncmp(lineStart, "TGT,", 4) == 0)
+      {
+        const size_t targetLength = lineLength - 4;
+        const size_t copyLength = targetLength < (sizeof(targetBuffer) - 1)
+                                    ? targetLength
+                                    : (sizeof(targetBuffer) - 1);
+        memcpy(targetBuffer, lineStart + 4, copyLength);
+        targetBuffer[copyLength] = '\0';
+        haveBatchTarget = true;
+      }
+      else
+      {
+        Serial.print(timestamp);
+        Serial.print(',');
+
+        if (haveBatchTarget &&
+            strncmp(lineStart, "TLM,", 4) != 0 &&
+            strncmp(lineStart, "ACK,", 4) != 0 &&
+            strncmp(lineStart, "ERR,", 4) != 0)
+        {
+          Serial.print("TLM,");
+          Serial.print(targetBuffer);
+          Serial.print(",");
+          Serial.write(lineStart, lineLength);
+          Serial.println();
+        }
+        else
+        {
+          Serial.write(lineStart, lineLength);
+          Serial.println();
+        }
+      }
     }
 
-    if (lineEnd > lineStart)
+    if (lineEnd == nullptr)
     {
-      Serial.print(timestamp);
-      Serial.print(',');
-      Serial.write(lineStart, static_cast<size_t>(lineEnd - lineStart));
-      Serial.println();
+      return;
     }
 
     lineStart = lineEnd + 1;
