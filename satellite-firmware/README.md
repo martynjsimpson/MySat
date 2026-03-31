@@ -69,7 +69,7 @@ platformio device monitor --environment mkrwifi1010
 
 - `LED` - built-in LED control and status
 - `TELEMETRY` - telemetry scheduler control and reporting policy
-- `BATTERY` - PMIC-backed battery reporting
+- `BATTERY` - PMIC-backed battery reporting and charger enable control
 - `GPS` - GPS control and position reporting
 - `RTC` - RTC time, synchronisation state, and clock source reporting
 - `THERMAL` - DHT11 temperature and humidity reporting

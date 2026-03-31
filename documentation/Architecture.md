@@ -4,7 +4,7 @@ This repository contains one system split across three runtime parts:
 
 - `satellite-firmware/` runs on the flight-side Arduino board and is the source of truth for command execution, telemetry production, and device control.
 - `ground-station-firmware/` runs on the physical ground-station Arduino board and is intended to handle local hardware and link transport responsibilities.
-- `ground-station-dashboard/` runs on a host machine as a Node-RED dashboard for operator interaction, state display, and command issuance.
+- `ground-station-dashboard/` runs on a host machine as a Node-RED-backed operator interface, with the current bespoke frontend implemented through `uibuilder`.
 
 ## System Boundaries
 
