@@ -1,12 +1,281 @@
 #include <Arduino.h>
+#include <LoRa.h>
+#include <string.h>
+
+#include "config.h"
+#include "rf_envelope.h"
 
 namespace
 {
-  constexpr unsigned long kBaudRate = 115200;
-  constexpr unsigned long kHeartbeatIntervalMs = 1000;
+  constexpr size_t kLineBufferSize = RfEnvelope::maxPayloadLength + 1;
+  constexpr size_t kPacketBufferSize = RfEnvelope::maxPacketLength;
 
-  unsigned long lastHeartbeatMs = 0;
-  bool ledOn = false;
+  enum PendingResponseKind
+  {
+    RESPONSE_NONE = 0,
+    RESPONSE_ACK_OR_ERR,
+    RESPONSE_TLM_OR_ERR
+  };
+
+  struct PendingCommandState
+  {
+    bool active = false;
+    char line[kLineBufferSize]{};
+    unsigned long lastSendMs = 0;
+    uint8_t retryCount = 0;
+    PendingResponseKind expectedResponse = RESPONSE_NONE;
+  };
+
+  char hostInputBuffer[kLineBufferSize];
+  size_t hostInputLength = 0;
+  unsigned long lastHostHeartbeatMs = 0;
+
+  PendingCommandState pendingCommand;
+  bool radioReady = false;
+
+  PendingResponseKind expectedResponseForCommand(const char *line)
+  {
+    if (line == nullptr)
+    {
+      return RESPONSE_NONE;
+    }
+
+    if (strncmp(line, "GET,", 4) == 0)
+    {
+      return RESPONSE_TLM_OR_ERR;
+    }
+
+    if (strncmp(line, "SET,", 4) == 0 ||
+        strncmp(line, "PING,", 5) == 0 ||
+        strncmp(line, "RESET,", 6) == 0)
+    {
+      return RESPONSE_ACK_OR_ERR;
+    }
+
+    return RESPONSE_NONE;
+  }
+
+  bool sendPayloadToSatellite(const char *payload)
+  {
+    if (!radioReady || payload == nullptr || *payload == '\0')
+    {
+      return false;
+    }
+
+    uint8_t packetBuffer[kPacketBufferSize];
+    size_t packetLength = 0;
+    if (!RfEnvelope::encodePacket(RfEnvelope::groundStationDeviceId,
+                                  RfEnvelope::satelliteDeviceId,
+                                  payload,
+                                  packetBuffer,
+                                  sizeof(packetBuffer),
+                                  packetLength))
+    {
+      return false;
+    }
+
+    if (LoRa.beginPacket() != 1)
+    {
+      return false;
+    }
+
+    LoRa.write(packetBuffer, packetLength);
+    return LoRa.endPacket(false) == 1;
+  }
+
+  void startPendingCommand(const char *line)
+  {
+    if (line == nullptr)
+    {
+      pendingCommand.active = false;
+      return;
+    }
+
+    strncpy(pendingCommand.line, line, sizeof(pendingCommand.line) - 1);
+    pendingCommand.line[sizeof(pendingCommand.line) - 1] = '\0';
+    pendingCommand.lastSendMs = millis();
+    pendingCommand.retryCount = 0;
+    pendingCommand.expectedResponse = expectedResponseForCommand(line);
+    pendingCommand.active = pendingCommand.expectedResponse != RESPONSE_NONE;
+  }
+
+  void clearPendingCommand()
+  {
+    pendingCommand.active = false;
+    pendingCommand.line[0] = '\0';
+    pendingCommand.lastSendMs = 0;
+    pendingCommand.retryCount = 0;
+    pendingCommand.expectedResponse = RESPONSE_NONE;
+  }
+
+  bool payloadMatchesPendingResponse(const char *payload)
+  {
+    if (!pendingCommand.active || payload == nullptr)
+    {
+      return false;
+    }
+
+    const char *firstComma = strchr(payload, ',');
+    if (firstComma == nullptr)
+    {
+      return false;
+    }
+
+    const char *typeStart = firstComma + 1;
+    const char *secondComma = strchr(typeStart, ',');
+    if (secondComma == nullptr)
+    {
+      return false;
+    }
+
+    const size_t typeLength = static_cast<size_t>(secondComma - typeStart);
+    if (typeLength == 3 && strncmp(typeStart, "ERR", 3) == 0)
+    {
+      return true;
+    }
+
+    if (pendingCommand.expectedResponse == RESPONSE_ACK_OR_ERR)
+    {
+      return typeLength == 3 && strncmp(typeStart, "ACK", 3) == 0;
+    }
+
+    if (pendingCommand.expectedResponse == RESPONSE_TLM_OR_ERR)
+    {
+      return typeLength == 3 && strncmp(typeStart, "TLM", 3) == 0;
+    }
+
+    return false;
+  }
+
+  void forwardPayloadToHost(const char *payload)
+  {
+    Serial.println(payload);
+  }
+
+  void emitHostHeartbeat()
+  {
+    const unsigned long now = millis();
+    if ((now - lastHostHeartbeatMs) < Config::Serial::heartbeatIntervalMs)
+    {
+      return;
+    }
+
+    lastHostHeartbeatMs = now;
+    Serial.print(F("GROUND,HEARTBEAT_MS,"));
+    Serial.print(now);
+    Serial.print(F(",RADIO,"));
+    Serial.print(radioReady ? F("READY") : F("FAILED"));
+    Serial.print(F(",PENDING,"));
+    Serial.println(pendingCommand.active ? F("TRUE") : F("FALSE"));
+  }
+
+  void handleHostSerial()
+  {
+    while (Serial.available() > 0)
+    {
+      const char ch = static_cast<char>(Serial.read());
+
+      if (ch == '\r')
+      {
+        continue;
+      }
+
+      if (ch == '\n')
+      {
+        hostInputBuffer[hostInputLength] = '\0';
+        if (hostInputLength > 0)
+        {
+          if (sendPayloadToSatellite(hostInputBuffer))
+          {
+            startPendingCommand(hostInputBuffer);
+          }
+        }
+        hostInputLength = 0;
+        continue;
+      }
+
+      if (hostInputLength < (sizeof(hostInputBuffer) - 1))
+      {
+        hostInputBuffer[hostInputLength++] = ch;
+      }
+      else
+      {
+        hostInputLength = 0;
+      }
+    }
+  }
+
+  void handleRadioReceive()
+  {
+    const int packetLength = LoRa.parsePacket();
+    if (packetLength <= 0)
+    {
+      return;
+    }
+
+    if (packetLength > static_cast<int>(kPacketBufferSize))
+    {
+      while (LoRa.available())
+      {
+        LoRa.read();
+      }
+      return;
+    }
+
+    uint8_t packetBuffer[kPacketBufferSize];
+    size_t bytesRead = 0;
+    while (LoRa.available() && bytesRead < static_cast<size_t>(packetLength))
+    {
+      const int value = LoRa.read();
+      if (value < 0)
+      {
+        break;
+      }
+
+      packetBuffer[bytesRead++] = static_cast<uint8_t>(value);
+    }
+
+    RfEnvelope::DecodedPacket decodedPacket{};
+    if (RfEnvelope::decodePacket(packetBuffer,
+                                 bytesRead,
+                                 RfEnvelope::groundStationDeviceId,
+                                 decodedPacket) != RfEnvelope::DECODE_OK)
+    {
+      return;
+    }
+
+    forwardPayloadToHost(decodedPacket.payload);
+    if (payloadMatchesPendingResponse(decodedPacket.payload))
+    {
+      clearPendingCommand();
+    }
+  }
+
+  void handleCommandRetry()
+  {
+    if (!pendingCommand.active)
+    {
+      return;
+    }
+
+    const unsigned long now = millis();
+    if ((now - pendingCommand.lastSendMs) < Config::Retry::commandRetryDelayMs)
+    {
+      return;
+    }
+
+    if (pendingCommand.retryCount >= Config::Retry::maxCommandRetries)
+    {
+      clearPendingCommand();
+      return;
+    }
+
+    if (sendPayloadToSatellite(pendingCommand.line))
+    {
+      pendingCommand.lastSendMs = now;
+      pendingCommand.retryCount++;
+    }
+  }
 }
 
 void setup()
@@ -14,27 +283,36 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
 
-  Serial.begin(kBaudRate);
+  Serial.begin(Config::Serial::baudRate);
   while (!Serial)
   {
     // Wait for the USB serial port on boards that expose it.
   }
 
-  Serial.println(F("MySat ground station firmware starting"));
+  Serial.println(F("GROUND,STARTED,TRUE"));
+
+  radioReady = (LoRa.begin(Config::Transport::loraFrequencyHz) == 1);
+  if (radioReady)
+  {
+    LoRa.setTxPower(Config::Transport::loraTxPowerDbm);
+    LoRa.setSignalBandwidth(Config::Transport::loraSignalBandwidthHz);
+    LoRa.setSpreadingFactor(Config::Transport::loraSpreadingFactor);
+    LoRa.setCodingRate4(Config::Transport::loraCodingRateDenominator);
+    LoRa.setPreambleLength(Config::Transport::loraPreambleLength);
+    LoRa.setSyncWord(Config::Transport::loraSyncWord);
+    LoRa.enableCrc();
+  }
 }
 
 void loop()
 {
-  const unsigned long now = millis();
-  if ((now - lastHeartbeatMs) < kHeartbeatIntervalMs)
+  digitalWrite(LED_BUILTIN, pendingCommand.active ? HIGH : LOW);
+
+  emitHostHeartbeat();
+  handleHostSerial();
+  if (radioReady)
   {
-    return;
+    handleRadioReceive();
+    handleCommandRetry();
   }
-
-  lastHeartbeatMs = now;
-  ledOn = !ledOn;
-  digitalWrite(LED_BUILTIN, ledOn ? HIGH : LOW);
-
-  Serial.print(F("GROUND_STATION,HEARTBEAT_MS,"));
-  Serial.println(now);
 }

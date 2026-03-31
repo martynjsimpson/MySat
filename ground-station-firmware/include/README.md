@@ -1,10 +1,11 @@
 # Ground Station Firmware
 
-This directory contains the Arduino Mega 2560 firmware that will back the physical MySat ground station hardware.
+This directory contains the MKR WAN 1310 firmware that backs the physical MySat ground station bridge.
 
 Current structure:
 
-- `src/` - PlatformIO source files for the Mega 2560
-- `include/` - project headers for the Mega 2560 firmware
+- `src/` - PlatformIO source files for the MKR WAN 1310 bridge firmware
+- `include/` - project headers shared by the bridge firmware
+- `include/config.h` - serial, LoRa, and retry tuning constants for the bridge
 
-The initial scaffold provides a minimal serial heartbeat sketch so the `mega2560` PlatformIO environment builds cleanly.
+The current bridge firmware accepts host serial commands, wraps them in the shared RF envelope, forwards them over LoRa, and sends received satellite payloads back to the host over USB serial.

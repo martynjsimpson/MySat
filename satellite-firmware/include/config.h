@@ -15,6 +15,17 @@ namespace Config
     constexpr unsigned long resetAckDelayMs = 50;
   }
 
+  namespace Transport
+  {
+    constexpr long loraFrequencyHz = 868000000L;
+    constexpr int loraTxPowerDbm = 17;
+    constexpr long loraSignalBandwidthHz = 125E3;
+    constexpr int loraSpreadingFactor = 7;
+    constexpr int loraCodingRateDenominator = 5;
+    constexpr long loraPreambleLength = 8;
+    constexpr uint8_t loraSyncWord = 0x12;
+  }
+
   namespace Telemetry
   {
     constexpr bool defaultTelemetryEnabled = true;

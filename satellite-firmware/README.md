@@ -36,6 +36,7 @@ platformio device monitor --environment mkrwan1310
 - `include/imu.h` - MPU-6050 and QMC5883L IMU subsystem interface
 - `include/adcs.h` - derived attitude subsystem interface
 - `include/protocol.h` - inbound command buffering and line-framing interface
+- `include/rf_envelope.h` - RF packet envelope and CRC helpers for the planned LoRa transport
 - `include/rtc.h` - RTC interface
 - `include/sender.h` - outbound `ACK`, `ERR`, and `TLM` helpers
 - `include/status.h` - status heartbeat interface
@@ -49,6 +50,7 @@ platformio device monitor --environment mkrwan1310
 - `src/protocol.cpp` - inbound command buffering and newline framing
 - `src/protocol_parser.cpp` - token parsing and `Command` construction
 - `src/protocol_dispatch.cpp` - command execution and target dispatch
+- `src/rf_envelope.cpp` - RF packet encode/decode helpers and CRC-16/CCITT-FALSE implementation
 - `src/telemetry_config.cpp` - telemetry flags, interval, and telemetry control target
 - `src/telemetry_scheduler.cpp` - periodic snapshot scheduling
 - `src/led.cpp` - LED control and reporting
@@ -63,7 +65,7 @@ platformio device monitor --environment mkrwan1310
 - `src/imu.cpp` - MPU-6050 and QMC5883L polling, caching, and reporting
 - `src/adcs.cpp` - IMU-derived roll, pitch, heading, source, and yaw-rate reporting
 - `src/sender.cpp` - wire-format message emission
-- `src/transport_serial.cpp` - current serial-backed transport implementation
+- `src/transport_lora.cpp` - LoRa-backed transport that carries one logical protocol line per RF packet
 
 ## Current Targets
 
@@ -101,4 +103,4 @@ The firmware is still serial-first today, but command and response I/O no longer
 - `sender.cpp` emits `ACK`, `ERR`, and `TLM` messages through `transportWrite(...)` helpers.
 - `protocol_dispatch.cpp` uses `transportFlush()` before reset so the reboot acknowledgement has a chance to leave the device.
 
-At the moment the transport implementation is `src/transport_serial.cpp`, which simply forwards these operations to `Serial`. The point of the abstraction is to let us swap the underlying link later, such as a radio transport, without rewriting the higher-level parser, dispatcher, sender, or telemetry logic.
+The active transport implementation is now `src/transport_lora.cpp`, which wraps one logical protocol line per RF packet using the shared RF envelope and feeds decoded payloads back into the existing parser path. The point of the abstraction remains the same: parser, dispatcher, sender, and telemetry code stay transport-agnostic while the link layer evolves underneath them.
