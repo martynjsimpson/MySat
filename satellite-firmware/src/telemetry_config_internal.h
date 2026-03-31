@@ -5,5 +5,6 @@
 
 bool isTelemetryEnabledInternal();
 unsigned long getTelemetryIntervalSecondsInternal();
+void setTargetTelemetryEnabledInternal(TargetType target, bool enabled);
 
 #endif

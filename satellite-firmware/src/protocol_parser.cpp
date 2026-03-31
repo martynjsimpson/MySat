@@ -171,6 +171,10 @@ namespace
       return VALUE_ENABLE;
     if (strcmp(token, "DISABLE") == 0)
       return VALUE_DISABLE;
+    if (strcmp(token, "LAUNCH") == 0)
+      return VALUE_LAUNCH;
+    if (strcmp(token, "ORBIT") == 0)
+      return VALUE_ORBIT;
     if (strcmp(token, "SAFE") == 0)
       return VALUE_SAFE;
     if (strcmp(token, "NORMAL") == 0)

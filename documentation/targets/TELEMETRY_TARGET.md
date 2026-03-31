@@ -39,6 +39,7 @@ Per-target telemetry control for other targets uses the same `SET,<target>,TELEM
 
 - `SET,TELEMETRY,ENABLE,FALSE` stops normal periodic snapshots.
 - `STATUS,HEARTBEAT_N` still continues on the same interval when global telemetry is disabled.
+- `MODE` can reapply a baseline per-target telemetry set, after which manual `SET,<target>,TELEMETRY,...` overrides still work.
 - `GET` works regardless of periodic telemetry state.
 
 ## Examples

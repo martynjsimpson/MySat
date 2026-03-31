@@ -28,6 +28,15 @@ export const systemConfigs = [
     getOptions: ['CURRENT_TIME', 'SYNC', 'SOURCE', 'TELEMETRY'],
   },
   {
+    target: 'MODE',
+    title: 'MOD',
+    fields: [
+      ['TELEMETRY', 'TLM'],
+      ['STATE', 'STATE'],
+    ],
+    getOptions: ['LAUNCH', 'ORBIT', 'LOW_POWER'],
+  },
+  {
     target: 'TELEMETRY',
     title: 'TLM',
     fields: [

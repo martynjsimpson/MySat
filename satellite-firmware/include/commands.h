@@ -23,6 +23,7 @@ enum TargetType
   TARGET_NONE,
 
   // Implemented
+  TARGET_MODE,
   TARGET_TELEMETRY,
   TARGET_BATTERY,
   TARGET_GPS,
@@ -33,7 +34,6 @@ enum TargetType
   TARGET_STATUS,
 
   // Reserved
-  TARGET_MODE,
   TARGET_RADIO,
   TARGET_POWER,
   TARGET_PAYLOAD,
@@ -98,6 +98,8 @@ enum ValueType
   VALUE_FALSE,
   VALUE_ENABLE,
   VALUE_DISABLE,
+  VALUE_LAUNCH,
+  VALUE_ORBIT,
   // Reserved
   VALUE_SAFE,
   VALUE_NORMAL,

@@ -4,6 +4,7 @@
 
 #include "adcs.h"
 #include "imu.h"
+#include "mode.h"
 #include "config.h"
 #include "gps.h"
 #include "pmic.h"
@@ -25,6 +26,7 @@ namespace
     }
 
     handleGetTelemetry({CMD_GET, TARGET_TELEMETRY, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
+    handleGetMode({CMD_GET, TARGET_MODE, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
     handleGetRtc({CMD_GET, TARGET_RTC, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
     handleGetBattery({CMD_GET, TARGET_BATTERY, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
     handleGetGps({CMD_GET, TARGET_GPS, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
@@ -46,6 +48,10 @@ namespace
     {
     case TARGET_TELEMETRY:
       handleGetTelemetry(cmd);
+      break;
+
+    case TARGET_MODE:
+      handleGetMode(cmd);
       break;
 
     case TARGET_BATTERY:
@@ -97,6 +103,10 @@ namespace
 
     switch (cmd.target)
     {
+    case TARGET_MODE:
+      handleSetMode(cmd);
+      break;
+
     case TARGET_GPS:
       handleSetGps(cmd);
       break;

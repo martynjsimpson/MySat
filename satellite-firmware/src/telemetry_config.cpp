@@ -6,6 +6,7 @@
 namespace
 {
   bool telemetryEnabled;
+  bool modeTelemetryEnabled;
   bool telemetryTelemetryEnabled;
   bool rtcTelemetryEnabled;
   bool batteryTelemetryEnabled;
@@ -19,6 +20,8 @@ namespace
   {
     switch (target)
     {
+    case TARGET_MODE:
+      return &modeTelemetryEnabled;
     case TARGET_TELEMETRY:
       return &telemetryTelemetryEnabled;
     case TARGET_RTC:
@@ -42,6 +45,8 @@ namespace
   {
     switch (target)
     {
+    case TARGET_MODE:
+      return "MODE";
     case TARGET_TELEMETRY:
       return "TELEMETRY";
     case TARGET_RTC:
@@ -65,6 +70,7 @@ namespace
 void setupTelemetry()
 {
   telemetryEnabled = Config::Telemetry::defaultTelemetryEnabled;
+  modeTelemetryEnabled = true;
   telemetryTelemetryEnabled = Config::Telemetry::defaultReportTelemetry;
   rtcTelemetryEnabled = Config::Telemetry::defaultReportRtc;
   batteryTelemetryEnabled = Config::Telemetry::defaultReportBattery;
@@ -116,6 +122,17 @@ bool isTargetTelemetryEnabled(TargetType target)
   }
 
   return *flag;
+}
+
+void setTargetTelemetryEnabledInternal(TargetType target, bool enabled)
+{
+  bool *flag = getTargetTelemetryFlag(target);
+  if (flag == nullptr)
+  {
+    return;
+  }
+
+  *flag = enabled;
 }
 
 void handleSetTelemetry(const Command &cmd)

@@ -32,6 +32,7 @@ platformio device monitor --environment mkrwan1310
 - `include/config.h` - central defaults and tunable parameters
 - `include/gps.h` - GPS subsystem interface
 - `include/led.h` - built-in LED activity indicator interface
+- `include/mode.h` - mission mode interface and mode-driven telemetry defaults
 - `include/pmic.h` - battery subsystem interface
 - `include/imu.h` - MPU-6050 and QMC5883L IMU subsystem interface
 - `include/adcs.h` - derived attitude subsystem interface
@@ -47,6 +48,7 @@ platformio device monitor --environment mkrwan1310
 ### Source Files
 
 - `src/main.cpp` - top-level `setup()` and `loop()`
+- `src/mode.cpp` - mission mode control and mode-driven telemetry profile application
 - `src/protocol.cpp` - inbound command buffering and newline framing
 - `src/protocol_parser.cpp` - token parsing and `Command` construction
 - `src/protocol_dispatch.cpp` - command execution and target dispatch
@@ -69,6 +71,7 @@ platformio device monitor --environment mkrwan1310
 
 ## Current Targets
 
+- `MODE` - mission mode and telemetry-default profile selection
 - `TELEMETRY` - telemetry scheduler control and reporting policy
 - `BATTERY` - PMIC-backed battery reporting and charger enable control
 - `GPS` - GPS control and position reporting

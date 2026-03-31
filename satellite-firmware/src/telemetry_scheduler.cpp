@@ -2,6 +2,7 @@
 
 #include "adcs.h"
 #include "imu.h"
+#include "mode.h"
 #include "gps.h"
 #include "pmic.h"
 #include "rtc.h"
@@ -25,6 +26,7 @@ void sendTelemetrySnapshot()
   // STATUS heartbeat is always emitted so the ground side can distinguish
   // "telemetry disabled" from "link appears dead".
   reportStatusHeartbeat(true);
+  reportModeStatus();
   if (isTargetTelemetryEnabled(TARGET_RTC))
   {
     reportRtcStatus();

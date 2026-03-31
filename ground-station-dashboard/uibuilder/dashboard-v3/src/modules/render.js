@@ -280,7 +280,7 @@ function renderSystems(state, systemConfigs) {
       </div>
     `
 
-    const enableControls = system.target === 'RTC' || system.target === 'GROUND'
+    const enableControls = system.target === 'RTC' || system.target === 'GROUND' || system.target === 'MODE'
       ? '<div class="control-gap"></div><div class="control-gap"></div>'
       : `<button class="mini-btn cmd-green" data-role="enable" data-target="${system.target}" data-value="TRUE">EN</button>
          <button class="mini-btn cmd-red" data-role="enable" data-target="${system.target}" data-value="FALSE">DIS</button>`
@@ -300,7 +300,9 @@ function renderSystems(state, systemConfigs) {
         <button class="mini-btn cmd-neutral" data-role="telemetry-interval">INT</button>`
     }
 
-    const telemetryControls = `<button class="mini-btn cmd-green-soft" data-role="telemetry" data-target="${system.target}" data-value="ENABLE">T+</button>
+    const telemetryControls = system.target === 'MODE'
+      ? '<div class="control-gap"></div><div class="control-gap"></div>'
+      : `<button class="mini-btn cmd-green-soft" data-role="telemetry" data-target="${system.target}" data-value="ENABLE">T+</button>
          <button class="mini-btn cmd-red-soft" data-role="telemetry" data-target="${system.target}" data-value="DISABLE">T-</button>`
 
     return `

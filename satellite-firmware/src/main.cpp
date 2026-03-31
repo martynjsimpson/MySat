@@ -2,6 +2,7 @@
 
 #include "adcs.h"
 #include "imu.h"
+#include "mode.h"
 #include "config.h"
 #include "gps.h"
 #include "led.h"
@@ -25,6 +26,7 @@ void setup()
   setupAdcs();
   setupStatus();
   setupTelemetry();
+  setupMode();
   setupProtocol();
   delay(Config::Main::serialStartupDelayMs);
   reportStatusStarted();

@@ -104,6 +104,7 @@ The v3 interaction model is:
 - the current systems row order is:
   - `GND`
   - `RTC`
+  - `MOD`
   - `TLM`
   - `BAT`
   - `THM`
@@ -122,6 +123,7 @@ Current v3 control conventions:
 - top-level `POLL` sends `GET,NONE,NONE,NONE`
 - `EN` / `DIS` are shown only for targets that support firmware enable control
 - `RTC` intentionally does not expose `EN` / `DIS` because the RTC underpins message timestamps for the protocol
+- `MOD` uses its dropdown as the mode selector and sends `SET,MODE,STATE,<value>` when changed
 
 Implementation notes:
 

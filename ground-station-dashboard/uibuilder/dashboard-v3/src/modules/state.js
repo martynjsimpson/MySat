@@ -15,6 +15,7 @@ export function createState() {
       GROUND: 'HEARTBEAT_N',
       TELEMETRY: 'TELEMETRY',
       RTC: 'CURRENT_TIME',
+      MODE: 'STATE',
       BATTERY: 'STATE',
       GPS: 'LATITUDE_D',
       THERMAL: 'TEMPERATURE_C',

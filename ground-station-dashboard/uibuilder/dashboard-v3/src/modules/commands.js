@@ -111,6 +111,10 @@ export function bindEvents(state) {
     const target = event.target
     if (target.matches('[data-role="get-select"]')) {
       state.getSelections[target.dataset.target] = target.value
+      if (target.dataset.target === 'MODE') {
+        sendCommand(`SET,MODE,STATE,${target.value}`)
+        return
+      }
       sendCommand(`GET,${target.dataset.target},${target.value},NONE`)
       return
     }

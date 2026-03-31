@@ -9,6 +9,7 @@ At the host-facing USB boundary, the ground-station firmware may also emit its o
 Target-specific command and telemetry details are documented separately:
 
 - [GROUND](./targets/GROUND.md)
+- [MODE](./targets/MODE.md)
 - [TELEMETRY target](./targets/TELEMETRY_TARGET.md)
 - [BATTERY](./targets/BATTERY.md)
 - [GPS](./targets/GPS.md)
@@ -105,6 +106,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 | Target | Purpose | Reference |
 |---|---|---|
 | `GROUND` | Host-visible ground-station status, counters, clock sync, and reset control | [GROUND.md](./targets/GROUND.md) |
+| `MODE` | Satellite mission mode and telemetry-default profile selection | [MODE.md](./targets/MODE.md) |
 | `TELEMETRY` | Global and per-target telemetry control | [TELEMETRY_TARGET.md](./targets/TELEMETRY_TARGET.md) |
 | `BATTERY` | PMIC-backed battery reporting and charge control | [BATTERY.md](./targets/BATTERY.md) |
 | `GPS` | GPS control and position reporting | [GPS.md](./targets/GPS.md) |
@@ -118,7 +120,6 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 
 | Token | Intended future meaning |
 |---|---|
-| `MODE` | Spacecraft operating mode |
 | `RADIO` | Communications subsystem |
 | `POWER` | Power subsystem |
 | `PAYLOAD` | Payload subsystem |
@@ -133,7 +134,7 @@ These tokens are implemented in the parser today and are used by one or more tar
 | Kind | Tokens |
 |---|---|
 | Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `SOURCE`, `AVAILABLE`, `HEALTH`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N`, `TEMPERATURE_C`, `HUMIDITY_P`, `X_MS2`, `Y_MS2`, `Z_MS2`, `GYRO_X_DPS`, `GYRO_Y_DPS`, `GYRO_Z_DPS`, `MAG_X_UT`, `MAG_Y_UT`, `MAG_Z_UT`, `HEADING_DEG`, `ROLL_DEG`, `PITCH_DEG`, `YAW_RATE_DPS` |
-| Values | `NONE`, `TRUE`, `FALSE`, `ENABLE`, `DISABLE`, `ON`, `OFF`, `OK`, `FAIL`, `LOW_POWER` |
+| Values | `NONE`, `TRUE`, `FALSE`, `ENABLE`, `DISABLE`, `ON`, `OFF`, `OK`, `FAIL`, `LOW_POWER`, `LAUNCH`, `ORBIT` |
 
 ## Reserved Generic Tokens
 
@@ -141,7 +142,7 @@ These parser tokens are reserved but not used by the current firmware features.
 
 | Kind | Tokens |
 |---|---|
-| Parameters | `MODE`, `UPTIME_S` |
+| Parameters | `UPTIME_S` |
 | Values | `SAFE`, `NORMAL`, `ACTIVE`, `IDLE` |
 
 ## Error Handling

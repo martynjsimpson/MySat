@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "mode.h"
+
 namespace Config
 {
   namespace Main
@@ -40,6 +42,47 @@ namespace Config
     constexpr unsigned long defaultIntervalSeconds = 5;
     constexpr unsigned long minIntervalSeconds = 1;
     constexpr unsigned long maxIntervalSeconds = 3600;
+  }
+
+  namespace Mode
+  {
+    constexpr MissionMode defaultMissionMode = MODE_ORBIT;
+
+    namespace Launch
+    {
+      constexpr bool reportMode = true;
+      constexpr bool reportTelemetry = false;
+      constexpr bool reportRtc = true;
+      constexpr bool reportBattery = true;
+      constexpr bool reportGps = false;
+      constexpr bool reportThermal = false;
+      constexpr bool reportImu = true;
+      constexpr bool reportAdcs = true;
+    }
+
+    namespace Orbit
+    {
+      constexpr bool reportMode = true;
+      constexpr bool reportTelemetry = false;
+      constexpr bool reportRtc = true;
+      constexpr bool reportBattery = true;
+      constexpr bool reportGps = true;
+      constexpr bool reportThermal = false;
+      constexpr bool reportImu = false;
+      constexpr bool reportAdcs = true;
+    }
+
+    namespace LowPower
+    {
+      constexpr bool reportMode = true;
+      constexpr bool reportTelemetry = false;
+      constexpr bool reportRtc = true;
+      constexpr bool reportBattery = true;
+      constexpr bool reportGps = false;
+      constexpr bool reportThermal = false;
+      constexpr bool reportImu = false;
+      constexpr bool reportAdcs = false;
+    }
   }
 
   namespace Rtc
