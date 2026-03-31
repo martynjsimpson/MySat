@@ -28,6 +28,7 @@ function unitSuffix(parameter) {
   if (parameter.endsWith('_DPS')) return 'dps'
   if (parameter.endsWith('_UT')) return 'uT'
   if (parameter.endsWith('_KPH')) return 'kph'
+  if (parameter.endsWith('_C')) return '°C'
   if (parameter.endsWith('_DEG')) return '°'
   if (parameter.endsWith('_V')) return 'V'
   if (parameter.endsWith('_A')) return 'A'
@@ -93,6 +94,20 @@ function setVisualMetric(state, id, item) {
   if (!node) return
   node.textContent = displayValue(item)
   node.className = `metric-value ${freshnessClass(state, item)}`
+}
+
+function setVisualStatus(state, id, item, text) {
+  const node = el(id)
+  if (!node) return
+  node.textContent = text
+  node.className = `metric-value ${freshnessClass(state, item)}`
+}
+
+function setVisualFixedMetric(id, item) {
+  const node = el(id)
+  if (!node) return
+  node.textContent = displayValue(item)
+  node.className = 'metric-value'
 }
 
 function setAttitudeReadout(state, id, item) {
@@ -292,10 +307,15 @@ export function refreshDashboardStatus(state, systemConfigs) {
   el('last-err').textContent = formatSummary(state.payload.lastErr, 'err')
   el('last-err').className = `stat-value stat-wrap ${state.payload.lastErr ? 'freshness-stale' : 'freshness-empty'}`
 
-  setVisualMetric(state, 'visual-altitude', field(state, 'GPS', 'ALTITUDE_M', 'ALT'))
-  setVisualMetric(state, 'visual-speed', field(state, 'GPS', 'SPEED_KPH', 'SPD'))
-  setVisualMetric(state, 'visual-roll', field(state, 'ADCS', 'ROLL_DEG', 'ROL'))
-  setVisualMetric(state, 'visual-pitch', field(state, 'ADCS', 'PITCH_DEG', 'PIT'))
+  const gpsAvailable = field(state, 'GPS', 'AVAILABLE', 'AVL')
+  setVisualFixedMetric('visual-altitude', field(state, 'GPS', 'ALTITUDE_M', 'ALT'))
+  setVisualFixedMetric('visual-speed', field(state, 'GPS', 'SPEED_KPH', 'SPD'))
+  setVisualStatus(state, 'visual-gps-status', gpsAvailable, gpsAvailable.value === 'TRUE' ? 'Fix' : 'Lost')
+  const gpsStatusNode = el('visual-gps-status')
+  if (gpsStatusNode) {
+    gpsStatusNode.className = `metric-value${gpsAvailable.value === 'TRUE' ? '' : ' freshness-stale'}`
+  }
+  setVisualFixedMetric('visual-temperature', field(state, 'THERMAL', 'TEMPERATURE_C', 'TMP'))
 
   refreshSystemValues(state, systemConfigs)
   updateGpsMap(state)
