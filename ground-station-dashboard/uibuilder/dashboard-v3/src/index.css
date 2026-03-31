@@ -163,6 +163,17 @@ h1 {
   border-color: #3a4a5c;
 }
 
+button.is-disabled,
+input.is-disabled,
+select.is-disabled,
+button:disabled,
+input:disabled,
+select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .panel-content {
   display: block;
 }

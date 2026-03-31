@@ -1,6 +1,6 @@
 import { systemConfigs } from './modules/config.js'
 import { createState, stateActions } from './modules/state.js'
-import { bindEvents, bindPanelToggles, requestStateSync, updateConnection, updateSatelliteStatus } from './modules/commands.js'
+import { bindEvents, bindPanelToggles, reconcileCommandBusyState, requestStateSync, updateCommandBusyState, updateConnection, updateSatelliteStatus } from './modules/commands.js'
 import { refreshDashboardStatus, renderDashboard } from './modules/render.js'
 
 const state = createState()
@@ -18,7 +18,9 @@ function satelliteMode() {
 function applyPayload(payload) {
   if (!payload || typeof payload !== 'object') return
   stateActions.setPayload(state, payload)
+  reconcileCommandBusyState(state)
   renderDashboard(state, systemConfigs)
+  updateCommandBusyState(state)
   updateSatelliteStatus(satelliteMode())
 }
 
@@ -44,7 +46,9 @@ function init() {
 
     window.setInterval(() => {
       state.nowMs = Date.now()
+      reconcileCommandBusyState(state)
       refreshDashboardStatus(state, systemConfigs)
+      updateCommandBusyState(state)
       updateSatelliteStatus(satelliteMode())
     }, 1000)
   }

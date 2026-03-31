@@ -266,6 +266,7 @@ function renderLogs(containerId, rows, emptyText) {
 function renderSystems(state, systemConfigs) {
   const body = el('systems-body')
   body.innerHTML = systemConfigs.map((system) => {
+    const scope = system.target === 'GROUND' ? 'ground' : 'satellite'
     const fields = system.fields.map(([parameter, label]) => field(state, system.target, parameter, label))
     const fieldMarkup = fields.map((item) => {
       return `<div class="field-chip"><span class="field-label">${item.label}</span><span class="field-value ${freshnessClass(state, item)}" data-field-key="${item.key}">${escapeHtml(displayValue(item))}</span></div>`
@@ -273,7 +274,7 @@ function renderSystems(state, systemConfigs) {
 
     const getSelect = `
       <div class="select-shell get-shell">
-        <select class="mini-select get-select" data-role="get-select" data-target="${system.target}">
+        <select class="mini-select get-select" data-role="get-select" data-target="${system.target}" data-command-scope="${scope}">
           ${optionMarkup(system.getOptions, state.getSelections[system.target])}
         </select>
         <span class="select-arrow">▼</span>
@@ -282,26 +283,26 @@ function renderSystems(state, systemConfigs) {
 
     const enableControls = system.target === 'RTC' || system.target === 'GROUND' || system.target === 'MODE'
       ? '<div class="control-gap"></div><div class="control-gap"></div>'
-      : `<button class="mini-btn cmd-green" data-role="enable" data-target="${system.target}" data-value="TRUE">EN</button>
-         <button class="mini-btn cmd-red" data-role="enable" data-target="${system.target}" data-value="FALSE">DIS</button>`
+      : `<button class="mini-btn cmd-green" data-role="enable" data-target="${system.target}" data-value="TRUE" data-command-scope="${scope}">EN</button>
+         <button class="mini-btn cmd-red" data-role="enable" data-target="${system.target}" data-value="FALSE" data-command-scope="${scope}">DIS</button>`
 
     let modeControls = '<div class="control-gap"></div><div class="control-gap"></div>'
     if (system.target === 'GROUND') {
-      modeControls = `<button class="mini-btn cmd-blue" data-role="ground-now">NOW</button>
+      modeControls = `<button class="mini-btn cmd-blue" data-role="ground-now" data-command-scope="${scope}">NOW</button>
         <div class="control-gap"></div>`
     } else if (system.target === 'RTC') {
-      modeControls = `<button class="mini-btn cmd-blue" data-role="rtc-now">NOW</button>
-        <button class="mini-btn cmd-blue" data-command="SET,RTC,SYNC,GPS">GPS</button>`
+      modeControls = `<button class="mini-btn cmd-blue" data-role="rtc-now" data-command-scope="${scope}">NOW</button>
+        <button class="mini-btn cmd-blue" data-command="SET,RTC,SYNC,GPS" data-command-scope="${scope}">GPS</button>`
     }
 
     let auxControls = '<div class="control-gap"></div><div class="control-gap"></div>'
     if (system.target === 'TELEMETRY') {
-      auxControls = `<input class="mini-input inline-field" id="telemetry-interval" type="number" min="1" max="3600" value="${escapeHtml(state.telemetryInterval)}">
-        <button class="mini-btn cmd-neutral" data-role="telemetry-interval">INT</button>`
+      auxControls = `<input class="mini-input inline-field" id="telemetry-interval" type="number" min="1" max="3600" value="${escapeHtml(state.telemetryInterval)}" data-command-scope="${scope}">
+        <button class="mini-btn cmd-neutral" data-role="telemetry-interval" data-command-scope="${scope}">INT</button>`
     }
 
-    const telemetryControls = `<button class="mini-btn cmd-green-soft" data-role="telemetry" data-target="${system.target}" data-value="ENABLE">T+</button>
-         <button class="mini-btn cmd-red-soft" data-role="telemetry" data-target="${system.target}" data-value="DISABLE">T-</button>`
+    const telemetryControls = `<button class="mini-btn cmd-green-soft" data-role="telemetry" data-target="${system.target}" data-value="ENABLE" data-command-scope="${scope}">T+</button>
+         <button class="mini-btn cmd-red-soft" data-role="telemetry" data-target="${system.target}" data-value="DISABLE" data-command-scope="${scope}">T-</button>`
 
     return `
       <div class="systems-row">
@@ -309,7 +310,7 @@ function renderSystems(state, systemConfigs) {
         <div class="col-values values-wrap">${fieldMarkup}</div>
         <div class="col-actions">
           <div class="controls-grid">
-            <button class="mini-btn cmd-purple" data-command="GET,${system.target},NONE,NONE">POL</button>
+            <button class="mini-btn cmd-purple" data-command="GET,${system.target},NONE,NONE" data-command-scope="${scope}">POL</button>
             ${enableControls}
             ${telemetryControls}
             ${modeControls}
@@ -383,6 +384,16 @@ export function refreshDashboardStatus(state, systemConfigs) {
   updateAttitudeIndicator(state)
 }
 
+export function applyBusyControlState(state) {
+  document.querySelectorAll('[data-command-scope]').forEach((node) => {
+    const scope = node.dataset.commandScope
+    const pending = state.commandUi && state.commandUi[scope]
+    const disabled = Boolean(pending && pending.active)
+    node.disabled = disabled
+    node.classList.toggle('is-disabled', disabled)
+  })
+}
+
 export function renderDashboard(state, systemConfigs) {
   if (!el('systems-body').children.length) {
     renderSystems(state, systemConfigs)
@@ -392,4 +403,5 @@ export function renderDashboard(state, systemConfigs) {
   renderLogs('err-log', state.payload.errorLog, 'No errors yet')
   renderLogs('packet-log', state.payload.packetLog, 'No packets yet')
   refreshDashboardStatus(state, systemConfigs)
+  applyBusyControlState(state)
 }

@@ -2,6 +2,7 @@ export function createState() {
   return {
     nowMs: Date.now(),
     freshnessThresholdMs: 10000,
+    commandTimeoutMs: 20000,
     payload: {
       tlm: {},
       ackLog: [],
@@ -21,6 +22,18 @@ export function createState() {
       THERMAL: 'TEMPERATURE_C',
       IMU: 'HEADING_DEG',
       ADCS: 'HEADING_DEG',
+    },
+    commandUi: {
+      ground: {
+        active: false,
+        sentAtMs: 0,
+        resolveOn: [],
+      },
+      satellite: {
+        active: false,
+        sentAtMs: 0,
+        resolveOn: [],
+      },
     },
   }
 }

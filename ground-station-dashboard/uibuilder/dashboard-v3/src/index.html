@@ -75,18 +75,18 @@
             </div>
             <div class="ops-divider" aria-hidden="true"></div>
             <div class="ops-command-row">
-              <button class="cmd-btn cmd-blue" data-command="PING,GROUND,NONE,NONE">PING</button>
-              <button class="cmd-btn cmd-purple" data-command="GET,GROUND,NONE,NONE">POLL</button>
-              <button class="cmd-btn cmd-red" data-command="RESET,GROUND,NONE,NONE">RESET</button>
-              <input id="ground-custom-command" class="cmd-input" type="text" placeholder="Ground command">
-              <button class="cmd-btn cmd-neutral" data-role="custom-send" data-input="ground-custom-command">SEND</button>
+              <button class="cmd-btn cmd-blue" data-command="PING,GROUND,NONE,NONE" data-command-scope="ground">PING</button>
+              <button class="cmd-btn cmd-purple" data-command="GET,GROUND,NONE,NONE" data-command-scope="ground">POLL</button>
+              <button class="cmd-btn cmd-red" data-command="RESET,GROUND,NONE,NONE" data-command-scope="ground">RESET</button>
+              <input id="ground-custom-command" class="cmd-input" type="text" placeholder="Ground command" data-command-scope="ground">
+              <button class="cmd-btn cmd-neutral" data-role="custom-send" data-input="ground-custom-command" data-command-scope="ground">SEND</button>
             </div>
             <div class="ops-command-row">
-              <button class="cmd-btn cmd-blue" data-command="PING,NONE,NONE,NONE">PING</button>
-              <button class="cmd-btn cmd-purple" data-command="GET,NONE,NONE,NONE">POLL</button>
-              <button class="cmd-btn cmd-red" data-command="RESET,NONE,NONE,NONE">RESET</button>
-              <input id="sat-custom-command" class="cmd-input" type="text" placeholder="Satellite command">
-              <button class="cmd-btn cmd-neutral" data-role="custom-send" data-input="sat-custom-command">SEND</button>
+              <button class="cmd-btn cmd-blue" data-command="PING,NONE,NONE,NONE" data-command-scope="satellite">PING</button>
+              <button class="cmd-btn cmd-purple" data-command="GET,NONE,NONE,NONE" data-command-scope="satellite">POLL</button>
+              <button class="cmd-btn cmd-red" data-command="RESET,NONE,NONE,NONE" data-command-scope="satellite">RESET</button>
+              <input id="sat-custom-command" class="cmd-input" type="text" placeholder="Satellite command" data-command-scope="satellite">
+              <button class="cmd-btn cmd-neutral" data-role="custom-send" data-input="sat-custom-command" data-command-scope="satellite">SEND</button>
             </div>
           </div>
         </div>
