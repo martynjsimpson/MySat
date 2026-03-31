@@ -10,15 +10,6 @@
 namespace
 {
   bool batteryEnabled = Config::Battery::defaultEnabled;
-  float rawADC = 0.0f;
-  float voltADC = 0.0f;
-  float battVolt = 0.0f;
-  int battPerc = 0;
-
-  const int R1 = 330000;  // resistor between battery terminal and SAMD pin PB09
-  const int R2 = 1000000; // resistor between SAMD pin PB09 and ground
-
-  int maxSourceVoltage = 0;
 
   const float batteryFullVoltage = 4.2f;
   const float batteryEmptyVoltage = 2.75f;
@@ -26,18 +17,46 @@ namespace
 
   bool isBatteryConnected()
   {
-    // On this hardware/library combination, canRunOnBattery() reflects battery presence. It also needs to be inverted due to a bug
-    return !PMIC.canRunOnBattery();
+    // Use the PMIC's dedicated battery-present status bit rather than the
+    // minimum-system-voltage status bit, which can fluctuate independently.
+    return PMIC.isBattConnected();
   }
 
-  void updateBatteryValues()
+  const char *batteryChargeStateToken()
   {
-    rawADC = analogRead(ADC_BATTERY);
-    voltADC = rawADC * (3.3f / 4095.0f);
-    battVolt = voltADC * (static_cast<float>(maxSourceVoltage) / 3.3f);
+    switch (PMIC.chargeStatus())
+    {
+    case 0x00:
+      return "NOT_CHARGING";
+    case 0x10:
+      return "PRE_CHARGE";
+    case 0x20:
+      return "FAST_CHARGE";
+    case 0x30:
+      return "CHARGE_DONE";
+    default:
+      return "UNKNOWN";
+    }
+  }
 
-    battPerc = static_cast<int>(
-        (battVolt - batteryEmptyVoltage) * 100.0f / (batteryFullVoltage - batteryEmptyVoltage));
+  const char *batteryHealthToken(bool batteryAvailable)
+  {
+    if (!batteryAvailable)
+    {
+      return "NONE";
+    }
+
+    if (PMIC.isBatteryInOverVoltage() || PMIC.getChargeFault() > 0)
+    {
+      return "FAIL";
+    }
+
+    if (PMIC.canRunOnBattery())
+    {
+      return "LOW_POWER";
+    }
+
+    return "OK";
   }
 
   void reportBatteryTelemetryStatus()
@@ -55,6 +74,34 @@ namespace
     sendTelemetry("BATTERY", "AVAILABLE", batteryAvailable ? "TRUE" : "FALSE");
   }
 
+  void reportBatteryState(bool batteryAvailable)
+  {
+    if (!batteryEnabled)
+    {
+      sendTelemetry("BATTERY", "STATE", "DISABLED");
+      return;
+    }
+
+    if (!batteryAvailable)
+    {
+      sendTelemetry("BATTERY", "STATE", "ABSENT");
+      return;
+    }
+
+    if (PMIC.isBatteryInOverVoltage() || PMIC.getChargeFault() > 0)
+    {
+      sendTelemetry("BATTERY", "STATE", "FAULT");
+      return;
+    }
+
+    sendTelemetry("BATTERY", "STATE", batteryChargeStateToken());
+  }
+
+  void reportBatteryHealth(bool batteryAvailable)
+  {
+    sendTelemetry("BATTERY", "HEALTH", batteryHealthToken(batteryAvailable));
+  }
+
   void reportBatteryChargeCurrent(bool batteryAvailable)
   {
     sendTelemetryFloat("BATTERY", "CHARGE_CURRENT_A", batteryAvailable ? PMIC.getChargeCurrent() : 0.0f, 3);
@@ -63,16 +110,6 @@ namespace
   void reportBatteryChargeVoltage(bool batteryAvailable)
   {
     sendTelemetryFloat("BATTERY", "CHARGE_VOLTAGE_V", batteryAvailable ? PMIC.getChargeVoltage() : 0.0f, 3);
-  }
-
-  void reportBatteryChargePercent(bool batteryAvailable)
-  {
-    sendTelemetryULong("BATTERY", "CHARGE_PERCENT_P", batteryAvailable ? static_cast<unsigned long>(battPerc) : 0);
-  }
-
-  void reportBatteryVoltage(bool batteryAvailable)
-  {
-    sendTelemetryFloat("BATTERY", "VOLTAGE_V", batteryAvailable ? battVolt : 0.0f);
   }
 }
 
@@ -95,26 +132,22 @@ void setupBattery()
     PMIC.disableCharge();
   }
 
-  maxSourceVoltage = static_cast<int>((3.3f * (R1 + R2)) / static_cast<float>(R2));
   (void)batteryCapacity; // reserved for future tuning
+  (void)batteryFullVoltage;
+  (void)batteryEmptyVoltage;
 }
 
 void reportBatteryStatus()
 {
   const bool batteryAvailable = batteryEnabled && isBatteryConnected();
 
-  if (batteryAvailable)
-  {
-    updateBatteryValues();
-  }
-
   reportBatteryTelemetryStatus();
   reportBatteryEnableStatus();
   reportBatteryAvailability(batteryAvailable);
+  reportBatteryState(batteryAvailable);
+  reportBatteryHealth(batteryAvailable);
   reportBatteryChargeCurrent(batteryAvailable);
   reportBatteryChargeVoltage(batteryAvailable);
-  reportBatteryChargePercent(batteryAvailable);
-  reportBatteryVoltage(batteryAvailable);
 }
 
 void handleGetBattery(const Command &cmd)
@@ -126,10 +159,6 @@ void handleGetBattery(const Command &cmd)
   }
 
   const bool batteryAvailable = batteryEnabled && isBatteryConnected();
-  if (batteryAvailable)
-  {
-    updateBatteryValues();
-  }
 
   switch (cmd.parameter)
   {
@@ -149,20 +178,20 @@ void handleGetBattery(const Command &cmd)
     reportBatteryAvailability(batteryAvailable);
     break;
 
+  case PARAM_STATE:
+    reportBatteryState(batteryAvailable);
+    break;
+
+  case PARAM_HEALTH:
+    reportBatteryHealth(batteryAvailable);
+    break;
+
   case PARAM_CHARGE_CURRENT_A:
     reportBatteryChargeCurrent(batteryAvailable);
     break;
 
   case PARAM_CHARGE_VOLTAGE_V:
     reportBatteryChargeVoltage(batteryAvailable);
-    break;
-
-  case PARAM_CHARGE_PERCENT_P:
-    reportBatteryChargePercent(batteryAvailable);
-    break;
-
-  case PARAM_VOLTAGE_V:
-    reportBatteryVoltage(batteryAvailable);
     break;
 
   default:

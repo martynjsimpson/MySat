@@ -2,7 +2,7 @@
 
 ## Overview
 
-`LED` controls and reports the built-in LED and RGB LED state used for development and protocol testing.
+`LED` controls and reports the built-in LED state used for development and protocol testing.
 
 ## Implemented Commands
 
@@ -37,13 +37,14 @@
 | `LED,TELEMETRY` | Whether LED is included in periodic telemetry | `TRUE`, `FALSE` |
 | `LED,ENABLE` | Whether LED control is enabled | `TRUE`, `FALSE` |
 | `LED,STATE` | Current output state | `ON`, `OFF` |
-| `LED,COLOR` | Current color selection | `RED`, `GREEN`, `BLUE` |
+| `LED,COLOR` | Current logical color selection | `RED`, `GREEN`, `BLUE` |
 
 ## Behavior Notes
 
 - `SET,LED,ENABLE,FALSE` also forces `LED,STATE` to `OFF`.
 - `GET` works even when LED periodic telemetry is disabled.
 - `SET,LED,STATE,ON` returns `ERR,LED_DISABLED` if LED control is disabled.
+- On the MKR WAN 1310, hardware LED output is built-in LED only. `COLOR` is retained as a protocol-compatible state token and no longer maps to distinct onboard RGB hardware.
 
 ## Examples
 

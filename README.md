@@ -22,7 +22,7 @@ It is best thought of as a **satellite-inspired control and telemetry lab**.
 MySat currently consists of three cooperating parts:
 
 1. **Satellite firmware**  
-   Firmware for an Arduino MKR WiFi 1010 acting as the satellite-side embedded target.
+   Firmware for an Arduino MKR WAN 1310 acting as the satellite-side embedded target.
 
 2. **Ground-station firmware**  
    Firmware for an Arduino Mega 2560 acting as a hardware ground-station target.
@@ -79,7 +79,7 @@ Project direction, design decisions, hardware work, and final review remain huma
 
 ## Documentation map
 
-- [satellite-firmware/README.md](./satellite-firmware/README.md) — MKR WiFi 1010 firmware build, structure, and subsystem notes
+- [satellite-firmware/README.md](./satellite-firmware/README.md) — MKR WAN 1310 firmware build, structure, and subsystem notes
 - [ground-station-firmware/platformio.ini](./ground-station-firmware/platformio.ini) — Arduino Mega 2560 PlatformIO project config
 - [ground-station-dashboard/README.md](./ground-station-dashboard/README.md) — Node-RED setup and runtime notes
 - [documentation/README.md](./documentation/README.md) — documentation index and target reference map

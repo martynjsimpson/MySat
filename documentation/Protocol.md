@@ -130,8 +130,8 @@ These tokens are implemented in the parser today and are used by one or more tar
 
 | Kind | Tokens |
 |---|---|
-| Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `COLOR`, `SOURCE`, `AVAILABLE`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `CHARGE_PERCENT_P`, `VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N`, `TEMPERATURE_C`, `HUMIDITY_P`, `X_MS2`, `Y_MS2`, `Z_MS2`, `GYRO_X_DPS`, `GYRO_Y_DPS`, `GYRO_Z_DPS`, `MAG_X_UT`, `MAG_Y_UT`, `MAG_Z_UT`, `HEADING_DEG`, `ROLL_DEG`, `PITCH_DEG`, `YAW_RATE_DPS` |
-| Values | `NONE`, `TRUE`, `FALSE`, `ENABLE`, `DISABLE`, `ON`, `OFF`, `RED`, `GREEN`, `BLUE` |
+| Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `COLOR`, `SOURCE`, `AVAILABLE`, `HEALTH`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N`, `TEMPERATURE_C`, `HUMIDITY_P`, `X_MS2`, `Y_MS2`, `Z_MS2`, `GYRO_X_DPS`, `GYRO_Y_DPS`, `GYRO_Z_DPS`, `MAG_X_UT`, `MAG_Y_UT`, `MAG_Z_UT`, `HEADING_DEG`, `ROLL_DEG`, `PITCH_DEG`, `YAW_RATE_DPS` |
+| Values | `NONE`, `TRUE`, `FALSE`, `ENABLE`, `DISABLE`, `ON`, `OFF`, `RED`, `GREEN`, `BLUE`, `OK`, `FAIL`, `LOW_POWER` |
 
 ## Reserved Generic Tokens
 
@@ -139,8 +139,8 @@ These parser tokens are reserved but not used by the current firmware features.
 
 | Kind | Tokens |
 |---|---|
-| Parameters | `MODE`, `HEALTH`, `UPTIME_S` |
-| Values | `SAFE`, `NORMAL`, `LOW_POWER`, `ACTIVE`, `IDLE`, `OK`, `FAIL` |
+| Parameters | `MODE`, `UPTIME_S` |
+| Values | `SAFE`, `NORMAL`, `ACTIVE`, `IDLE` |
 
 ## Error Handling
 

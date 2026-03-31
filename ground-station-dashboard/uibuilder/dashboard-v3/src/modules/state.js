@@ -16,7 +16,7 @@ export function createState() {
       TELEMETRY: 'TELEMETRY',
       RTC: 'CURRENT_TIME',
       LED: 'STATE',
-      BATTERY: 'CHARGE_PERCENT_P',
+      BATTERY: 'STATE',
       GPS: 'LATITUDE_D',
       THERMAL: 'TEMPERATURE_C',
       IMU: 'HEADING_DEG',

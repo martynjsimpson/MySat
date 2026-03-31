@@ -3,9 +3,6 @@
 #include <Arduino.h>
 #include <string.h>
 
-#include <WiFiNINA.h>
-#include <utility/wifi_drv.h>
-
 #include "config.h"
 #include "sender.h"
 #include "telemetry.h"
@@ -13,10 +10,6 @@
 namespace
 {
   const int LED_PIN = LED_BUILTIN;
-  // Some MKR WiFi 1010 revisions have red/green swapped compared to older docs.
-  const int RGB_RED_PIN = 25;
-  const int RGB_GREEN_PIN = 26;
-  const int RGB_BLUE_PIN = 27;
 
   bool ledEnabled = Config::Led::defaultEnabled;
   bool ledStateOn = Config::Led::defaultStateOn;
@@ -46,13 +39,6 @@ namespace
   void setLed(bool on)
   {
     digitalWrite(LED_PIN, on ? HIGH : LOW);
-  }
-
-  void setRgb(bool redOn, bool greenOn, bool blueOn)
-  {
-    WiFiDrv::digitalWrite(RGB_RED_PIN, redOn ? HIGH : LOW);
-    WiFiDrv::digitalWrite(RGB_GREEN_PIN, greenOn ? HIGH : LOW);
-    WiFiDrv::digitalWrite(RGB_BLUE_PIN, blueOn ? HIGH : LOW);
   }
 
   const char *colorToToken(LedColor color)
@@ -95,35 +81,19 @@ namespace
     if (!ledEnabled || !ledStateOn)
     {
       setLed(false);
-      setRgb(false, false, false);
       return;
     }
 
+    // The MKR WAN 1310 only guarantees the built-in status LED. We retain the
+    // protocol-level color token for compatibility, but hardware output is
+    // reduced to simple on/off behavior.
     setLed(true);
-    switch (ledColor)
-    {
-    case LED_COLOR_RED:
-      setRgb(true, false, false);
-      break;
-    case LED_COLOR_GREEN:
-      setRgb(false, true, false);
-      break;
-    case LED_COLOR_BLUE:
-      setRgb(false, false, true);
-      break;
-    default:
-      setRgb(false, false, false);
-      break;
-    }
   }
 } // namespace
 
 void setupLed()
 {
   pinMode(LED_PIN, OUTPUT);
-  WiFiDrv::pinMode(RGB_RED_PIN, OUTPUT);   // define RED LED
-  WiFiDrv::pinMode(RGB_GREEN_PIN, OUTPUT); // define GREEN LED
-  WiFiDrv::pinMode(RGB_BLUE_PIN, OUTPUT);  // define BLUE LED
 
   ledEnabled = Config::Led::defaultEnabled;
   ledStateOn = Config::Led::defaultStateOn;

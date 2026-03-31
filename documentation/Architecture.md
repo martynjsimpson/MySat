@@ -17,7 +17,7 @@ This repository contains one system split across three runtime parts:
 
 The firmware projects intentionally use separate PlatformIO entry points:
 
-- [../platformio.ini](../platformio.ini) builds `satellite-firmware/` for the `mkrwifi1010`
+- [../platformio.ini](../platformio.ini) builds `satellite-firmware/` for the `mkrwan1310`
 - [../ground-station-firmware/platformio.ini](../ground-station-firmware/platformio.ini) builds `ground-station-firmware/` for the `mega2560`
 
 This split is deliberate. A combined multi-environment root PlatformIO setup built successfully, but it destabilized VS Code IntelliSense enough to make day-to-day work noisy and unreliable.

@@ -4,7 +4,7 @@
 
 `THERMAL` reports temperature and humidity from a DHT11 connected to the satellite firmware and allows the thermal sensor service to be enabled or disabled.
 
-The current firmware is written for a simple single-wire DHT11 module connected directly to the MKR WiFi 1010.
+The current firmware is written for a simple single-wire DHT11 module connected directly to the MKR WAN 1310.
 
 ## Supported GET Commands
 

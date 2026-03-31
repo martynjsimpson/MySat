@@ -116,10 +116,6 @@ namespace
       return PARAM_CHARGE_CURRENT_A;
     if (strcmp(token, "CHARGE_VOLTAGE_V") == 0)
       return PARAM_CHARGE_VOLTAGE_V;
-    if (strcmp(token, "CHARGE_PERCENT_P") == 0)
-      return PARAM_CHARGE_PERCENT_P;
-    if (strcmp(token, "VOLTAGE_V") == 0)
-      return PARAM_VOLTAGE_V;
     if (strcmp(token, "LATITUDE_D") == 0)
       return PARAM_LATITUDE_D;
     if (strcmp(token, "LONGITUDE_D") == 0)

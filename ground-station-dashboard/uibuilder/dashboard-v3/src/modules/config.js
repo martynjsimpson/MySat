@@ -26,13 +26,13 @@ export const systemConfigs = [
     fields: [
       ['ENABLE', 'EN'],
       ['AVAILABLE', 'AVL'],
+      ['STATE', 'STATE'],
+      ['HEALTH', 'HLTH'],
       ['TELEMETRY', 'TLM'],
-      ['CHARGE_PERCENT_P', 'PCT'],
-      ['VOLTAGE_V', 'BAT'],
       ['CHARGE_VOLTAGE_V', 'CHG'],
       ['CHARGE_CURRENT_A', 'CUR'],
     ],
-    getOptions: ['ENABLE', 'AVAILABLE', 'TELEMETRY', 'CHARGE_PERCENT_P', 'VOLTAGE_V', 'CHARGE_VOLTAGE_V', 'CHARGE_CURRENT_A'],
+    getOptions: ['ENABLE', 'AVAILABLE', 'STATE', 'HEALTH', 'TELEMETRY', 'CHARGE_VOLTAGE_V', 'CHARGE_CURRENT_A'],
   },
   {
     target: 'THERMAL',
