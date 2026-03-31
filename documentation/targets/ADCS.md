@@ -53,7 +53,7 @@
 - The current ADCS implementation applies a fixed magnetometer-to-body-frame alignment to account for the QMC5883L being mounted 90 degrees in-plane from the MPU-6050.
 - If the IMU is disabled, unavailable, or missing usable magnetometer data, `ADCS,AVAILABLE` becomes `FALSE` and derived numeric values are reported as `0`.
 - ADCS processing is enabled by default in firmware.
-- ADCS periodic telemetry is disabled by default until explicitly enabled.
+- ADCS periodic telemetry defaults are now mode-driven; see [MODE](./MODE.md) for the current per-mode baseline.
 - `GET` works even when ADCS periodic telemetry is disabled.
 
 ## Examples

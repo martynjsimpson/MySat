@@ -70,14 +70,14 @@ namespace
 void setupTelemetry()
 {
   telemetryEnabled = Config::Telemetry::defaultTelemetryEnabled;
-  modeTelemetryEnabled = true;
-  telemetryTelemetryEnabled = Config::Telemetry::defaultReportTelemetry;
-  rtcTelemetryEnabled = Config::Telemetry::defaultReportRtc;
-  batteryTelemetryEnabled = Config::Telemetry::defaultReportBattery;
-  gpsTelemetryEnabled = Config::Telemetry::defaultReportGps;
-  thermalTelemetryEnabled = Config::Telemetry::defaultReportThermal;
-  imuTelemetryEnabled = Config::Telemetry::defaultReportImu;
-  adcsTelemetryEnabled = Config::Telemetry::defaultReportAdcs;
+  modeTelemetryEnabled = false;
+  telemetryTelemetryEnabled = false;
+  rtcTelemetryEnabled = false;
+  batteryTelemetryEnabled = false;
+  gpsTelemetryEnabled = false;
+  thermalTelemetryEnabled = false;
+  imuTelemetryEnabled = false;
+  adcsTelemetryEnabled = false;
   telemetryIntervalSeconds = Config::Telemetry::defaultIntervalSeconds;
 }
 

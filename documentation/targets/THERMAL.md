@@ -72,7 +72,7 @@ If you later use the bare sensor instead of the 3-pin module:
 - Reads are rate-limited in firmware so the DHT11 is not polled faster than its supported cadence.
 - The current firmware limits reads to once every `2000 ms`.
 - Sampling is enabled by default in firmware.
-- Thermal periodic telemetry is disabled by default until explicitly enabled.
+- Thermal periodic telemetry defaults are now mode-driven; see [MODE](./MODE.md) for the current per-mode baseline.
 - `THERMAL,AVAILABLE,FALSE` usually means the sensor is not wired, not yet ready, or the last read failed.
 - When thermal sampling is disabled with `SET,THERMAL,ENABLE,FALSE`, availability is cleared immediately.
 - `GET` works even when thermal periodic telemetry is disabled.

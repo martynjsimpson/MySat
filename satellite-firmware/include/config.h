@@ -32,13 +32,6 @@ namespace Config
   namespace Telemetry
   {
     constexpr bool defaultTelemetryEnabled = true;
-    constexpr bool defaultReportTelemetry = false;
-    constexpr bool defaultReportRtc = false;
-    constexpr bool defaultReportBattery = false;
-    constexpr bool defaultReportGps = false;
-    constexpr bool defaultReportThermal = false;
-    constexpr bool defaultReportImu = false;
-    constexpr bool defaultReportAdcs = false;
     constexpr unsigned long defaultIntervalSeconds = 5;
     constexpr unsigned long minIntervalSeconds = 1;
     constexpr unsigned long maxIntervalSeconds = 3600;
