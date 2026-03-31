@@ -85,7 +85,7 @@ Project direction, design decisions, hardware work, and final review remain huma
 ## Documentation map
 
 - [satellite-firmware/README.md](./satellite-firmware/README.md) — MKR WAN 1310 firmware build, structure, and subsystem notes
-- [ground-station-firmware/platformio.ini](./ground-station-firmware/platformio.ini) — MKR WAN 1310 ground-station bridge PlatformIO config
+- [ground-station-firmware/README.md](./ground-station-firmware/README.md) — MKR WAN 1310 ground-station bridge notes
 - [ground-station-dashboard/README.md](./ground-station-dashboard/README.md) — Node-RED setup and runtime notes
 - [documentation/README.md](./documentation/README.md) — documentation index and target reference map
 - [documentation/Architecture.md](./documentation/Architecture.md) — repo-level system boundaries and interaction map
