@@ -36,7 +36,7 @@ namespace Config
 
   namespace Telemetry
   {
-    constexpr bool defaultEnabled = true;
+    constexpr bool defaultEnabled = false;
   }
 
   namespace Led

@@ -65,8 +65,9 @@ export function bindEvents(state) {
       return
     }
 
-    if (button.id === 'custom-send') {
-      const input = el('custom-command')
+    if (button.dataset.role === 'custom-send') {
+      const input = el(button.dataset.input)
+      if (!input) return
       sendCommand(input.value)
       input.value = ''
       return
@@ -119,9 +120,11 @@ export function bindEvents(state) {
     }
   })
 
-  el('custom-command').addEventListener('keydown', (event) => {
-    if (event.key !== 'Enter') return
-    sendCommand(event.currentTarget.value)
-    event.currentTarget.value = ''
+  document.querySelectorAll('#ground-custom-command, #sat-custom-command').forEach((input) => {
+    input.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return
+      sendCommand(event.currentTarget.value)
+      event.currentTarget.value = ''
+    })
   })
 }

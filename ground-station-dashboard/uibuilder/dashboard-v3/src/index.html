@@ -36,30 +36,58 @@
           <button class="panel-toggle" type="button" data-panel-toggle aria-expanded="true" aria-controls="panel-operations">Collapse</button>
         </div>
         <div class="panel-content" id="panel-operations">
-          <div class="ops-stats">
-            <div class="stat-block">
-              <div class="stat-label">Heartbeat</div>
-              <div class="stat-value" id="heartbeat-value">--</div>
+          <div class="ops-layout">
+            <div class="ops-stats">
+              <div class="stat-block stat-block-compact">
+                <div class="stat-label">GND HB</div>
+                <div class="stat-value" id="ground-heartbeat-value">--</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-label">GND TLM</div>
+                <div class="stat-value" id="ground-last-tlm">--</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-label">GND ACK</div>
+                <div class="stat-value stat-wrap" id="ground-last-ack">--</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-label">GND ERR</div>
+                <div class="stat-value stat-wrap" id="ground-last-err">--</div>
+              </div>
             </div>
-            <div class="stat-block">
-              <div class="stat-label">Last TLM</div>
-              <div class="stat-value" id="last-tlm">--</div>
+            <div class="ops-stats">
+              <div class="stat-block stat-block-compact">
+                <div class="stat-label">Sat HB</div>
+                <div class="stat-value" id="sat-heartbeat-value">--</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-label">Sat TLM</div>
+                <div class="stat-value" id="sat-last-tlm">--</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-label">Sat ACK</div>
+                <div class="stat-value stat-wrap" id="sat-last-ack">--</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-label">Sat ERR</div>
+                <div class="stat-value stat-wrap" id="sat-last-err">--</div>
+              </div>
             </div>
-            <div class="stat-block">
-              <div class="stat-label">Last ACK</div>
-              <div class="stat-value stat-wrap" id="last-ack">--</div>
+            <div class="ops-divider" aria-hidden="true"></div>
+            <div class="ops-command-row">
+              <button class="cmd-btn cmd-blue" data-command="PING,GROUND,NONE,NONE">PING</button>
+              <button class="cmd-btn cmd-purple" data-command="GET,GROUND,NONE,NONE">POLL</button>
+              <button class="cmd-btn cmd-red" data-command="RESET,GROUND,NONE,NONE">RESET</button>
+              <input id="ground-custom-command" class="cmd-input" type="text" placeholder="Ground command">
+              <button class="cmd-btn cmd-neutral" data-role="custom-send" data-input="ground-custom-command">SEND</button>
             </div>
-            <div class="stat-block">
-              <div class="stat-label">Last ERR</div>
-              <div class="stat-value stat-wrap" id="last-err">--</div>
+            <div class="ops-command-row">
+              <button class="cmd-btn cmd-blue" data-command="PING,NONE,NONE,NONE">PING</button>
+              <button class="cmd-btn cmd-purple" data-command="GET,NONE,NONE,NONE">POLL</button>
+              <button class="cmd-btn cmd-red" data-command="RESET,NONE,NONE,NONE">RESET</button>
+              <input id="sat-custom-command" class="cmd-input" type="text" placeholder="Satellite command">
+              <button class="cmd-btn cmd-neutral" data-role="custom-send" data-input="sat-custom-command">SEND</button>
             </div>
-          </div>
-          <div class="ops-command-row">
-            <button class="cmd-btn cmd-blue" data-command="PING,NONE,NONE,NONE">PING</button>
-            <button class="cmd-btn cmd-purple" data-command="GET,NONE,NONE,NONE">POLL</button>
-            <button class="cmd-btn cmd-red" data-command="RESET,NONE,NONE,NONE">RESET</button>
-            <input id="custom-command" class="cmd-input" type="text" placeholder="Custom command">
-            <button id="custom-send" class="cmd-btn cmd-neutral">SEND</button>
           </div>
         </div>
       </section>

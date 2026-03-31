@@ -72,11 +72,48 @@ function formatSummary(entry, type) {
   return `${entry.time || ''} ${entry.error}${detail ? ` ${detail}` : ''}`.trim()
 }
 
-function lastTlmEntry(state) {
+function isGroundErrorRow(row) {
+  const raw = String(row && row.raw ? row.raw : '')
+  return raw.includes(',ERR,TIMEOUT') ||
+    raw.includes(',ERR,LINK_DOWN') ||
+    raw.includes(',ERR,RETRY_SEND_FAILED') ||
+    raw.includes(',ERR,BAD_PARAMETER,GROUND') ||
+    raw.includes('%2CGROUND%2C') ||
+    raw.includes(',GROUND,')
+}
+
+function packetOrigin(row) {
+  if (!row) return ''
+  if (row.packetType === 'TLM' || row.packetType === 'ACK') {
+    return row.target === 'GROUND' ? 'ground' : 'satellite'
+  }
+  if (row.packetType === 'ERR') {
+    return isGroundErrorRow(row) ? 'ground' : 'satellite'
+  }
+  return ''
+}
+
+function lastPacketRow(state, predicate) {
   const rows = state.payload.packetLog || []
-  const row = rows.find((item) => item && item.packetType === 'TLM' && item.time)
+  return rows.find((item) => item && predicate(item)) || null
+}
+
+function lastTlmEntry(state, origin) {
+  const row = lastPacketRow(state, (item) => item.packetType === 'TLM' && packetOrigin(item) === origin && item.time)
   if (!row) return null
   return { value: row.time, time: row.time }
+}
+
+function ackSummary(state, origin) {
+  const row = lastPacketRow(state, (item) => item.packetType === 'ACK' && packetOrigin(item) === origin)
+  if (!row) return '--'
+  return `${row.time || ''} ${row.target || ''} ${row.value || ''}`.trim()
+}
+
+function errSummary(state, origin) {
+  const row = lastPacketRow(state, (item) => item.packetType === 'ERR' && packetOrigin(item) === origin)
+  if (!row) return '--'
+  return `${row.time || ''} ${row.value || ''}`.trim()
 }
 
 function gpsEntries(state) {
@@ -240,7 +277,7 @@ function renderSystems(state, systemConfigs) {
     let modeControls = '<div class="control-gap"></div><div class="control-gap"></div>'
     if (system.target === 'GROUND') {
       modeControls = `<button class="mini-btn cmd-blue" data-role="ground-now">NOW</button>
-        <button class="mini-btn cmd-red" data-role="ground-reset">RST</button>`
+        <div class="control-gap"></div>`
     } else if (system.target === 'RTC') {
       modeControls = `<button class="mini-btn cmd-blue" data-role="rtc-now">NOW</button>
         <button class="mini-btn cmd-blue" data-command="SET,RTC,SYNC,GPS">GPS</button>`
@@ -287,19 +324,38 @@ function refreshSystemValues(state, systemConfigs) {
 }
 
 export function refreshDashboardStatus(state, systemConfigs) {
-  const heartbeat = field(state, 'STATUS', 'HEARTBEAT_N', 'N')
-  const lastTlm = lastTlmEntry(state)
-  el('heartbeat-value').textContent = displayValue(heartbeat)
-  el('heartbeat-value').className = `stat-value ${freshnessClass(state, heartbeat)}`
+  const groundHeartbeat = field(state, 'GROUND', 'HEARTBEAT_N', 'N')
+  const satHeartbeat = field(state, 'STATUS', 'HEARTBEAT_N', 'N')
+  const groundLastTlm = lastTlmEntry(state, 'ground')
+  const satLastTlm = lastTlmEntry(state, 'satellite')
+  const groundAck = ackSummary(state, 'ground')
+  const satAck = ackSummary(state, 'satellite')
+  const groundErr = errSummary(state, 'ground')
+  const satErr = errSummary(state, 'satellite')
 
-  el('last-tlm').textContent = displayValue(lastTlm)
-  el('last-tlm').className = `stat-value ${freshnessClass(state, lastTlm)}`
+  el('ground-heartbeat-value').textContent = displayValue(groundHeartbeat)
+  el('ground-heartbeat-value').className = `stat-value ${freshnessClass(state, groundHeartbeat)}`
 
-  el('last-ack').textContent = formatSummary(state.payload.lastAck, 'ack')
-  el('last-ack').className = `stat-value stat-wrap ${state.payload.lastAck ? 'freshness-fresh' : 'freshness-empty'}`
+  el('ground-last-tlm').textContent = displayValue(groundLastTlm)
+  el('ground-last-tlm').className = `stat-value ${freshnessClass(state, groundLastTlm)}`
 
-  el('last-err').textContent = formatSummary(state.payload.lastErr, 'err')
-  el('last-err').className = `stat-value stat-wrap ${state.payload.lastErr ? 'freshness-stale' : 'freshness-empty'}`
+  el('ground-last-ack').textContent = groundAck
+  el('ground-last-ack').className = `stat-value stat-wrap ${groundAck !== '--' ? 'freshness-fresh' : 'freshness-empty'}`
+
+  el('ground-last-err').textContent = groundErr
+  el('ground-last-err').className = `stat-value stat-wrap ${groundErr !== '--' ? 'freshness-stale' : 'freshness-empty'}`
+
+  el('sat-heartbeat-value').textContent = displayValue(satHeartbeat)
+  el('sat-heartbeat-value').className = `stat-value ${freshnessClass(state, satHeartbeat)}`
+
+  el('sat-last-tlm').textContent = displayValue(satLastTlm)
+  el('sat-last-tlm').className = `stat-value ${freshnessClass(state, satLastTlm)}`
+
+  el('sat-last-ack').textContent = satAck
+  el('sat-last-ack').className = `stat-value stat-wrap ${satAck !== '--' ? 'freshness-fresh' : 'freshness-empty'}`
+
+  el('sat-last-err').textContent = satErr
+  el('sat-last-err').className = `stat-value stat-wrap ${satErr !== '--' ? 'freshness-stale' : 'freshness-empty'}`
 
   const gpsAvailable = field(state, 'GPS', 'AVAILABLE', 'AVL')
   setVisualFixedMetric('visual-altitude', field(state, 'GPS', 'ALTITUDE_M', 'ALT'))
