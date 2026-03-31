@@ -6,13 +6,13 @@
 
 namespace RfEnvelope
 {
-  constexpr uint8_t version = 0x01;
+  constexpr uint8_t version = 0x02;
 
   constexpr uint8_t satelliteDeviceId = 0x01;
   constexpr uint8_t groundStationDeviceId = 0x02;
   constexpr uint8_t broadcastDeviceId = 0xFF;
 
-  constexpr size_t headerSize = 4;
+  constexpr size_t headerSize = 8;
   constexpr size_t crcSize = 2;
   constexpr size_t overheadSize = headerSize + crcSize;
   constexpr size_t maxPayloadLength = 255;
@@ -33,6 +33,7 @@ namespace RfEnvelope
   {
     uint8_t source;
     uint8_t destination;
+    uint32_t timestampSeconds;
     size_t payloadLength;
     char payload[maxPayloadLength + 1];
   };
@@ -41,6 +42,7 @@ namespace RfEnvelope
   size_t encodedPacketLength(size_t payloadLength);
   bool encodePacket(uint8_t source,
                     uint8_t destination,
+                    uint32_t timestampSeconds,
                     const char *payload,
                     uint8_t *outPacket,
                     size_t outPacketCapacity,

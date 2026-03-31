@@ -435,41 +435,16 @@ namespace
     sendGroundTelemetryULong("DROP_PACKETS_N", dropPacketCount);
   }
 
-  bool extractPayloadTimestamp(const char *payload, char *timestampBuffer, size_t timestampBufferSize)
+  bool formatPacketTimestamp(uint32_t timestampSeconds, char *timestampBuffer, size_t timestampBufferSize)
   {
-    if (payload == nullptr || timestampBuffer == nullptr || timestampBufferSize < 21)
+    if (timestampBuffer == nullptr || timestampBufferSize < 21)
     {
       return false;
     }
 
-    const char *firstNewline = strchr(payload, '\n');
-    if (firstNewline != nullptr)
-    {
-      const size_t length = static_cast<size_t>(firstNewline - payload);
-      if (length != 20 || length >= timestampBufferSize)
-      {
-        return false;
-      }
-
-      memcpy(timestampBuffer, payload, length);
-      timestampBuffer[length] = '\0';
-      return true;
-    }
-
-    const char *firstComma = strchr(payload, ',');
-    if (firstComma == nullptr)
-    {
-      return false;
-    }
-
-    const size_t length = static_cast<size_t>(firstComma - payload);
-    if (length != 20 || length >= timestampBufferSize)
-    {
-      return false;
-    }
-
-    memcpy(timestampBuffer, payload, length);
-    timestampBuffer[length] = '\0';
+    formatIsoTimestamp(timestampSeconds == 0 ? kUnsyncedEpochSeconds : timestampSeconds,
+                       timestampBuffer,
+                       timestampBufferSize);
     return true;
   }
 
@@ -483,7 +458,7 @@ namespace
     return strcmp(timestamp, Config::Clock::minTrustedSatelliteTimestamp) >= 0;
   }
 
-  void maybeSyncClockFromSatellitePayload(const char *payload)
+  void maybeSyncClockFromSatelliteTimestamp(uint32_t timestampSeconds)
   {
     if (!Config::Clock::autoSyncFromSatellite || clockSource != CLOCK_SOURCE_UNSYNC)
     {
@@ -491,10 +466,7 @@ namespace
     }
 
     char timestamp[21];
-    if (!extractPayloadTimestamp(payload, timestamp, sizeof(timestamp)))
-    {
-      return;
-    }
+    formatPacketTimestamp(timestampSeconds, timestamp, sizeof(timestamp));
 
     if (!isTrustedSatelliteTimestamp(timestamp))
     {
@@ -550,6 +522,7 @@ namespace
     size_t packetLength = 0;
     if (!RfEnvelope::encodePacket(RfEnvelope::groundStationDeviceId,
                                   RfEnvelope::satelliteDeviceId,
+                                  currentEpochSeconds(),
                                   payload,
                                   packetBuffer,
                                   sizeof(packetBuffer),
@@ -599,9 +572,9 @@ namespace
     pendingCommand.expectedResponse = RESPONSE_NONE;
   }
 
-  bool payloadMatchesPendingResponse(const char *payload)
+  bool payloadTypeEquals(const char *payload, const char *type)
   {
-    if (!pendingCommand.active || payload == nullptr)
+    if (payload == nullptr || type == nullptr)
     {
       return false;
     }
@@ -612,77 +585,45 @@ namespace
       return false;
     }
 
-    const char *typeStart = firstComma + 1;
-    const char *secondComma = strchr(typeStart, ',');
-    if (secondComma == nullptr)
+    const size_t typeLength = static_cast<size_t>(firstComma - payload);
+    const size_t expectedLength = strlen(type);
+    return typeLength == expectedLength && strncmp(payload, type, expectedLength) == 0;
+  }
+
+  bool payloadMatchesPendingResponse(const char *payload)
+  {
+    if (!pendingCommand.active || payload == nullptr)
     {
       return false;
     }
 
-    const size_t typeLength = static_cast<size_t>(secondComma - typeStart);
-    if (typeLength == 3 && strncmp(typeStart, "ERR", 3) == 0)
+    if (payloadTypeEquals(payload, "ERR"))
     {
       return true;
     }
 
     if (pendingCommand.expectedResponse == RESPONSE_ACK_OR_ERR)
     {
-      return typeLength == 3 && strncmp(typeStart, "ACK", 3) == 0;
+      return payloadTypeEquals(payload, "ACK");
     }
 
     if (pendingCommand.expectedResponse == RESPONSE_TLM_OR_ERR)
     {
-      return typeLength == 3 && strncmp(typeStart, "TLM", 3) == 0;
+      return payloadTypeEquals(payload, "TLM");
     }
 
     return false;
   }
 
-  void forwardPayloadToHost(const char *payload)
+  void forwardPayloadToHost(const char *payload, uint32_t timestampSeconds)
   {
     if (payload == nullptr)
     {
       return;
     }
 
-    const char *firstNewline = strchr(payload, '\n');
-    if (firstNewline != nullptr)
-    {
-      const size_t timestampLength = static_cast<size_t>(firstNewline - payload);
-      if (timestampLength == 20)
-      {
-        char timestamp[21];
-        memcpy(timestamp, payload, timestampLength);
-        timestamp[timestampLength] = '\0';
-
-        const char *lineStart = firstNewline + 1;
-        while (*lineStart != '\0')
-        {
-          const char *lineEnd = strchr(lineStart, '\n');
-          if (lineEnd == nullptr)
-          {
-            if (*lineStart != '\0')
-            {
-              Serial.print(timestamp);
-              Serial.print(',');
-              Serial.println(lineStart);
-            }
-            return;
-          }
-
-          if (lineEnd > lineStart)
-          {
-            Serial.print(timestamp);
-            Serial.print(',');
-            Serial.write(lineStart, static_cast<size_t>(lineEnd - lineStart));
-            Serial.println();
-          }
-
-          lineStart = lineEnd + 1;
-        }
-        return;
-      }
-    }
+    char timestamp[21];
+    formatPacketTimestamp(timestampSeconds, timestamp, sizeof(timestamp));
 
     const char *lineStart = payload;
     while (*lineStart != '\0')
@@ -690,12 +631,16 @@ namespace
       const char *lineEnd = strchr(lineStart, '\n');
       if (lineEnd == nullptr)
       {
+        Serial.print(timestamp);
+        Serial.print(',');
         Serial.println(lineStart);
         return;
       }
 
       if (lineEnd > lineStart)
       {
+        Serial.print(timestamp);
+        Serial.print(',');
         Serial.write(lineStart, static_cast<size_t>(lineEnd - lineStart));
         Serial.println();
       }
@@ -1093,14 +1038,14 @@ namespace
       return;
     }
 
-    maybeSyncClockFromSatellitePayload(decodedPacket.payload);
+    maybeSyncClockFromSatelliteTimestamp(decodedPacket.timestampSeconds);
     if (shouldSuppressDuplicatePayload(decodedPacket.payload))
     {
       return;
     }
 
     rxPacketCount++;
-    forwardPayloadToHost(decodedPacket.payload);
+    forwardPayloadToHost(decodedPacket.payload, decodedPacket.timestampSeconds);
     rememberForwardedPayload(decodedPacket.payload);
     noteLedActivity();
     if (payloadMatchesPendingResponse(decodedPacket.payload))

@@ -69,7 +69,7 @@ There is no separate host-side transport protocol beyond the existing MySat mess
 The current RF envelope is:
 
 ```text
-[version][source][destination][payload_length][payload...][crc16_hi][crc16_lo]
+[version][source][destination][payload_length][timestamp_seconds_be32][payload...][crc16_hi][crc16_lo]
 ```
 
 Field definitions:
@@ -78,29 +78,31 @@ Field definitions:
 - `source`: one-byte sender id
 - `destination`: one-byte receiver id
 - `payload_length`: one-byte payload length in bytes
-- `payload`: exactly one logical MySat protocol message
+- `timestamp_seconds_be32`: packet timestamp as a 4-byte big-endian Unix timestamp
+- `payload`: one logical MySat protocol message, or a newline-delimited batch of telemetry lines
 - `crc16`: `CRC-16/CCITT-FALSE`
 
 Current fixed values:
 
-- envelope version: `0x01`
+- envelope version: `0x02`
 - satellite device id: `0x01`
 - ground-station device id: `0x02`
 - broadcast id: `0xFF`
 
-The envelope overhead is `6` bytes plus payload.
+The envelope overhead is `10` bytes plus payload.
 
 ## Message Granularity
 
-One logical protocol message maps to one RF packet.
+Commands still map one logical protocol message to one RF packet. Satellite telemetry is now allowed to batch multiple lines into one RF packet.
 
 Examples:
 
 - one `GET` command line becomes one RF packet
 - one `ACK` line becomes one RF packet
-- one `TLM` line becomes one RF packet
+- one `ERR` line becomes one RF packet
+- one routine telemetry batch for a target can contain several newline-delimited `TLM,...` lines in one RF packet
 
-This keeps link handling simple and preserves per-field freshness in the dashboard.
+Ground-station forwarding expands packet-level timestamps and telemetry batches back into normal host-visible `TIME,TLM,...` lines, so the host protocol shape remains unchanged.
 
 ## Receive Rules
 
@@ -116,7 +118,8 @@ This keeps link handling simple and preserves per-field freshness in the dashboa
 - accepts only packets addressed to the ground-station id
 - validates envelope version and CRC
 - drops invalid, misaddressed, or oversized packets
-- forwards valid payload text to the host unchanged
+- uses the packet timestamp to reconstruct host-visible timestamps on forwarded lines
+- splits valid newline-delimited telemetry batches back into normal host-visible protocol lines
 
 ## Command and Response Flow
 
@@ -126,7 +129,7 @@ For satellite-bound traffic:
 2. ground station wraps the command in the RF envelope and transmits it
 3. satellite receives, validates, decodes, and executes the command
 4. satellite emits `ACK`, `ERR`, or `TLM` payload lines over LoRa
-5. ground station unwraps the RF packet and forwards the payload to the host
+5. ground station unwraps the RF packet, reconstructs host-visible timestamps from the packet header, and forwards the logical lines to the host
 
 For ground-station-local traffic:
 
@@ -193,9 +196,9 @@ Ground station:
 - LoRa frequency: `868000000 Hz`
 - LoRa TX power: `17 dBm`
 - spreading factor: `7`
-- bandwidth: `125 kHz`
+- bandwidth: `250 kHz`
 - coding rate denominator: `5`
-- preamble length: `8`
+- preamble length: `6`
 - sync word: `0x12`
 
 Satellite:
@@ -204,9 +207,9 @@ Satellite:
 - LoRa frequency: `868000000 Hz`
 - LoRa TX power: `17 dBm`
 - spreading factor: `7`
-- bandwidth: `125 kHz`
+- bandwidth: `250 kHz`
 - coding rate denominator: `5`
-- preamble length: `8`
+- preamble length: `6`
 - sync word: `0x12`
 
 These are current bench values, not guaranteed final values.

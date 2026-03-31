@@ -10,22 +10,22 @@
 
 namespace
 {
+  constexpr unsigned long kFallbackEpochSeconds = 946684800UL; // 2000-01-01T00:00:00Z
+
   const char *errorContext = nullptr;
   bool telemetryBatchActive = false;
   char telemetryBatchBuffer[RfEnvelope::maxPayloadLength + 1]{};
-  char telemetryBatchTimestamp[21]{};
   size_t telemetryBatchLength = 0;
 
-  void printTimestampIso()
+  unsigned long currentPacketTimestampSeconds()
   {
-    char timestamp[21];
-    if (!getCurrentTimestampIso(timestamp, sizeof(timestamp)))
+    unsigned long epochSeconds = 0;
+    if (!getCurrentTimeUnix(epochSeconds))
     {
-      transportWrite("2000-01-01T00:00:00Z");
-      return;
+      return kFallbackEpochSeconds;
     }
 
-    transportWrite(timestamp);
+    return epochSeconds;
   }
 
   bool isUnreservedContextChar(char c)
@@ -76,26 +76,6 @@ namespace
     telemetryBatchBuffer[0] = '\0';
   }
 
-  bool initializeTelemetryBatchWithTimestamp()
-  {
-    const size_t timestampLength = strlen(telemetryBatchTimestamp);
-    if (timestampLength != 20)
-    {
-      return false;
-    }
-
-    if ((timestampLength + 1) > RfEnvelope::maxPayloadLength)
-    {
-      return false;
-    }
-
-    memcpy(telemetryBatchBuffer, telemetryBatchTimestamp, timestampLength);
-    telemetryBatchLength = timestampLength;
-    telemetryBatchBuffer[telemetryBatchLength++] = '\n';
-    telemetryBatchBuffer[telemetryBatchLength] = '\0';
-    return true;
-  }
-
   void flushTelemetryBatch()
   {
     if (telemetryBatchLength == 0)
@@ -104,17 +84,9 @@ namespace
     }
 
     transportWrite(telemetryBatchBuffer);
+    transportSetPacketTimestamp(currentPacketTimestampSeconds());
     transportWriteLine();
     resetTelemetryBatch();
-  }
-
-  void writeTimestampIsoToBuffer(char *buffer, size_t bufferSize)
-  {
-    if (!getCurrentTimestampIso(buffer, bufferSize))
-    {
-      strncpy(buffer, "2000-01-01T00:00:00Z", bufferSize - 1);
-      buffer[bufferSize - 1] = '\0';
-    }
   }
 
   bool appendTelemetryLineToBatch(const char *line)
@@ -130,24 +102,15 @@ namespace
       return false;
     }
 
-    if (telemetryBatchLength == 0 && !initializeTelemetryBatchWithTimestamp())
-    {
-      return false;
-    }
-
-    const bool hasLinesAlready = telemetryBatchLength > 21;
+    const bool hasLinesAlready = telemetryBatchLength > 0;
     const size_t separatorLength = hasLinesAlready ? 1 : 0;
     const size_t requiredLength = telemetryBatchLength + separatorLength + lineLength;
     if (requiredLength > RfEnvelope::maxPayloadLength)
     {
       flushTelemetryBatch();
-      if (!initializeTelemetryBatchWithTimestamp())
-      {
-        return false;
-      }
     }
 
-    if (telemetryBatchLength > 21)
+    if (telemetryBatchLength > 0)
     {
       telemetryBatchBuffer[telemetryBatchLength++] = '\n';
     }
@@ -178,6 +141,7 @@ namespace
       return;
     }
 
+    transportSetPacketTimestamp(currentPacketTimestampSeconds());
     transportWrite(lineBuffer);
     transportWriteLine();
   }
@@ -196,7 +160,6 @@ void clearErrorContext()
 void beginTelemetryBatch()
 {
   telemetryBatchActive = true;
-  writeTimestampIsoToBuffer(telemetryBatchTimestamp, sizeof(telemetryBatchTimestamp));
   resetTelemetryBatch();
 }
 
@@ -209,8 +172,8 @@ void endTelemetryBatch()
 void sendAck(const char *target, const char *value)
 {
   flushTelemetryBatch();
-  printTimestampIso();
-  transportWrite(",ACK,");
+  transportSetPacketTimestamp(currentPacketTimestampSeconds());
+  transportWrite("ACK,");
   transportWrite(target);
   transportWrite(",");
   transportWrite(value);
@@ -220,8 +183,8 @@ void sendAck(const char *target, const char *value)
 void sendError(const char *errorCode)
 {
   flushTelemetryBatch();
-  printTimestampIso();
-  transportWrite(",ERR,");
+  transportSetPacketTimestamp(currentPacketTimestampSeconds());
+  transportWrite("ERR,");
   transportWrite(errorCode);
 
   if (errorContext != nullptr && *errorContext != '\0')

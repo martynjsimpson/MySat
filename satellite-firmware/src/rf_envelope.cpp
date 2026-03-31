@@ -6,10 +6,26 @@ namespace RfEnvelope
 {
   namespace
   {
+    uint32_t readBigEndianU32(const uint8_t *data)
+    {
+      return (static_cast<uint32_t>(data[0]) << 24) |
+             (static_cast<uint32_t>(data[1]) << 16) |
+             (static_cast<uint32_t>(data[2]) << 8) |
+             static_cast<uint32_t>(data[3]);
+    }
+
     uint16_t readBigEndianU16(const uint8_t *data)
     {
       return static_cast<uint16_t>((static_cast<uint16_t>(data[0]) << 8) |
                                    static_cast<uint16_t>(data[1]));
+    }
+
+    void writeBigEndianU32(uint32_t value, uint8_t *data)
+    {
+      data[0] = static_cast<uint8_t>((value >> 24) & 0xFF);
+      data[1] = static_cast<uint8_t>((value >> 16) & 0xFF);
+      data[2] = static_cast<uint8_t>((value >> 8) & 0xFF);
+      data[3] = static_cast<uint8_t>(value & 0xFF);
     }
 
     void writeBigEndianU16(uint16_t value, uint8_t *data)
@@ -50,6 +66,7 @@ namespace RfEnvelope
 
   bool encodePacket(uint8_t source,
                     uint8_t destination,
+                    uint32_t timestampSeconds,
                     const char *payload,
                     uint8_t *outPacket,
                     size_t outPacketCapacity,
@@ -79,6 +96,7 @@ namespace RfEnvelope
     outPacket[1] = source;
     outPacket[2] = destination;
     outPacket[3] = static_cast<uint8_t>(payloadLength);
+    writeBigEndianU32(timestampSeconds, &outPacket[4]);
 
     memcpy(&outPacket[headerSize], payload, payloadLength);
 
@@ -138,6 +156,7 @@ namespace RfEnvelope
 
     outPacket.source = packet[1];
     outPacket.destination = destination;
+    outPacket.timestampSeconds = readBigEndianU32(&packet[4]);
     outPacket.payloadLength = payloadLength;
     memcpy(outPacket.payload, &packet[headerSize], payloadLength);
     outPacket.payload[payloadLength] = '\0';

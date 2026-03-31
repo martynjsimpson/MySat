@@ -30,7 +30,7 @@ These items are intentionally out of the current baseline scope.
 - Add shared-key command authentication after the baseline RF transport is stable.
 - Add explicit sequence and retry metadata after the baseline RF transport is stable.
 - Revisit duplicate suppression once sequence metadata exists.
-- Consider bundled multi-field telemetry only if real airtime testing shows one-message-per-packet is too expensive.
+- Revisit whether batched telemetry should remain payload-based or move to a richer future envelope if more packet metadata is needed.
 - If payloads ever grow beyond `255` bytes, introduce a later RF envelope version with a larger payload-length field.
 
 ## Possible Next RF Improvements
@@ -50,7 +50,7 @@ The completed phase-one transition path was:
 2. move the ground-station baseline from `Arduino Mega 2560` to `MKR WAN 1310`
 3. preserve the host-side logical protocol at the USB boundary
 4. introduce the RF envelope and LoRa transport
-5. keep one logical protocol message per RF packet
+5. later relax one-message-per-packet for routine telemetry batching, while keeping commands one-per-packet
 6. put retry ownership on the ground station
 7. add busy-aware routine telemetry deferral on the satellite
 

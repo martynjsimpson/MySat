@@ -24,6 +24,7 @@ namespace
 
   char outboundBuffer[kOutboundBufferSize];
   size_t outboundLength = 0;
+  uint32_t outboundPacketTimestampSeconds = 0;
 
   void noteRadioActivity()
   {
@@ -126,6 +127,7 @@ namespace
   {
     outboundLength = 0;
     outboundBuffer[0] = '\0';
+    outboundPacketTimestampSeconds = 0;
   }
 }
 
@@ -213,6 +215,11 @@ void transportWrite(float value, int decimals)
   transportWrite(trimmed);
 }
 
+void transportSetPacketTimestamp(uint32_t timestampSeconds)
+{
+  outboundPacketTimestampSeconds = timestampSeconds;
+}
+
 void transportWriteLine()
 {
   if (!radioReady || outboundLength == 0)
@@ -225,6 +232,7 @@ void transportWriteLine()
   size_t packetLength = 0;
   if (!RfEnvelope::encodePacket(RfEnvelope::satelliteDeviceId,
                                 RfEnvelope::groundStationDeviceId,
+                                outboundPacketTimestampSeconds,
                                 outboundBuffer,
                                 packetBuffer,
                                 sizeof(packetBuffer),
