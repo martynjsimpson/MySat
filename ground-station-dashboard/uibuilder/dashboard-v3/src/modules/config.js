@@ -1,5 +1,23 @@
 export const systemConfigs = [
   {
+    target: 'GROUND',
+    title: 'GND',
+    fields: [
+      ['HEARTBEAT_N', 'HB'],
+      ['TELEMETRY', 'TLM'],
+      ['RADIO', 'RAD'],
+      ['PENDING', 'PND'],
+      ['SOURCE', 'SRC'],
+      ['CURRENT_TIME', 'TIME'],
+      ['CLOCK_SYNC', 'CLK'],
+      ['TX_PACKETS_N', 'TX'],
+      ['RX_PACKETS_N', 'RX'],
+      ['DROP_PACKETS_N', 'DRP'],
+      ['LAST_RETRY_N', 'RTY'],
+    ],
+    getOptions: ['HEARTBEAT_N', 'CURRENT_TIME', 'SOURCE', 'RADIO', 'PENDING', 'CLOCK_SYNC', 'TELEMETRY', 'TX_PACKETS_N', 'RX_PACKETS_N', 'DROP_PACKETS_N', 'LAST_RETRY_N'],
+  },
+  {
     target: 'RTC',
     title: 'RTC',
     fields: [

@@ -1,5 +1,8 @@
 #include <Arduino.h>
 #include <LoRa.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "config.h"
@@ -9,6 +12,7 @@ namespace
 {
   constexpr size_t kLineBufferSize = RfEnvelope::maxPayloadLength + 1;
   constexpr size_t kPacketBufferSize = RfEnvelope::maxPacketLength;
+  constexpr uint32_t kUnsyncedEpochSeconds = 946684800UL; // 2000-01-01T00:00:00Z
 
   enum PendingResponseKind
   {
@@ -26,6 +30,14 @@ namespace
     PendingResponseKind expectedResponse = RESPONSE_NONE;
   };
 
+  struct CommandView
+  {
+    const char *type = nullptr;
+    const char *target = nullptr;
+    const char *parameter = nullptr;
+    const char *value = nullptr;
+  };
+
   char hostInputBuffer[kLineBufferSize];
   size_t hostInputLength = 0;
   unsigned long lastHostHeartbeatMs = 0;
@@ -34,9 +46,16 @@ namespace
   unsigned long txPacketCount = 0;
   unsigned long rxPacketCount = 0;
   unsigned long dropPacketCount = 0;
+  unsigned long lastRetryAttempt = 0;
+  unsigned long groundHeartbeatCount = 0;
 
   PendingCommandState pendingCommand;
   bool radioReady = false;
+
+  uint32_t clockBaseEpochSeconds = kUnsyncedEpochSeconds;
+  unsigned long clockBaseMillis = 0;
+  bool clockSynced = false;
+  bool groundTelemetryEnabled = Config::Telemetry::defaultEnabled;
 
   void applyLedOutput()
   {
@@ -64,6 +83,332 @@ namespace
 
     ledPulseActive = false;
     applyLedOutput();
+  }
+
+  bool isLeapYear(int year)
+  {
+    return ((year % 4) == 0 && (year % 100) != 0) || ((year % 400) == 0);
+  }
+
+  uint32_t daysFromCivil(int year, unsigned month, unsigned day)
+  {
+    year -= month <= 2;
+    const int era = (year >= 0 ? year : year - 399) / 400;
+    const unsigned yoe = static_cast<unsigned>(year - era * 400);
+    const unsigned doy = (153 * (month + (month > 2 ? -3 : 9)) + 2) / 5 + day - 1;
+    const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    return static_cast<uint32_t>(era * 146097 + static_cast<int>(doe) - 719468);
+  }
+
+  void civilFromDays(int64_t z, int &year, unsigned &month, unsigned &day)
+  {
+    z += 719468;
+    const int era = (z >= 0 ? z : z - 146096) / 146097;
+    const unsigned doe = static_cast<unsigned>(z - era * 146097);
+    const unsigned yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    year = static_cast<int>(yoe) + era * 400;
+    const unsigned doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    const unsigned mp = (5 * doy + 2) / 153;
+    day = doy - (153 * mp + 2) / 5 + 1;
+    month = mp + (mp < 10 ? 3 : -9);
+    year += (month <= 2);
+  }
+
+  bool parseTwoDigits(const char *text, int &value)
+  {
+    if (text[0] < '0' || text[0] > '9' || text[1] < '0' || text[1] > '9')
+    {
+      return false;
+    }
+
+    value = (text[0] - '0') * 10 + (text[1] - '0');
+    return true;
+  }
+
+  bool parseFourDigits(const char *text, int &value)
+  {
+    value = 0;
+    for (size_t index = 0; index < 4; ++index)
+    {
+      if (text[index] < '0' || text[index] > '9')
+      {
+        return false;
+      }
+
+      value = (value * 10) + (text[index] - '0');
+    }
+
+    return true;
+  }
+
+  bool parseIsoTimestamp(const char *timestamp, uint32_t &outEpochSeconds)
+  {
+    if (timestamp == nullptr || strlen(timestamp) != 20)
+    {
+      return false;
+    }
+
+    if (timestamp[4] != '-' ||
+        timestamp[7] != '-' ||
+        timestamp[10] != 'T' ||
+        timestamp[13] != ':' ||
+        timestamp[16] != ':' ||
+        timestamp[19] != 'Z')
+    {
+      return false;
+    }
+
+    int year = 0;
+    int month = 0;
+    int day = 0;
+    int hour = 0;
+    int minute = 0;
+    int second = 0;
+
+    if (!parseFourDigits(timestamp, year) ||
+        !parseTwoDigits(timestamp + 5, month) ||
+        !parseTwoDigits(timestamp + 8, day) ||
+        !parseTwoDigits(timestamp + 11, hour) ||
+        !parseTwoDigits(timestamp + 14, minute) ||
+        !parseTwoDigits(timestamp + 17, second))
+    {
+      return false;
+    }
+
+    if (month < 1 || month > 12 || day < 1 || hour > 23 || minute > 59 || second > 59)
+    {
+      return false;
+    }
+
+    static const uint8_t daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int maxDay = daysInMonth[month - 1];
+    if (month == 2 && isLeapYear(year))
+    {
+      maxDay = 29;
+    }
+
+    if (day > maxDay)
+    {
+      return false;
+    }
+
+    const uint32_t days = daysFromCivil(year, static_cast<unsigned>(month), static_cast<unsigned>(day));
+    outEpochSeconds = (days * 86400UL) +
+                      (static_cast<uint32_t>(hour) * 3600UL) +
+                      (static_cast<uint32_t>(minute) * 60UL) +
+                      static_cast<uint32_t>(second);
+    return true;
+  }
+
+  void formatIsoTimestamp(uint32_t epochSeconds, char *buffer, size_t bufferSize)
+  {
+    if (buffer == nullptr || bufferSize < 21)
+    {
+      return;
+    }
+
+    const uint32_t days = epochSeconds / 86400UL;
+    uint32_t secondsOfDay = epochSeconds % 86400UL;
+
+    int year = 0;
+    unsigned month = 0;
+    unsigned day = 0;
+    civilFromDays(days, year, month, day);
+
+    const unsigned hour = secondsOfDay / 3600UL;
+    secondsOfDay %= 3600UL;
+    const unsigned minute = secondsOfDay / 60UL;
+    const unsigned second = secondsOfDay % 60UL;
+
+    buffer[0] = static_cast<char>('0' + ((year / 1000) % 10));
+    buffer[1] = static_cast<char>('0' + ((year / 100) % 10));
+    buffer[2] = static_cast<char>('0' + ((year / 10) % 10));
+    buffer[3] = static_cast<char>('0' + (year % 10));
+    buffer[4] = '-';
+    buffer[5] = static_cast<char>('0' + ((month / 10) % 10));
+    buffer[6] = static_cast<char>('0' + (month % 10));
+    buffer[7] = '-';
+    buffer[8] = static_cast<char>('0' + ((day / 10) % 10));
+    buffer[9] = static_cast<char>('0' + (day % 10));
+    buffer[10] = 'T';
+    buffer[11] = static_cast<char>('0' + ((hour / 10) % 10));
+    buffer[12] = static_cast<char>('0' + (hour % 10));
+    buffer[13] = ':';
+    buffer[14] = static_cast<char>('0' + ((minute / 10) % 10));
+    buffer[15] = static_cast<char>('0' + (minute % 10));
+    buffer[16] = ':';
+    buffer[17] = static_cast<char>('0' + ((second / 10) % 10));
+    buffer[18] = static_cast<char>('0' + (second % 10));
+    buffer[19] = 'Z';
+    buffer[20] = '\0';
+  }
+
+  uint32_t currentEpochSeconds()
+  {
+    return clockBaseEpochSeconds + ((millis() - clockBaseMillis) / 1000UL);
+  }
+
+  void writeCurrentTimestamp()
+  {
+    char timestamp[21];
+    formatIsoTimestamp(currentEpochSeconds(), timestamp, sizeof(timestamp));
+    Serial.print(timestamp);
+  }
+
+  bool isUnreservedContextChar(char c)
+  {
+    return (c >= 'A' && c <= 'Z') ||
+           (c >= 'a' && c <= 'z') ||
+           (c >= '0' && c <= '9') ||
+           c == '-' ||
+           c == '_' ||
+           c == '.' ||
+           c == '~';
+  }
+
+  void printHexDigit(uint8_t nibble)
+  {
+    if (nibble < 10)
+    {
+      Serial.print(static_cast<char>('0' + nibble));
+    }
+    else
+    {
+      Serial.print(static_cast<char>('A' + (nibble - 10)));
+    }
+  }
+
+  void printEscapedContext(const char *context)
+  {
+    for (const char *pointer = context; *pointer != '\0'; ++pointer)
+    {
+      const unsigned char ch = static_cast<unsigned char>(*pointer);
+      if (isUnreservedContextChar(static_cast<char>(ch)))
+      {
+        Serial.print(static_cast<char>(ch));
+      }
+      else
+      {
+        Serial.print('%');
+        printHexDigit((ch >> 4) & 0x0F);
+        printHexDigit(ch & 0x0F);
+      }
+    }
+  }
+
+  void sendGroundAck(const char *value)
+  {
+    writeCurrentTimestamp();
+    Serial.print(F(",ACK,GROUND,"));
+    Serial.println(value);
+  }
+
+  void sendGroundError(const char *errorCode, const char *context = nullptr)
+  {
+    writeCurrentTimestamp();
+    Serial.print(F(",ERR,"));
+    Serial.print(errorCode);
+    if (context != nullptr && *context != '\0')
+    {
+      Serial.print(F(","));
+      printEscapedContext(context);
+    }
+    Serial.println();
+  }
+
+  void sendGroundTelemetry(const char *parameter, const char *value)
+  {
+    writeCurrentTimestamp();
+    Serial.print(F(",TLM,GROUND,"));
+    Serial.print(parameter);
+    Serial.print(F(","));
+    Serial.println(value);
+  }
+
+  void sendGroundTelemetryFlash(const char *parameter, const __FlashStringHelper *value)
+  {
+    writeCurrentTimestamp();
+    Serial.print(F(",TLM,GROUND,"));
+    Serial.print(parameter);
+    Serial.print(F(","));
+    Serial.println(value);
+  }
+
+  void sendGroundTelemetryULong(const char *parameter, unsigned long value)
+  {
+    writeCurrentTimestamp();
+    Serial.print(F(",TLM,GROUND,"));
+    Serial.print(parameter);
+    Serial.print(F(","));
+    Serial.println(value);
+  }
+
+  void sendGroundStatusSnapshot()
+  {
+    char timestamp[21];
+    formatIsoTimestamp(currentEpochSeconds(), timestamp, sizeof(timestamp));
+
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,HEARTBEAT_N,"));
+    Serial.println(groundHeartbeatCount);
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,TELEMETRY,"));
+    Serial.println(groundTelemetryEnabled ? F("TRUE") : F("FALSE"));
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,SOURCE,"));
+    Serial.println(clockSynced ? F("LOCAL") : F("UNSYNC"));
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,RADIO,"));
+    Serial.println(radioReady ? F("READY") : F("FAILED"));
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,PENDING,"));
+    Serial.println(pendingCommand.active ? F("TRUE") : F("FALSE"));
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,CLOCK_SYNC,"));
+    Serial.println(clockSynced ? F("TRUE") : F("FALSE"));
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,TX_PACKETS_N,"));
+    Serial.println(txPacketCount);
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,RX_PACKETS_N,"));
+    Serial.println(rxPacketCount);
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,DROP_PACKETS_N,"));
+    Serial.println(dropPacketCount);
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,LAST_RETRY_N,"));
+    Serial.println(lastRetryAttempt);
+    Serial.print(timestamp);
+    Serial.print(F(",TLM,GROUND,CURRENT_TIME,"));
+    Serial.println(timestamp);
+  }
+
+  const __FlashStringHelper *decodeStatusLabel(RfEnvelope::DecodeStatus status)
+  {
+    switch (status)
+    {
+    case RfEnvelope::DECODE_PACKET_TOO_SHORT:
+      return F("PACKET_TOO_SHORT");
+    case RfEnvelope::DECODE_UNSUPPORTED_VERSION:
+      return F("UNSUPPORTED_VERSION");
+    case RfEnvelope::DECODE_LENGTH_MISMATCH:
+      return F("LENGTH_MISMATCH");
+    case RfEnvelope::DECODE_CRC_MISMATCH:
+      return F("CRC_MISMATCH");
+    case RfEnvelope::DECODE_NOT_FOR_DEVICE:
+      return F("NOT_FOR_DEVICE");
+    case RfEnvelope::DECODE_PAYLOAD_TOO_LARGE:
+      return F("PAYLOAD_TOO_LARGE");
+    case RfEnvelope::DECODE_OK:
+    default:
+      return F("OK");
+    }
+  }
+
+  void emitDropTelemetry(RfEnvelope::DecodeStatus status)
+  {
+    sendGroundTelemetryFlash("LAST_ERROR", decodeStatusLabel(status));
+    sendGroundTelemetryULong("DROP_PACKETS_N", dropPacketCount);
   }
 
   PendingResponseKind expectedResponseForCommand(const char *line)
@@ -192,79 +537,7 @@ namespace
     Serial.println(payload);
   }
 
-  const __FlashStringHelper *decodeStatusLabel(RfEnvelope::DecodeStatus status)
-  {
-    switch (status)
-    {
-    case RfEnvelope::DECODE_PACKET_TOO_SHORT:
-      return F("PACKET_TOO_SHORT");
-    case RfEnvelope::DECODE_UNSUPPORTED_VERSION:
-      return F("UNSUPPORTED_VERSION");
-    case RfEnvelope::DECODE_LENGTH_MISMATCH:
-      return F("LENGTH_MISMATCH");
-    case RfEnvelope::DECODE_CRC_MISMATCH:
-      return F("CRC_MISMATCH");
-    case RfEnvelope::DECODE_NOT_FOR_DEVICE:
-      return F("NOT_FOR_DEVICE");
-    case RfEnvelope::DECODE_PAYLOAD_TOO_LARGE:
-      return F("PAYLOAD_TOO_LARGE");
-    case RfEnvelope::DECODE_OK:
-    default:
-      return F("OK");
-    }
-  }
-
-  void emitDiagTx(const char *event, const char *detail = nullptr)
-  {
-    Serial.print(F("GROUND,DIAG,TX,"));
-    Serial.print(event);
-    if (detail != nullptr && *detail != '\0')
-    {
-      Serial.print(F(","));
-      Serial.print(detail);
-    }
-    Serial.print(F(",COUNT,"));
-    Serial.println(txPacketCount);
-  }
-
-  void emitDiagRx(const char *payload)
-  {
-    if (!Config::Serial::logRxPayloadDiagnostics)
-    {
-      return;
-    }
-
-    Serial.print(F("GROUND,DIAG,RX,PAYLOAD,"));
-    Serial.print(payload);
-    Serial.print(F(",COUNT,"));
-    Serial.println(rxPacketCount);
-  }
-
-  void emitDiagDrop(RfEnvelope::DecodeStatus status)
-  {
-    Serial.print(F("GROUND,DIAG,DROP,"));
-    Serial.print(decodeStatusLabel(status));
-    Serial.print(F(",COUNT,"));
-    Serial.println(dropPacketCount);
-  }
-
-  void emitDiagRetry()
-  {
-    Serial.print(F("GROUND,DIAG,RETRY,ATTEMPT,"));
-    Serial.print(static_cast<unsigned long>(pendingCommand.retryCount + 1));
-    Serial.print(F(",COMMAND,"));
-    Serial.println(pendingCommand.line);
-  }
-
-  void emitDiagTimeout()
-  {
-    Serial.print(F("GROUND,DIAG,TIMEOUT,COMMAND,"));
-    Serial.print(pendingCommand.line);
-    Serial.print(F(",RETRIES,"));
-    Serial.println(static_cast<unsigned long>(pendingCommand.retryCount));
-  }
-
-  void emitHostHeartbeat()
+  void emitGroundHeartbeat()
   {
     const unsigned long now = millis();
     if ((now - lastHostHeartbeatMs) < Config::Serial::heartbeatIntervalMs)
@@ -273,18 +546,261 @@ namespace
     }
 
     lastHostHeartbeatMs = now;
-    Serial.print(F("GROUND,HEARTBEAT_MS,"));
-    Serial.print(now);
-    Serial.print(F(",RADIO,"));
-    Serial.print(radioReady ? F("READY") : F("FAILED"));
-    Serial.print(F(",PENDING,"));
-    Serial.print(pendingCommand.active ? F("TRUE") : F("FALSE"));
-    Serial.print(F(",TX,"));
-    Serial.print(txPacketCount);
-    Serial.print(F(",RX,"));
-    Serial.print(rxPacketCount);
-    Serial.print(F(",DROP,"));
-    Serial.println(dropPacketCount);
+    groundHeartbeatCount++;
+    sendGroundTelemetryULong("HEARTBEAT_N", groundHeartbeatCount);
+    if (!groundTelemetryEnabled)
+    {
+      return;
+    }
+
+    sendGroundStatusSnapshot();
+  }
+
+  bool parseCommand(char *line, CommandView &outCommand)
+  {
+    if (line == nullptr)
+    {
+      return false;
+    }
+
+    char *firstComma = strchr(line, ',');
+    if (firstComma == nullptr)
+    {
+      return false;
+    }
+
+    char *secondComma = strchr(firstComma + 1, ',');
+    if (secondComma == nullptr)
+    {
+      return false;
+    }
+
+    char *thirdComma = strchr(secondComma + 1, ',');
+    if (thirdComma == nullptr)
+    {
+      return false;
+    }
+
+    *firstComma = '\0';
+    *secondComma = '\0';
+    *thirdComma = '\0';
+
+    outCommand.type = line;
+    outCommand.target = firstComma + 1;
+    outCommand.parameter = secondComma + 1;
+    outCommand.value = thirdComma + 1;
+    return true;
+  }
+
+  bool equalsToken(const char *value, const char *expected)
+  {
+    return value != nullptr && expected != nullptr && strcmp(value, expected) == 0;
+  }
+
+  bool isGroundTarget(const CommandView &command)
+  {
+    return equalsToken(command.target, "GROUND");
+  }
+
+  void handleGroundGet(const CommandView &command)
+  {
+    if (equalsToken(command.parameter, "NONE"))
+    {
+      sendGroundStatusSnapshot();
+      return;
+    }
+
+    if (equalsToken(command.parameter, "CURRENT_TIME"))
+    {
+      char timestamp[21];
+      formatIsoTimestamp(currentEpochSeconds(), timestamp, sizeof(timestamp));
+      sendGroundTelemetry("CURRENT_TIME", timestamp);
+      return;
+    }
+
+    if (equalsToken(command.parameter, "HEARTBEAT_N"))
+    {
+      sendGroundTelemetryULong("HEARTBEAT_N", groundHeartbeatCount);
+      return;
+    }
+
+    if (equalsToken(command.parameter, "SOURCE"))
+    {
+      sendGroundTelemetry("SOURCE", clockSynced ? "LOCAL" : "UNSYNC");
+      return;
+    }
+
+    if (equalsToken(command.parameter, "TELEMETRY"))
+    {
+      sendGroundTelemetry("TELEMETRY", groundTelemetryEnabled ? "TRUE" : "FALSE");
+      return;
+    }
+
+    if (equalsToken(command.parameter, "RADIO"))
+    {
+      sendGroundTelemetry("RADIO", radioReady ? "READY" : "FAILED");
+      return;
+    }
+
+    if (equalsToken(command.parameter, "PENDING"))
+    {
+      sendGroundTelemetry("PENDING", pendingCommand.active ? "TRUE" : "FALSE");
+      return;
+    }
+
+    if (equalsToken(command.parameter, "CLOCK_SYNC"))
+    {
+      sendGroundTelemetry("CLOCK_SYNC", clockSynced ? "TRUE" : "FALSE");
+      return;
+    }
+
+    if (equalsToken(command.parameter, "TX_PACKETS_N"))
+    {
+      sendGroundTelemetryULong("TX_PACKETS_N", txPacketCount);
+      return;
+    }
+
+    if (equalsToken(command.parameter, "RX_PACKETS_N"))
+    {
+      sendGroundTelemetryULong("RX_PACKETS_N", rxPacketCount);
+      return;
+    }
+
+    if (equalsToken(command.parameter, "DROP_PACKETS_N"))
+    {
+      sendGroundTelemetryULong("DROP_PACKETS_N", dropPacketCount);
+      return;
+    }
+
+    if (equalsToken(command.parameter, "LAST_RETRY_N"))
+    {
+      sendGroundTelemetryULong("LAST_RETRY_N", lastRetryAttempt);
+      return;
+    }
+
+    sendGroundError("BAD_PARAMETER", command.parameter);
+  }
+
+  void handleGroundSet(const CommandView &command)
+  {
+    if (equalsToken(command.parameter, "TELEMETRY"))
+    {
+      if (equalsToken(command.value, "ENABLE") || equalsToken(command.value, "TRUE"))
+      {
+        groundTelemetryEnabled = true;
+        sendGroundAck("TELEMETRY");
+        sendGroundTelemetry("TELEMETRY", "TRUE");
+        return;
+      }
+
+      if (equalsToken(command.value, "DISABLE") || equalsToken(command.value, "FALSE"))
+      {
+        groundTelemetryEnabled = false;
+        sendGroundAck("TELEMETRY");
+        sendGroundTelemetry("TELEMETRY", "FALSE");
+        return;
+      }
+
+      sendGroundError("BAD_VALUE", command.value);
+      return;
+    }
+
+    if (!equalsToken(command.parameter, "CURRENT_TIME"))
+    {
+      sendGroundError("BAD_PARAMETER", command.parameter);
+      return;
+    }
+
+    uint32_t epochSeconds = 0;
+    if (!parseIsoTimestamp(command.value, epochSeconds))
+    {
+      sendGroundError("BAD_VALUE", command.value);
+      return;
+    }
+
+    clockBaseEpochSeconds = epochSeconds;
+    clockBaseMillis = millis();
+    clockSynced = true;
+    sendGroundAck("CLOCK_SET");
+    char timestamp[21];
+    formatIsoTimestamp(currentEpochSeconds(), timestamp, sizeof(timestamp));
+    sendGroundTelemetry("CURRENT_TIME", timestamp);
+    sendGroundTelemetry("SOURCE", "LOCAL");
+    sendGroundTelemetry("CLOCK_SYNC", "TRUE");
+  }
+
+  void handleGroundPing(const CommandView &command)
+  {
+    if (!equalsToken(command.parameter, "NONE") || !equalsToken(command.value, "NONE"))
+    {
+      sendGroundError("BAD_FORMAT", "PING");
+      return;
+    }
+
+    sendGroundAck("PONG");
+  }
+
+  void handleGroundReset(const CommandView &command)
+  {
+    if (!equalsToken(command.parameter, "NONE") || !equalsToken(command.value, "NONE"))
+    {
+      sendGroundError("BAD_FORMAT", "RESET");
+      return;
+    }
+
+    sendGroundAck("REBOOT");
+    delay(Config::Protocol::resetAckDelayMs);
+    NVIC_SystemReset();
+  }
+
+  bool handleGroundCommand(const char *line)
+  {
+    if (line == nullptr)
+    {
+      return false;
+    }
+
+    char localBuffer[kLineBufferSize];
+    strncpy(localBuffer, line, sizeof(localBuffer) - 1);
+    localBuffer[sizeof(localBuffer) - 1] = '\0';
+
+    CommandView command{};
+    if (!parseCommand(localBuffer, command))
+    {
+      return false;
+    }
+
+    if (!isGroundTarget(command))
+    {
+      return false;
+    }
+
+    if (equalsToken(command.type, "GET"))
+    {
+      handleGroundGet(command);
+      return true;
+    }
+
+    if (equalsToken(command.type, "SET"))
+    {
+      handleGroundSet(command);
+      return true;
+    }
+
+    if (equalsToken(command.type, "PING"))
+    {
+      handleGroundPing(command);
+      return true;
+    }
+
+    if (equalsToken(command.type, "RESET"))
+    {
+      handleGroundReset(command);
+      return true;
+    }
+
+    sendGroundError("UNKNOWN_CMD", command.type);
+    return true;
   }
 
   void handleHostSerial()
@@ -303,14 +819,16 @@ namespace
         hostInputBuffer[hostInputLength] = '\0';
         if (hostInputLength > 0)
         {
-          if (sendPayloadToSatellite(hostInputBuffer))
+          if (!handleGroundCommand(hostInputBuffer))
           {
-            startPendingCommand(hostInputBuffer);
-            emitDiagTx("COMMAND", hostInputBuffer);
-          }
-          else
-          {
-            emitDiagTx("SEND_FAILED", hostInputBuffer);
+            if (sendPayloadToSatellite(hostInputBuffer))
+            {
+              startPendingCommand(hostInputBuffer);
+            }
+            else
+            {
+              sendGroundError("LINK_DOWN", hostInputBuffer);
+            }
           }
         }
         hostInputLength = 0;
@@ -342,6 +860,8 @@ namespace
       {
         LoRa.read();
       }
+      dropPacketCount++;
+      emitDropTelemetry(RfEnvelope::DECODE_PAYLOAD_TOO_LARGE);
       return;
     }
 
@@ -367,14 +887,13 @@ namespace
     if (decodeStatus != RfEnvelope::DECODE_OK)
     {
       dropPacketCount++;
-      emitDiagDrop(decodeStatus);
+      emitDropTelemetry(decodeStatus);
       return;
     }
 
     rxPacketCount++;
     forwardPayloadToHost(decodedPacket.payload);
     noteLedActivity();
-    emitDiagRx(decodedPacket.payload);
     if (payloadMatchesPendingResponse(decodedPacket.payload))
     {
       clearPendingCommand();
@@ -396,21 +915,22 @@ namespace
 
     if (pendingCommand.retryCount >= Config::Retry::maxCommandRetries)
     {
-      emitDiagTimeout();
+      sendGroundTelemetryULong("LAST_RETRY_N", lastRetryAttempt);
+      sendGroundError("TIMEOUT", pendingCommand.line);
       clearPendingCommand();
       return;
     }
 
-    emitDiagRetry();
     if (sendPayloadToSatellite(pendingCommand.line))
     {
       pendingCommand.lastSendMs = now;
       pendingCommand.retryCount++;
-      emitDiagTx("RETRY", pendingCommand.line);
+      lastRetryAttempt = pendingCommand.retryCount;
+      sendGroundTelemetryULong("LAST_RETRY_N", lastRetryAttempt);
     }
     else
     {
-      emitDiagTx("RETRY_SEND_FAILED", pendingCommand.line);
+      sendGroundError("RETRY_SEND_FAILED", pendingCommand.line);
     }
   }
 }
@@ -422,13 +942,16 @@ void setup()
   ledPulseStartMs = 0;
   applyLedOutput();
 
+  clockBaseEpochSeconds = kUnsyncedEpochSeconds;
+  clockBaseMillis = millis();
+  clockSynced = false;
+  groundTelemetryEnabled = Config::Telemetry::defaultEnabled;
+
   Serial.begin(Config::Serial::baudRate);
   while (!Serial)
   {
     // Wait for the USB serial port on boards that expose it.
   }
-
-  Serial.println(F("GROUND,STARTED,TRUE"));
 
   radioReady = (LoRa.begin(Config::Transport::loraFrequencyHz) == 1);
   if (radioReady)
@@ -441,12 +964,16 @@ void setup()
     LoRa.setSyncWord(Config::Transport::loraSyncWord);
     LoRa.enableCrc();
   }
+
+  sendGroundTelemetry("STARTED", "TRUE");
+  sendGroundStatusSnapshot();
+  lastHostHeartbeatMs = millis();
 }
 
 void loop()
 {
   updateLed();
-  emitHostHeartbeat();
+  emitGroundHeartbeat();
   handleHostSerial();
   if (radioReady)
   {

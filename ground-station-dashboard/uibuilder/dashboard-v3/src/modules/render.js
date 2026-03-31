@@ -232,13 +232,16 @@ function renderSystems(state, systemConfigs) {
       </div>
     `
 
-    const enableControls = system.target === 'RTC'
+    const enableControls = system.target === 'RTC' || system.target === 'GROUND'
       ? '<div class="control-gap"></div><div class="control-gap"></div>'
       : `<button class="mini-btn cmd-green" data-role="enable" data-target="${system.target}" data-value="TRUE">EN</button>
          <button class="mini-btn cmd-red" data-role="enable" data-target="${system.target}" data-value="FALSE">DIS</button>`
 
     let modeControls = '<div class="control-gap"></div><div class="control-gap"></div>'
-    if (system.target === 'RTC') {
+    if (system.target === 'GROUND') {
+      modeControls = `<button class="mini-btn cmd-blue" data-role="ground-now">NOW</button>
+        <button class="mini-btn cmd-red" data-role="ground-reset">RST</button>`
+    } else if (system.target === 'RTC') {
       modeControls = `<button class="mini-btn cmd-blue" data-role="rtc-now">NOW</button>
         <button class="mini-btn cmd-blue" data-command="SET,RTC,SYNC,GPS">GPS</button>`
     }
@@ -249,6 +252,9 @@ function renderSystems(state, systemConfigs) {
         <button class="mini-btn cmd-neutral" data-role="telemetry-interval">INT</button>`
     }
 
+    const telemetryControls = `<button class="mini-btn cmd-green-soft" data-role="telemetry" data-target="${system.target}" data-value="ENABLE">T+</button>
+         <button class="mini-btn cmd-red-soft" data-role="telemetry" data-target="${system.target}" data-value="DISABLE">T-</button>`
+
     return `
       <div class="systems-row">
         <div class="col-system system-name">${system.title}</div>
@@ -257,8 +263,7 @@ function renderSystems(state, systemConfigs) {
           <div class="controls-grid">
             <button class="mini-btn cmd-purple" data-command="GET,${system.target},NONE,NONE">POL</button>
             ${enableControls}
-            <button class="mini-btn cmd-green-soft" data-role="telemetry" data-target="${system.target}" data-value="ENABLE">T+</button>
-            <button class="mini-btn cmd-red-soft" data-role="telemetry" data-target="${system.target}" data-value="DISABLE">T-</button>
+            ${telemetryControls}
             ${modeControls}
             ${auxControls}
             ${getSelect}

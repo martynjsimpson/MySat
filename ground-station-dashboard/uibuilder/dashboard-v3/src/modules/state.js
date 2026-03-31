@@ -12,6 +12,7 @@ export function createState() {
     },
     telemetryInterval: '5',
     getSelections: {
+      GROUND: 'HEARTBEAT_N',
       TELEMETRY: 'TELEMETRY',
       RTC: 'CURRENT_TIME',
       BATTERY: 'STATE',

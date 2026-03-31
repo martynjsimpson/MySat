@@ -22,6 +22,7 @@ Each implemented target has its own reference page with the same structure:
 
 Implemented target pages:
 
+- [GROUND](./targets/GROUND.md)
 - [TELEMETRY target](./targets/TELEMETRY_TARGET.md)
 - [BATTERY](./targets/BATTERY.md)
 - [GPS](./targets/GPS.md)

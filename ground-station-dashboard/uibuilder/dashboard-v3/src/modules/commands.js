@@ -89,6 +89,17 @@ export function bindEvents(state) {
       return
     }
 
+    if (button.dataset.role === 'ground-now') {
+      const iso = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
+      sendCommand(`SET,GROUND,CURRENT_TIME,${iso}`)
+      return
+    }
+
+    if (button.dataset.role === 'ground-reset') {
+      sendCommand('RESET,GROUND,NONE,NONE')
+      return
+    }
+
     if (button.dataset.role === 'rtc-now') {
       const iso = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
       sendCommand(`SET,RTC,CURRENT_TIME,${iso}`)

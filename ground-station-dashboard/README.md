@@ -2,10 +2,7 @@
 
 Node-RED based operator dashboard for MySat.
 
-This directory now contains two dashboard approaches:
-
-- the legacy FlowFuse Dashboard-based console in [flows/main.json](./flows/main.json)
-- the current `uibuilder`-based bespoke frontend for dashboard v3 in [uibuilder/dashboard-v3/src](./uibuilder/dashboard-v3/src)
+This directory now uses a single `uibuilder`-based bespoke frontend for dashboard v3 in [uibuilder/dashboard-v3/src](./uibuilder/dashboard-v3/src).
 
 The local Node-RED settings file points the runtime at [flows/main.json](./flows/main.json) directly.
 
@@ -14,7 +11,6 @@ The local Node-RED settings file points the runtime at [flows/main.json](./flows
 - Node.js and npm
 - Node-RED runtime
 - `node-red-node-serialport`
-- `@flowfuse/node-red-dashboard`
 - `node-red-contrib-uibuilder`
 
 ## Project layout
@@ -44,12 +40,9 @@ That split is now:
 
 ## Current flow structure
 
-The flow currently fans the flattened telemetry state to both frontends:
+The flow fans the flattened telemetry state to the `uibuilder` node at `/dashboard-v3`.
 
-- the legacy FlowFuse dashboard console
-- the `uibuilder` node at `/dashboard-v3`
-
-The `uibuilder` node also routes browser-originated commands back to the existing serial transmit path, so dashboard v3 uses the same backend command pipeline as the legacy dashboard.
+The `uibuilder` node also routes browser-originated commands back to the existing serial transmit path, so dashboard v3 uses the same backend command pipeline as the host serial console.
 
 There is also a `V3 Sync State` function that re-sends the latest stored telemetry snapshot to dashboard v3 when the uibuilder client emits control events such as a fresh connection.
 
@@ -109,6 +102,7 @@ The v3 interaction model is:
   - `TLM`
   - target-specific fields afterwards
 - the current systems row order is:
+  - `GND`
   - `RTC`
   - `TLM`
   - `BAT`
@@ -139,5 +133,4 @@ Implementation notes:
 
 ## Notes
 
-- The legacy FlowFuse dashboard remains in the flow as a fallback while dashboard v3 continues to evolve.
-- The previous README sections describing the old large flattened field model and widget-by-widget dashboard composition are no longer current after the move toward the v3 uibuilder architecture.
+- The dashboard now includes a host-local `GROUND` system row for bridge state, counters, and ground-station control actions such as local clock sync and reboot.

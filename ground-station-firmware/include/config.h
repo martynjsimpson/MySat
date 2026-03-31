@@ -29,6 +29,16 @@ namespace Config
     constexpr uint8_t maxCommandRetries = 3;
   }
 
+  namespace Protocol
+  {
+    constexpr unsigned long resetAckDelayMs = 50;
+  }
+
+  namespace Telemetry
+  {
+    constexpr bool defaultEnabled = true;
+  }
+
   namespace Led
   {
     constexpr unsigned long activityPulseMs = 120;

@@ -4,8 +4,11 @@
 
 This document defines the generic wire protocol used between the firmware and the ground station.
 
+At the host-facing USB boundary, the ground-station firmware may also emit its own protocol-shaped `ACK`, `ERR`, and `TLM` messages for the host-local `GROUND` target while still forwarding satellite traffic unchanged.
+
 Target-specific command and telemetry details are documented separately:
 
+- [GROUND](./targets/GROUND.md)
 - [TELEMETRY target](./targets/TELEMETRY_TARGET.md)
 - [BATTERY](./targets/BATTERY.md)
 - [GPS](./targets/GPS.md)
@@ -101,6 +104,7 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 
 | Target | Purpose | Reference |
 |---|---|---|
+| `GROUND` | Host-visible ground-station status, counters, clock sync, and reset control | [GROUND.md](./targets/GROUND.md) |
 | `TELEMETRY` | Global and per-target telemetry control | [TELEMETRY_TARGET.md](./targets/TELEMETRY_TARGET.md) |
 | `BATTERY` | PMIC-backed battery reporting and charge control | [BATTERY.md](./targets/BATTERY.md) |
 | `GPS` | GPS control and position reporting | [GPS.md](./targets/GPS.md) |

@@ -104,7 +104,12 @@ The host-facing interface should remain unchanged in phase one:
 
 - the host PC continues to talk serial to the ground station
 - the host continues to see the existing logical protocol messages
-- the bridge should remain transparent rather than introducing a second protocol at the host boundary
+- the bridge should avoid introducing a separate transport protocol at the host boundary
+
+Current implementation note:
+
+- satellite traffic still passes through in the existing logical message format
+- the ground station may also emit host-local protocol-shaped `GROUND` target messages for bridge status, counters, clock sync, and reset control
 
 ## Phase-One RF Envelope
 
