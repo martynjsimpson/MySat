@@ -29,6 +29,11 @@ namespace Config
     constexpr uint8_t maxCommandRetries = 3;
   }
 
+  namespace Receive
+  {
+    constexpr unsigned long duplicateSuppressWindowMs = 250;
+  }
+
   namespace Protocol
   {
     constexpr unsigned long resetAckDelayMs = 50;

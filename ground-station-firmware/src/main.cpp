@@ -48,6 +48,8 @@ namespace
   unsigned long dropPacketCount = 0;
   unsigned long lastRetryAttempt = 0;
   unsigned long groundHeartbeatCount = 0;
+  unsigned long lastForwardedPayloadMs = 0;
+  char lastForwardedPayload[kLineBufferSize]{};
 
   PendingCommandState pendingCommand;
   bool radioReady = false;
@@ -537,6 +539,40 @@ namespace
     Serial.println(payload);
   }
 
+  bool shouldSuppressDuplicatePayload(const char *payload)
+  {
+    if (payload == nullptr || *payload == '\0')
+    {
+      return false;
+    }
+
+    if (lastForwardedPayload[0] == '\0')
+    {
+      return false;
+    }
+
+    if (strcmp(payload, lastForwardedPayload) != 0)
+    {
+      return false;
+    }
+
+    return (millis() - lastForwardedPayloadMs) <= Config::Receive::duplicateSuppressWindowMs;
+  }
+
+  void rememberForwardedPayload(const char *payload)
+  {
+    if (payload == nullptr || *payload == '\0')
+    {
+      lastForwardedPayload[0] = '\0';
+      lastForwardedPayloadMs = 0;
+      return;
+    }
+
+    strncpy(lastForwardedPayload, payload, sizeof(lastForwardedPayload) - 1);
+    lastForwardedPayload[sizeof(lastForwardedPayload) - 1] = '\0';
+    lastForwardedPayloadMs = millis();
+  }
+
   void emitGroundHeartbeat()
   {
     const unsigned long now = millis();
@@ -891,8 +927,14 @@ namespace
       return;
     }
 
+    if (shouldSuppressDuplicatePayload(decodedPacket.payload))
+    {
+      return;
+    }
+
     rxPacketCount++;
     forwardPayloadToHost(decodedPacket.payload);
+    rememberForwardedPayload(decodedPacket.payload);
     noteLedActivity();
     if (payloadMatchesPendingResponse(decodedPacket.payload))
     {
@@ -946,6 +988,8 @@ void setup()
   clockBaseMillis = millis();
   clockSynced = false;
   groundTelemetryEnabled = Config::Telemetry::defaultEnabled;
+  lastForwardedPayload[0] = '\0';
+  lastForwardedPayloadMs = 0;
 
   Serial.begin(Config::Serial::baudRate);
   while (!Serial)
