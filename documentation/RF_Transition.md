@@ -1,5 +1,7 @@
 # RF Transition
 
+This document now mixes phase-one design intent with the current implemented RF behavior. A cleanup pass can later split the final baseline into `RF.md` and retire this transition-oriented name.
+
 ## Purpose
 
 This document records the planned transition from the current serial-first bench setup to an RF-backed architecture using two Arduino MKR WAN boards.
@@ -51,7 +53,7 @@ These are the parts of the current system we are deliberately trying to preserve
 
 - the current logical command model: `COMMAND,TARGET,PARAMETER,VALUE`
 - the response types (including any additional that exist at the time): `ACK`, `ERR`, `TLM`
-- the existing target model (including any additional that exist at the time): `LED`, `RTC`, `GPS`, `THERMAL`, `IMU`, `ADCS`, `BATTERY`, `TELEMETRY`, `STATUS`
+- the existing target model (including any additional that exist at the time): `RTC`, `GPS`, `THERMAL`, `IMU`, `ADCS`, `BATTERY`, `TELEMETRY`, `STATUS`
 - the host-side serial workflow and dashboard expectations
 
 The intent is for RF to feel like a link substitution rather than a full protocol rewrite.
@@ -69,6 +71,21 @@ Even if the logical protocol stays the same, the RF link introduces constraints 
 Because of that, the radio path needs explicit transport policy rather than assuming the link is effectively always available.
 
 ## Phase-One Architecture
+
+## Current Implementation Status
+
+The following phase-one RF work is now implemented:
+
+- both firmware targets build for `MKR WAN 1310`
+- the satellite transport is LoRa-backed rather than serial-backed
+- the ground station is a USB serial to LoRa bridge
+- both sides use the shared phase-one RF envelope:
+  `[version][source][destination][payload_length][payload][crc16]`
+- command retries are owned by the ground station
+- the host still sees newline-terminated logical protocol messages over USB serial
+- the legacy Node-RED dashboard path has been removed in favour of the `uibuilder` dashboard
+
+The main remaining work is behaviour hardening and documentation cleanup rather than first-pass RF bring-up.
 
 ### Ground Station Role
 
@@ -210,6 +227,14 @@ Expected behavior:
 5. the next interval proceeds normally
 
 This avoids stale telemetry backlog and protects command responsiveness.
+
+Current implementation detail:
+
+- the satellite now defers routine periodic telemetry when there is unread inbound RF data
+- the satellite also defers routine periodic telemetry for a short quiet window after recent RF activity
+- heartbeat-only mode still emits heartbeat on interval even when normal global telemetry is disabled
+
+The current quiet-window value is `250 ms` and should be treated as a tunable bench value rather than a final fixed constant.
 
 ### Heartbeat
 

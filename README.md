@@ -25,7 +25,7 @@ MySat currently consists of three cooperating parts:
    Firmware for an Arduino MKR WAN 1310 acting as the satellite-side embedded target.
 
 2. **Ground-station firmware**  
-   Firmware for an Arduino Mega 2560 acting as a hardware ground-station target.
+   Firmware for an Arduino MKR WAN 1310 acting as the hardware ground-station bridge.
 
 3. **Ground-station dashboard**  
    A Node-RED-based ground-station UI used to parse, display, and interact with telemetry and commands. The current bespoke dashboard frontend is built with `uibuilder`.
@@ -35,7 +35,7 @@ The system currently uses a structured serial protocol first, with the intention
 ## Repository layout
 
 - `satellite-firmware/` — firmware source, headers, and satellite-specific notes
-- `ground-station-firmware/` — firmware source for the Arduino Mega 2560 ground station
+- `ground-station-firmware/` — firmware source for the MKR WAN 1310 ground station bridge
 - `ground-station-dashboard/` — Node-RED flows, local runtime setup, and dashboard notes
 - `documentation/` — shared protocol, telemetry, architecture, and target-specific references
 - `platformio.ini` — root PlatformIO configuration for the satellite firmware
@@ -80,7 +80,7 @@ Project direction, design decisions, hardware work, and final review remain huma
 ## Documentation map
 
 - [satellite-firmware/README.md](./satellite-firmware/README.md) — MKR WAN 1310 firmware build, structure, and subsystem notes
-- [ground-station-firmware/platformio.ini](./ground-station-firmware/platformio.ini) — Arduino Mega 2560 PlatformIO project config
+- [ground-station-firmware/platformio.ini](./ground-station-firmware/platformio.ini) — MKR WAN 1310 ground-station bridge PlatformIO config
 - [ground-station-dashboard/README.md](./ground-station-dashboard/README.md) — Node-RED setup and runtime notes
 - [documentation/README.md](./documentation/README.md) — documentation index and target reference map
 - [documentation/Architecture.md](./documentation/Architecture.md) — repo-level system boundaries and interaction map

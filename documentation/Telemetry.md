@@ -6,7 +6,6 @@ This document defines generic outbound telemetry behavior.
 
 Target-specific telemetry fields are documented in:
 
-- [LED](./targets/LED.md)
 - [TELEMETRY target](./targets/TELEMETRY_TARGET.md)
 - [BATTERY](./targets/BATTERY.md)
 - [GPS](./targets/GPS.md)
@@ -50,6 +49,7 @@ When global telemetry is enabled:
 - `STATUS,HEARTBEAT_N` is emitted every interval
 - enabled targets are appended to the same snapshot
 - a target omitted from periodic telemetry can still be queried with `GET`
+- on the RF transport, routine periodic telemetry is skipped when the link is busy rather than queued for later replay
 
 When global telemetry is disabled with `SET,TELEMETRY,ENABLE,FALSE`:
 
@@ -68,7 +68,7 @@ These events are target-specific and described in their target pages.
 ## Target Inclusion Rules
 
 - `STATUS` heartbeat is not per-target disableable
-- `LED`, `TELEMETRY`, `BATTERY`, `GPS`, `RTC`, `THERMAL`, `IMU`, and `ADCS` can each be included or omitted from periodic snapshots independently
+- `TELEMETRY`, `BATTERY`, `GPS`, `RTC`, `THERMAL`, `IMU`, and `ADCS` can each be included or omitted from periodic snapshots independently
 - `GET,NONE,NONE,NONE` emits a one-time full snapshot across all implemented targets, including `STATUS,HEARTBEAT_N`
 - `GET,<target>,NONE,NONE` returns the full implemented telemetry set for that target
 - `GET,<target>,<parameter>,NONE` returns a single telemetry line for that field when supported
@@ -98,7 +98,6 @@ The current protocol uses a naming convention where the parameter name usually c
 2026-03-27T12:00:00Z,TLM,STATUS,HEARTBEAT_N,12
 2026-03-27T12:00:00Z,TLM,RTC,CURRENT_TIME,2026-03-27T12:00:00Z
 2026-03-27T12:00:00Z,TLM,RTC,SOURCE,GPS
-2026-03-27T12:00:00Z,TLM,LED,STATE,OFF
 2026-03-27T12:00:00Z,TLM,BATTERY,ENABLE,TRUE
 2026-03-27T12:00:00Z,TLM,BATTERY,STATE,FAST_CHARGE
 2026-03-27T12:00:00Z,TLM,BATTERY,HEALTH,OK

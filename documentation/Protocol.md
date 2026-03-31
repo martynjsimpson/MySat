@@ -6,7 +6,6 @@ This document defines the generic wire protocol used between the firmware and th
 
 Target-specific command and telemetry details are documented separately:
 
-- [LED](./targets/LED.md)
 - [TELEMETRY target](./targets/TELEMETRY_TARGET.md)
 - [BATTERY](./targets/BATTERY.md)
 - [GPS](./targets/GPS.md)
@@ -102,7 +101,6 @@ TIME,TLM,TARGET,PARAMETER,VALUE
 
 | Target | Purpose | Reference |
 |---|---|---|
-| `LED` | Built-in LED control and status | [LED.md](./targets/LED.md) |
 | `TELEMETRY` | Global and per-target telemetry control | [TELEMETRY_TARGET.md](./targets/TELEMETRY_TARGET.md) |
 | `BATTERY` | PMIC-backed battery reporting and charge control | [BATTERY.md](./targets/BATTERY.md) |
 | `GPS` | GPS control and position reporting | [GPS.md](./targets/GPS.md) |
@@ -130,8 +128,8 @@ These tokens are implemented in the parser today and are used by one or more tar
 
 | Kind | Tokens |
 |---|---|
-| Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `COLOR`, `SOURCE`, `AVAILABLE`, `HEALTH`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N`, `TEMPERATURE_C`, `HUMIDITY_P`, `X_MS2`, `Y_MS2`, `Z_MS2`, `GYRO_X_DPS`, `GYRO_Y_DPS`, `GYRO_Z_DPS`, `MAG_X_UT`, `MAG_Y_UT`, `MAG_Z_UT`, `HEADING_DEG`, `ROLL_DEG`, `PITCH_DEG`, `YAW_RATE_DPS` |
-| Values | `NONE`, `TRUE`, `FALSE`, `ENABLE`, `DISABLE`, `ON`, `OFF`, `RED`, `GREEN`, `BLUE`, `OK`, `FAIL`, `LOW_POWER` |
+| Parameters | `NONE`, `STATE`, `ENABLE`, `INTERVAL_S`, `TELEMETRY`, `CURRENT_TIME`, `HEARTBEAT_N`, `SYNC`, `SOURCE`, `AVAILABLE`, `HEALTH`, `CHARGE_CURRENT_A`, `CHARGE_VOLTAGE_V`, `LATITUDE_D`, `LONGITUDE_D`, `ALTITUDE_M`, `SPEED_KPH`, `SATELLITES_N`, `TEMPERATURE_C`, `HUMIDITY_P`, `X_MS2`, `Y_MS2`, `Z_MS2`, `GYRO_X_DPS`, `GYRO_Y_DPS`, `GYRO_Z_DPS`, `MAG_X_UT`, `MAG_Y_UT`, `MAG_Z_UT`, `HEADING_DEG`, `ROLL_DEG`, `PITCH_DEG`, `YAW_RATE_DPS` |
+| Values | `NONE`, `TRUE`, `FALSE`, `ENABLE`, `DISABLE`, `ON`, `OFF`, `OK`, `FAIL`, `LOW_POWER` |
 
 ## Reserved Generic Tokens
 

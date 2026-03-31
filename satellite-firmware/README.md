@@ -31,7 +31,7 @@ platformio device monitor --environment mkrwan1310
 - `include/commands.h` - protocol enums and parsed `Command` model
 - `include/config.h` - central defaults and tunable parameters
 - `include/gps.h` - GPS subsystem interface
-- `include/led.h` - LED subsystem interface
+- `include/led.h` - built-in LED activity indicator interface
 - `include/pmic.h` - battery subsystem interface
 - `include/imu.h` - MPU-6050 and QMC5883L IMU subsystem interface
 - `include/adcs.h` - derived attitude subsystem interface
@@ -53,7 +53,7 @@ platformio device monitor --environment mkrwan1310
 - `src/rf_envelope.cpp` - RF packet encode/decode helpers and CRC-16/CCITT-FALSE implementation
 - `src/telemetry_config.cpp` - telemetry flags, interval, and telemetry control target
 - `src/telemetry_scheduler.cpp` - periodic snapshot scheduling
-- `src/led.cpp` - LED control and reporting
+- `src/led.cpp` - built-in LED activity pulse handling for transport traffic
 - `src/pmic.cpp` - PMIC setup and battery reporting
 - `src/gps.cpp` - GPS polling, state, and control
 - `src/gps_report.cpp` - GPS `GET` handling and reporting
@@ -69,7 +69,6 @@ platformio device monitor --environment mkrwan1310
 
 ## Current Targets
 
-- `LED` - built-in LED control and status
 - `TELEMETRY` - telemetry scheduler control and reporting policy
 - `BATTERY` - PMIC-backed battery reporting and charger enable control
 - `GPS` - GPS control and position reporting
@@ -103,4 +102,4 @@ The firmware is still serial-first today, but command and response I/O no longer
 - `sender.cpp` emits `ACK`, `ERR`, and `TLM` messages through `transportWrite(...)` helpers.
 - `protocol_dispatch.cpp` uses `transportFlush()` before reset so the reboot acknowledgement has a chance to leave the device.
 
-The active transport implementation is now `src/transport_lora.cpp`, which wraps one logical protocol line per RF packet using the shared RF envelope and feeds decoded payloads back into the existing parser path. The point of the abstraction remains the same: parser, dispatcher, sender, and telemetry code stay transport-agnostic while the link layer evolves underneath them.
+The active transport implementation is now `src/transport_lora.cpp`, which wraps one logical protocol line per RF packet using the shared RF envelope and feeds decoded payloads back into the existing parser path. The built-in LED is now used as a short activity pulse for RF send/receive events rather than as a commandable subsystem. The point of the abstraction remains the same: parser, dispatcher, sender, and telemetry code stay transport-agnostic while the link layer evolves underneath them.

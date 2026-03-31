@@ -238,10 +238,7 @@ function renderSystems(state, systemConfigs) {
          <button class="mini-btn cmd-red" data-role="enable" data-target="${system.target}" data-value="FALSE">DIS</button>`
 
     let modeControls = '<div class="control-gap"></div><div class="control-gap"></div>'
-    if (system.target === 'LED') {
-      modeControls = `<button class="mini-btn cmd-green" data-command="SET,LED,STATE,ON">ON</button>
-        <button class="mini-btn cmd-red" data-command="SET,LED,STATE,OFF">OFF</button>`
-    } else if (system.target === 'RTC') {
+    if (system.target === 'RTC') {
       modeControls = `<button class="mini-btn cmd-blue" data-role="rtc-now">NOW</button>
         <button class="mini-btn cmd-blue" data-command="SET,RTC,SYNC,GPS">GPS</button>`
     }
@@ -250,14 +247,6 @@ function renderSystems(state, systemConfigs) {
     if (system.target === 'TELEMETRY') {
       auxControls = `<input class="mini-input inline-field" id="telemetry-interval" type="number" min="1" max="3600" value="${escapeHtml(state.telemetryInterval)}">
         <button class="mini-btn cmd-neutral" data-role="telemetry-interval">INT</button>`
-    } else if (system.target === 'LED') {
-      auxControls = `<div class="select-shell compact">
-          <select class="mini-select compact" id="led-color-select">
-            ${optionMarkup(['RED', 'GREEN', 'BLUE'], state.ledColor)}
-          </select>
-          <span class="select-arrow">▼</span>
-        </div>
-        <button class="mini-btn cmd-neutral" data-role="led-color">CLR</button>`
     }
 
     return `

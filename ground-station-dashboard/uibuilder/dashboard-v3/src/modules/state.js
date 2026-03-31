@@ -10,12 +10,10 @@ export function createState() {
       lastAck: null,
       lastErr: null,
     },
-    ledColor: 'GREEN',
     telemetryInterval: '5',
     getSelections: {
       TELEMETRY: 'TELEMETRY',
       RTC: 'CURRENT_TIME',
-      LED: 'STATE',
       BATTERY: 'STATE',
       GPS: 'LATITUDE_D',
       THERMAL: 'TEMPERATURE_C',

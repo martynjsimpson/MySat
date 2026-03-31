@@ -47,8 +47,6 @@ namespace
   {
     if (strcmp(token, "NONE") == 0)
       return TARGET_NONE;
-    if (strcmp(token, "LED") == 0)
-      return TARGET_LED;
     if (strcmp(token, "TELEMETRY") == 0)
       return TARGET_TELEMETRY;
     if (strcmp(token, "BATTERY") == 0)
@@ -106,8 +104,6 @@ namespace
       return PARAM_SYNC;
     if (strcmp(token, "UPTIME_S") == 0)
       return PARAM_UPTIME_S;
-    if (strcmp(token, "COLOR") == 0)
-      return PARAM_COLOR;
     if (strcmp(token, "SOURCE") == 0)
       return PARAM_SOURCE;
     if (strcmp(token, "AVAILABLE") == 0)

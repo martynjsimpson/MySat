@@ -6,7 +6,6 @@
 #include "imu.h"
 #include "config.h"
 #include "gps.h"
-#include "led.h"
 #include "pmic.h"
 #include "rtc.h"
 #include "sender.h"
@@ -27,7 +26,6 @@ namespace
 
     handleGetTelemetry({CMD_GET, TARGET_TELEMETRY, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
     handleGetRtc({CMD_GET, TARGET_RTC, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
-    handleGetLed({CMD_GET, TARGET_LED, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
     handleGetBattery({CMD_GET, TARGET_BATTERY, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
     handleGetGps({CMD_GET, TARGET_GPS, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
     handleGetThermal({CMD_GET, TARGET_THERMAL, PARAM_NONE, VALUE_NONE, "NONE", 0, false});
@@ -46,10 +44,6 @@ namespace
 
     switch (cmd.target)
     {
-    case TARGET_LED:
-      handleGetLed(cmd);
-      break;
-
     case TARGET_TELEMETRY:
       handleGetTelemetry(cmd);
       break;
@@ -103,10 +97,6 @@ namespace
 
     switch (cmd.target)
     {
-    case TARGET_LED:
-      handleSetLed(cmd);
-      break;
-
     case TARGET_GPS:
       handleSetGps(cmd);
       break;

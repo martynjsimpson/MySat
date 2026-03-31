@@ -8,7 +8,6 @@ namespace
   bool telemetryEnabled;
   bool telemetryTelemetryEnabled;
   bool rtcTelemetryEnabled;
-  bool ledTelemetryEnabled;
   bool batteryTelemetryEnabled;
   bool gpsTelemetryEnabled;
   bool thermalTelemetryEnabled;
@@ -24,8 +23,6 @@ namespace
       return &telemetryTelemetryEnabled;
     case TARGET_RTC:
       return &rtcTelemetryEnabled;
-    case TARGET_LED:
-      return &ledTelemetryEnabled;
     case TARGET_BATTERY:
       return &batteryTelemetryEnabled;
     case TARGET_GPS:
@@ -49,8 +46,6 @@ namespace
       return "TELEMETRY";
     case TARGET_RTC:
       return "RTC";
-    case TARGET_LED:
-      return "LED";
     case TARGET_BATTERY:
       return "BATTERY";
     case TARGET_GPS:
@@ -72,7 +67,6 @@ void setupTelemetry()
   telemetryEnabled = Config::Telemetry::defaultTelemetryEnabled;
   telemetryTelemetryEnabled = Config::Telemetry::defaultReportTelemetry;
   rtcTelemetryEnabled = Config::Telemetry::defaultReportRtc;
-  ledTelemetryEnabled = Config::Telemetry::defaultReportLed;
   batteryTelemetryEnabled = Config::Telemetry::defaultReportBattery;
   gpsTelemetryEnabled = Config::Telemetry::defaultReportGps;
   thermalTelemetryEnabled = Config::Telemetry::defaultReportThermal;

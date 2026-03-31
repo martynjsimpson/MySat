@@ -116,7 +116,6 @@ The v3 interaction model is:
   - `GPS`
   - `IMU`
   - `ADCS`
-  - `LED`
 - live values are rendered as compact instrument-style readouts, with units appended in the value text where the parameter implies one
 - freshness colouring is used for live telemetry-derived values and the operations summary
 - the key-data visual intentionally treats `GPS Status` as a state indicator:

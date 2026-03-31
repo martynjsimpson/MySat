@@ -28,45 +28,6 @@
         "responsetimeout": 10000
     },
     {
-        "id": "d0f6c0df3d6bbbec",
-        "type": "ui-base",
-        "name": "MySat Ground Station",
-        "path": "/dashboard",
-        "appIcon": "",
-        "includeClientData": true,
-        "acceptsClientConfig": [
-            "ui-notification",
-            "ui-control"
-        ],
-        "showPathInSidebar": false,
-        "headerContent": "page",
-        "navigationStyle": "default",
-        "titleBarStyle": "default",
-        "showReconnectNotification": true,
-        "notificationDisplayTime": 1,
-        "showDisconnectNotification": true,
-        "allowInstall": false
-    },
-    {
-        "id": "5b53033ae39ab468",
-        "type": "ui-theme",
-        "name": "Mission Control Dark",
-        "colors": {
-            "surface": "#0f141a",
-            "primary": "#62a6ff",
-            "bgPage": "#0b1016",
-            "groupBg": "#0b1016",
-            "groupOutline": "#1f2a37"
-        },
-        "sizes": {
-            "density": "compact",
-            "pagePadding": "6px",
-            "groupGap": "6px",
-            "groupBorderRadius": "6px",
-            "widgetGap": "6px"
-        }
-    },
-    {
         "id": "8037b6b5da1c3e49",
         "type": "global-config",
         "env": [],
@@ -74,56 +35,6 @@
             "node-red-node-serialport": "2.0.3",
             "@flowfuse/node-red-dashboard": "1.30.2"
         }
-    },
-    {
-        "id": "f97e68d451736993",
-        "type": "ui-page",
-        "name": "Mission Control",
-        "ui": "d0f6c0df3d6bbbec",
-        "path": "/page1",
-        "icon": "home",
-        "layout": "grid",
-        "theme": "5b53033ae39ab468",
-        "breakpoints": [
-            {
-                "name": "Default",
-                "px": "0",
-                "cols": "3"
-            },
-            {
-                "name": "Tablet",
-                "px": "576",
-                "cols": "6"
-            },
-            {
-                "name": "Small Desktop",
-                "px": "768",
-                "cols": "9"
-            },
-            {
-                "name": "Desktop",
-                "px": "1024",
-                "cols": "12"
-            }
-        ],
-        "order": 1,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "b44ea29b6f584da1",
-        "type": "ui-group",
-        "name": "Console",
-        "page": "f97e68d451736993",
-        "width": "12",
-        "height": "22",
-        "order": 1,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
     },
     {
         "id": "5124fb12bde93c6f",
@@ -145,8 +56,8 @@
         "z": "3b521b08f4388c2f",
         "name": "",
         "serial": "7180565ad450ba58",
-        "x": 1380,
-        "y": 160,
+        "x": 1300,
+        "y": 120,
         "wires": []
     },
     {
@@ -184,7 +95,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
+        "x": 550,
         "y": 160,
         "wires": [
             [
@@ -204,11 +115,10 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 770,
+        "x": 750,
         "y": 160,
         "wires": [
             [
-                "7d743cc8c8454d18",
                 "3f64f4d9c6b140f1"
             ]
         ]
@@ -225,7 +135,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
+        "x": 550,
         "y": 40,
         "wires": [
             []
@@ -268,32 +178,6 @@
         ]
     },
     {
-        "id": "7d743cc8c8454d18",
-        "type": "ui-template",
-        "z": "3b521b08f4388c2f",
-        "group": "b44ea29b6f584da1",
-        "page": "",
-        "ui": "",
-        "name": "Mission Console V2",
-        "order": 1,
-        "width": "12",
-        "height": 22,
-        "head": "",
-        "format": "<template>\n  <div class=\"console-root\">\n    <section class=\"console-top\">\n      <div class=\"console-panel ops-panel\">\n        <div class=\"panel-title\">Operations</div>\n        <div class=\"ops-stats\">\n          <div class=\"stat-block\">\n            <div class=\"stat-label\">Heartbeat</div>\n            <div class=\"stat-value\" :class=\"valueClass(heartbeatField)\">{{ displayValue(heartbeatField) }}</div>\n          </div>\n          <div class=\"stat-block wide\">\n            <div class=\"stat-label\">Last ACK</div>\n            <div class=\"stat-value\" :class=\"ackClass\">{{ lastAckSummary }}</div>\n          </div>\n          <div class=\"stat-block wide\">\n            <div class=\"stat-label\">Last ERR</div>\n            <div class=\"stat-value\" :class=\"errClass\">{{ lastErrSummary }}</div>\n          </div>\n        </div>\n        <div class=\"ops-buttons\">\n          <button class=\"cmd-btn cmd-blue\" @click=\"sendCommand('PING,NONE,NONE,NONE')\">PING</button>\n          <button class=\"cmd-btn cmd-blue\" @click=\"sendCommand('GET,STATUS,NONE,NONE')\">STATUS</button>\n          <button class=\"cmd-btn cmd-red\" @click=\"sendCommand('RESET,NONE,NONE,NONE')\">RESET</button>\n        </div>\n        <div class=\"custom-command-row\">\n          <input v-model=\"customCommand\" class=\"cmd-input\" type=\"text\" placeholder=\"Custom command\" @keyup.enter=\"sendCustomCommand\" />\n          <button class=\"cmd-btn cmd-neutral\" @click=\"sendCustomCommand\">SEND</button>\n        </div>\n      </div>\n\n      <div class=\"console-panel logs-panel\">\n        <div class=\"logs-grid\">\n          <div class=\"log-card\">\n            <div class=\"panel-title\">ACK Log</div>\n            <div class=\"log-body small monospace\">\n              <div v-for=\"(row, index) in ackLogRows\" :key=\"'ack-' + index\" class=\"log-line\">{{ row.raw }}</div>\n            </div>\n          </div>\n          <div class=\"log-card\">\n            <div class=\"panel-title\">ERR Log</div>\n            <div class=\"log-body small monospace err-tone\">\n              <div v-for=\"(row, index) in errorLogRows\" :key=\"'err-' + index\" class=\"log-line\">{{ row.raw }}</div>\n            </div>\n          </div>\n          <div class=\"log-card packet-log-card\">\n            <div class=\"panel-title\">All Packet Log</div>\n            <div class=\"log-body monospace\">\n              <div v-for=\"(row, index) in packetLogRows\" :key=\"'pkt-' + index\" class=\"log-line\">{{ row.raw }}</div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </section>\n\n    <section class=\"console-panel systems-panel\">\n      <div class=\"panel-title\">Systems</div>\n      <div class=\"systems-table monospace\">\n        <div class=\"systems-row systems-header\">\n          <div class=\"col-system\">SYS</div>\n          <div class=\"col-values\">LIVE PARAMETERS</div>\n          <div class=\"col-actions\">CONTROLS</div>\n        </div>\n\n        <div v-for=\"system in systems\" :key=\"system.target\" class=\"systems-row\">\n          <div class=\"col-system system-name\">{{ system.title }}</div>\n\n          <div class=\"col-values values-wrap\">\n            <div v-for=\"field in system.fields\" :key=\"field.key\" class=\"field-chip\">\n              <span class=\"field-label\">{{ field.label }}</span>\n              <span class=\"field-value\" :class=\"valueClass(field)\">{{ displayValue(field) }}</span>\n            </div>\n          </div>\n\n          <div class=\"col-actions\">\n            <div class=\"controls-grid\">\n              <button class=\"mini-btn cmd-purple\" @click=\"pollTarget(system.target)\">POL</button>\n\n              <template v-if=\"system.target !== 'BATTERY'\">\n                <button class=\"mini-btn cmd-green\" @click=\"setEnable(system.target, true)\">EN</button>\n                <button class=\"mini-btn cmd-red\" @click=\"setEnable(system.target, false)\">DIS</button>\n              </template>\n              <template v-else>\n                <div class=\"control-gap\"></div>\n                <div class=\"control-gap\"></div>\n              </template>\n\n              <button class=\"mini-btn cmd-green-soft\" @click=\"setTelemetry(system.target, true)\">T+</button>\n              <button class=\"mini-btn cmd-red-soft\" @click=\"setTelemetry(system.target, false)\">T-</button>\n\n              <template v-if=\"system.target === 'LED'\">\n                <button class=\"mini-btn cmd-green\" @click=\"sendCommand('SET,LED,STATE,ON')\">ON</button>\n                <button class=\"mini-btn cmd-red\" @click=\"sendCommand('SET,LED,STATE,OFF')\">OFF</button>\n              </template>\n              <template v-else-if=\"system.target === 'RTC'\">\n                <button class=\"mini-btn cmd-blue\" @click=\"setRtcLocal\">NOW</button>\n                <button class=\"mini-btn cmd-blue\" @click=\"sendCommand('SET,RTC,SYNC,GPS')\">GPS</button>\n              </template>\n              <template v-else>\n                <div class=\"control-gap\"></div>\n                <div class=\"control-gap\"></div>\n              </template>\n\n              <template v-if=\"system.target === 'TELEMETRY'\">\n                <input v-model=\"telemetryInterval\" class=\"mini-input inline-field\" type=\"number\" min=\"1\" max=\"3600\" />\n                <button class=\"mini-btn cmd-neutral\" @click=\"setTelemetryInterval\">INT</button>\n              </template>\n              <template v-else-if=\"system.target === 'LED'\">\n                <div class=\"select-shell compact\">\n                  <select v-model=\"ledColor\" class=\"mini-select compact\">\n                    <option value=\"RED\">RED</option>\n                    <option value=\"GREEN\">GREEN</option>\n                    <option value=\"BLUE\">BLUE</option>\n                  </select>\n                  <span class=\"select-arrow\">▼</span>\n                </div>\n                <button class=\"mini-btn cmd-neutral\" @click=\"setLedColor\">CLR</button>\n              </template>\n              <template v-else>\n                <div class=\"control-gap\"></div>\n                <div class=\"control-gap\"></div>\n              </template>\n\n              <div class=\"select-shell get-shell\">\n                <select v-model=\"getSelections[system.target]\" class=\"mini-select get-select\" @change=\"sendGetSelected(system.target)\">\n                  <option v-for=\"option in system.getOptions\" :key=\"system.target + '-' + option.value\" :value=\"option.value\">{{ option.label }}</option>\n                </select>\n                <span class=\"select-arrow\">▼</span>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </section>\n  </div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return {\n      nowMs: Date.now(),\n      timerId: null,\n      customCommand: '',\n      ledColor: 'GREEN',\n      telemetryInterval: '5',\n      getSelections: {\n        TELEMETRY: 'TELEMETRY',\n        RTC: 'CURRENT_TIME',\n        LED: 'STATE',\n        BATTERY: 'CHARGE_PERCENT_P',\n        GPS: 'LATITUDE_D',\n        THERMAL: 'TEMPERATURE_C',\n        IMU: 'HEADING_DEG',\n        ADCS: 'HEADING_DEG'\n      }\n    };\n  },\n  computed: {\n    payloadData() {\n      return this.msg && this.msg.payload ? this.msg.payload : {};\n    },\n    tlm() {\n      return this.payloadData.tlm || {};\n    },\n    maxAgeMs() {\n      return this.payloadData.freshnessThresholdMs || 10000;\n    },\n    ackLogRows() {\n      return this.payloadData.ackLog || [];\n    },\n    errorLogRows() {\n      return this.payloadData.errorLog || [];\n    },\n    packetLogRows() {\n      return this.payloadData.packetLog || [];\n    },\n    heartbeatField() {\n      return this.field('STATUS', 'HEARTBEAT_N', 'N');\n    },\n    lastAckSummary() {\n      const ack = this.payloadData.lastAck;\n      if (!ack || !ack.target) return '--';\n      return (ack.time || '') + ' ' + (ack.target || '') + ' ' + (ack.value || '');\n    },\n    lastErrSummary() {\n      const err = this.payloadData.lastErr;\n      if (!err || !err.error) return '--';\n      const detail = err.contextDecoded || err.context || '';\n      return (err.time || '') + ' ' + err.error + (detail ? ' ' + detail : '');\n    },\n    ackClass() {\n      return this.payloadData.lastAck ? 'freshness-fresh' : 'freshness-empty';\n    },\n    errClass() {\n      return this.payloadData.lastErr ? 'freshness-stale' : 'freshness-empty';\n    },\n    systems() {\n      return [\n        {\n          target: 'TELEMETRY',\n          title: 'TLM',\n          fields: [\n            this.field('TELEMETRY', 'ENABLE', 'EN'),\n            this.field('TELEMETRY', 'TELEMETRY', 'SELF'),\n            this.field('TELEMETRY', 'INTERVAL_S', 'INT')\n          ],\n          getOptions: [\n            { label: 'ENABLE', value: 'ENABLE' },\n            { label: 'TELEMETRY', value: 'TELEMETRY' },\n            { label: 'INTERVAL_S', value: 'INTERVAL_S' }\n          ]\n        },\n        {\n          target: 'RTC',\n          title: 'RTC',\n          fields: [\n            this.field('RTC', 'CURRENT_TIME', 'TIME'),\n            this.field('RTC', 'SYNC', 'SYNC'),\n            this.field('RTC', 'SOURCE', 'SRC'),\n            this.field('RTC', 'TELEMETRY', 'TLM')\n          ],\n          getOptions: [\n            { label: 'CURRENT_TIME', value: 'CURRENT_TIME' },\n            { label: 'SYNC', value: 'SYNC' },\n            { label: 'SOURCE', value: 'SOURCE' },\n            { label: 'TELEMETRY', value: 'TELEMETRY' }\n          ]\n        },\n        {\n          target: 'LED',\n          title: 'LED',\n          fields: [\n            this.field('LED', 'ENABLE', 'EN'),\n            this.field('LED', 'STATE', 'STATE'),\n            this.field('LED', 'COLOR', 'CLR'),\n            this.field('LED', 'TELEMETRY', 'TLM')\n          ],\n          getOptions: [\n            { label: 'ENABLE', value: 'ENABLE' },\n            { label: 'STATE', value: 'STATE' },\n            { label: 'COLOR', value: 'COLOR' },\n            { label: 'TELEMETRY', value: 'TELEMETRY' }\n          ]\n        },\n        {\n          target: 'BATTERY',\n          title: 'BAT',\n          fields: [\n            this.field('BATTERY', 'AVAILABLE', 'AVL'),\n            this.field('BATTERY', 'TELEMETRY', 'TLM'),\n            this.field('BATTERY', 'CHARGE_PERCENT_P', 'PCT'),\n            this.field('BATTERY', 'VOLTAGE_V', 'BATV'),\n            this.field('BATTERY', 'CHARGE_VOLTAGE_V', 'CHGV'),\n            this.field('BATTERY', 'CHARGE_CURRENT_A', 'CHGA')\n          ],\n          getOptions: [\n            { label: 'AVAILABLE', value: 'AVAILABLE' },\n            { label: 'TELEMETRY', value: 'TELEMETRY' },\n            { label: 'CHARGE_PERCENT_P', value: 'CHARGE_PERCENT_P' },\n            { label: 'VOLTAGE_V', value: 'VOLTAGE_V' },\n            { label: 'CHARGE_VOLTAGE_V', value: 'CHARGE_VOLTAGE_V' },\n            { label: 'CHARGE_CURRENT_A', value: 'CHARGE_CURRENT_A' }\n          ]\n        },\n        {\n          target: 'GPS',\n          title: 'GPS',\n          fields: [\n            this.field('GPS', 'ENABLE', 'EN'),\n            this.field('GPS', 'AVAILABLE', 'AVL'),\n            this.field('GPS', 'SATELLITES_N', 'SATS'),\n            this.field('GPS', 'LATITUDE_D', 'LAT'),\n            this.field('GPS', 'LONGITUDE_D', 'LON'),\n            this.field('GPS', 'ALTITUDE_M', 'ALT'),\n            this.field('GPS', 'SPEED_KPH', 'SPD'),\n            this.field('GPS', 'TELEMETRY', 'TLM')\n          ],\n          getOptions: [\n            { label: 'ENABLE', value: 'ENABLE' },\n            { label: 'AVAILABLE', value: 'AVAILABLE' },\n            { label: 'SATELLITES_N', value: 'SATELLITES_N' },\n            { label: 'LATITUDE_D', value: 'LATITUDE_D' },\n            { label: 'LONGITUDE_D', value: 'LONGITUDE_D' },\n            { label: 'ALTITUDE_M', value: 'ALTITUDE_M' },\n            { label: 'SPEED_KPH', value: 'SPEED_KPH' },\n            { label: 'TELEMETRY', value: 'TELEMETRY' }\n          ]\n        },\n        {\n          target: 'THERMAL',\n          title: 'THM',\n          fields: [\n            this.field('THERMAL', 'ENABLE', 'EN'),\n            this.field('THERMAL', 'AVAILABLE', 'AVL'),\n            this.field('THERMAL', 'TEMPERATURE_C', 'TMP'),\n            this.field('THERMAL', 'HUMIDITY_P', 'RH'),\n            this.field('THERMAL', 'TELEMETRY', 'TLM')\n          ],\n          getOptions: [\n            { label: 'ENABLE', value: 'ENABLE' },\n            { label: 'AVAILABLE', value: 'AVAILABLE' },\n            { label: 'TEMPERATURE_C', value: 'TEMPERATURE_C' },\n            { label: 'HUMIDITY_P', value: 'HUMIDITY_P' },\n            { label: 'TELEMETRY', value: 'TELEMETRY' }\n          ]\n        },\n        {\n          target: 'IMU',\n          title: 'IMU',\n          fields: [\n            this.field('IMU', 'ENABLE', 'EN'),\n            this.field('IMU', 'AVAILABLE', 'AVL'),\n            this.field('IMU', 'TELEMETRY', 'TLM'),\n            this.field('IMU', 'HEADING_DEG', 'HDG'),\n            this.field('IMU', 'X_MS2', 'X'),\n            this.field('IMU', 'Y_MS2', 'Y'),\n            this.field('IMU', 'Z_MS2', 'Z'),\n            this.field('IMU', 'GYRO_X_DPS', 'GX'),\n            this.field('IMU', 'GYRO_Y_DPS', 'GY'),\n            this.field('IMU', 'GYRO_Z_DPS', 'GZ'),\n            this.field('IMU', 'MAG_X_UT', 'MX'),\n            this.field('IMU', 'MAG_Y_UT', 'MY'),\n            this.field('IMU', 'MAG_Z_UT', 'MZ')\n          ],\n          getOptions: [\n            { label: 'ENABLE', value: 'ENABLE' },\n            { label: 'AVAILABLE', value: 'AVAILABLE' },\n            { label: 'X_MS2', value: 'X_MS2' },\n            { label: 'Y_MS2', value: 'Y_MS2' },\n            { label: 'Z_MS2', value: 'Z_MS2' },\n            { label: 'GYRO_X_DPS', value: 'GYRO_X_DPS' },\n            { label: 'GYRO_Y_DPS', value: 'GYRO_Y_DPS' },\n            { label: 'GYRO_Z_DPS', value: 'GYRO_Z_DPS' },\n            { label: 'MAG_X_UT', value: 'MAG_X_UT' },\n            { label: 'MAG_Y_UT', value: 'MAG_Y_UT' },\n            { label: 'MAG_Z_UT', value: 'MAG_Z_UT' },\n            { label: 'HEADING_DEG', value: 'HEADING_DEG' },\n            { label: 'TELEMETRY', value: 'TELEMETRY' }\n          ]\n        },\n        {\n          target: 'ADCS',\n          title: 'ADCS',\n          fields: [\n            this.field('ADCS', 'ENABLE', 'EN'),\n            this.field('ADCS', 'AVAILABLE', 'AVL'),\n            this.field('ADCS', 'SOURCE', 'SRC'),\n            this.field('ADCS', 'TELEMETRY', 'TLM'),\n            this.field('ADCS', 'ROLL_DEG', 'ROL'),\n            this.field('ADCS', 'PITCH_DEG', 'PIT'),\n            this.field('ADCS', 'HEADING_DEG', 'HDG'),\n            this.field('ADCS', 'YAW_RATE_DPS', 'YAW')\n          ],\n          getOptions: [\n            { label: 'ENABLE', value: 'ENABLE' },\n            { label: 'AVAILABLE', value: 'AVAILABLE' },\n            { label: 'SOURCE', value: 'SOURCE' },\n            { label: 'ROLL_DEG', value: 'ROLL_DEG' },\n            { label: 'PITCH_DEG', value: 'PITCH_DEG' },\n            { label: 'HEADING_DEG', value: 'HEADING_DEG' },\n            { label: 'YAW_RATE_DPS', value: 'YAW_RATE_DPS' },\n            { label: 'TELEMETRY', value: 'TELEMETRY' }\n          ]\n        }\n      ];\n    }\n  },\n  methods: {\n    tlmEntry(target, parameter) {\n      if (!this.tlm[target] || !this.tlm[target][parameter]) {\n        return { value: '', time: '' };\n      }\n      return this.tlm[target][parameter];\n    },\n    field(target, parameter, label) {\n      const entry = this.tlmEntry(target, parameter);\n      return {\n        key: target + '-' + parameter,\n        label,\n        value: entry.value || '',\n        time: entry.time || ''\n      };\n    },\n    receivedMs(item) {\n      if (!item || !item.time) {\n        return null;\n      }\n      const parsed = Date.parse(item.time);\n      return Number.isNaN(parsed) ? null : parsed;\n    },\n    isFresh(item) {\n      if (!item || !item.value) {\n        return false;\n      }\n      const receivedMs = this.receivedMs(item);\n      if (receivedMs === null) {\n        return false;\n      }\n      return (this.nowMs - receivedMs) <= this.maxAgeMs;\n    },\n    valueClass(item) {\n      if (!item || item.value === '' || item.value === null || typeof item.value === 'undefined') {\n        return 'freshness-empty';\n      }\n      return this.isFresh(item) ? 'freshness-fresh' : 'freshness-stale';\n    },\n    displayValue(item) {\n      if (!item || item.value === '' || item.value === null || typeof item.value === 'undefined') {\n        return '--';\n      }\n      return String(item.value);\n    },\n    sendCommand(command) {\n      const payload = String(command || '').trim();\n      if (!payload) return;\n      this.send({ payload: payload + '\\n' });\n    },\n    sendCustomCommand() {\n      this.sendCommand(this.customCommand);\n      this.customCommand = '';\n    },\n    pollTarget(target) {\n      this.sendCommand('GET,' + target + ',NONE,NONE');\n    },\n    setEnable(target, enabled) {\n      this.sendCommand('SET,' + target + ',ENABLE,' + (enabled ? 'TRUE' : 'FALSE'));\n    },\n    setTelemetry(target, enabled) {\n      this.sendCommand('SET,' + target + ',TELEMETRY,' + (enabled ? 'ENABLE' : 'DISABLE'));\n    },\n    sendGetSelected(target) {\n      const option = this.getSelections[target];\n      if (!option) return;\n      this.sendCommand('GET,' + target + ',' + option + ',NONE');\n    },\n    setLedColor() {\n      this.sendCommand('SET,LED,COLOR,' + this.ledColor);\n    },\n    setRtcLocal() {\n      const iso = new Date().toISOString().replace(/\\.\\d{3}Z$/, 'Z');\n      this.sendCommand('SET,RTC,CURRENT_TIME,' + iso);\n    },\n    setTelemetryInterval() {\n      const value = String(this.telemetryInterval || '').trim();\n      if (!value) return;\n      this.sendCommand('SET,TELEMETRY,INTERVAL_S,' + value);\n    }\n  },\n  mounted() {\n    this.timerId = setInterval(() => {\n      this.nowMs = Date.now();\n    }, 1000);\n  },\n  unmounted() {\n    if (this.timerId) {\n      clearInterval(this.timerId);\n    }\n  }\n};\n</script>\n\n<style>\n.console-root {\n  font-family: \"SFMono-Regular\", \"Menlo\", \"Monaco\", \"Consolas\", \"Liberation Mono\", monospace;\n  color: #d7dee7;\n  display: flex;\n  flex-direction: column;\n  gap: 10px;\n  padding: 4px;\n  min-height: calc(100vh - 110px);\n  box-sizing: border-box;\n}\n\n.console-top {\n  display: grid;\n  grid-template-columns: minmax(340px, 0.9fr) minmax(0, 1.7fr);\n  gap: 10px;\n}\n\n.console-panel {\n  background: #111821;\n  border: 1px solid #1e2936;\n  border-radius: 10px;\n  padding: 10px;\n  box-sizing: border-box;\n}\n\n.systems-panel {\n  flex: 1 1 auto;\n}\n\n.panel-title {\n  font-size: 12px;\n  font-weight: 700;\n  letter-spacing: 0.1em;\n  text-transform: uppercase;\n  color: #8ea0b5;\n  margin-bottom: 8px;\n}\n\n.ops-stats {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 8px;\n  margin-bottom: 10px;\n}\n\n.stat-block {\n  background: #0b1016;\n  border: 1px solid #1b2632;\n  border-radius: 7px;\n  padding: 8px;\n  min-height: 52px;\n}\n\n.stat-label {\n  font-size: 11px;\n  color: #7f8d9c;\n  margin-bottom: 5px;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n}\n\n.stat-value {\n  font-size: 13px;\n  line-height: 1.3;\n  word-break: break-word;\n}\n\n.ops-buttons,\n.custom-command-row {\n  display: grid;\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  gap: 8px;\n}\n\n.custom-command-row {\n  grid-template-columns: minmax(0, 1fr) 100px;\n  margin-top: 8px;\n}\n\n.cmd-btn,\n.mini-btn {\n  border: 0;\n  border-radius: 6px;\n  cursor: pointer;\n  font-family: inherit;\n  font-size: 11px;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  padding: 8px 9px;\n  color: #f4f7fb;\n  min-height: 34px;\n}\n\n.mini-btn {\n  min-height: 30px;\n  padding: 6px 7px;\n  font-size: 10px;\n}\n\n.cmd-purple { background: #9c27b0; }\n.cmd-blue { background: #2f81f7; }\n.cmd-red { background: #d73a49; }\n.cmd-green { background: #2f9e44; }\n.cmd-green-soft { background: #5abf68; }\n.cmd-red-soft { background: #f05d5e; }\n.cmd-neutral { background: #394554; }\n\n.cmd-input,\n.mini-input,\n.mini-select {\n  width: 100%;\n  box-sizing: border-box;\n  border: 1px solid #2a3542;\n  background: #0b1016;\n  color: #d7dee7;\n  border-radius: 6px;\n  font-family: inherit;\n  font-size: 12px;\n  padding: 7px 9px;\n  min-height: 34px;\n}\n\n.mini-input,\n.mini-select {\n  min-height: 30px;\n  padding: 5px 7px;\n  font-size: 11px;\n}\n\n.inline-field {\n  width: 84px;\n}\n\n.logs-grid {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 10px;\n}\n\n.packet-log-card {\n  grid-column: 1 / -1;\n}\n\n.log-card {\n  background: #0b1016;\n  border: 1px solid #1b2632;\n  border-radius: 7px;\n  padding: 8px;\n}\n\n.log-body {\n  min-height: 112px;\n  max-height: 112px;\n  overflow: hidden;\n}\n\n.log-body.small {\n  min-height: 80px;\n  max-height: 80px;\n}\n\n.log-line {\n  font-size: 12px;\n  line-height: 1.3;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  color: #d7dee7;\n}\n\n.err-tone .log-line {\n  color: #f2b8b5;\n}\n\n.systems-table {\n  display: flex;\n  flex-direction: column;\n}\n\n.systems-row {\n  display: grid;\n  grid-template-columns: 68px minmax(0, 1fr) 580px;\n  gap: 10px;\n  align-items: center;\n  padding: 8px 0;\n  border-top: 1px solid #18222d;\n}\n\n.systems-row:first-of-type {\n  border-top: 0;\n  padding-top: 0;\n}\n\n.systems-header {\n  font-size: 11px;\n  color: #718194;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  padding-bottom: 8px;\n}\n\n.system-name {\n  font-size: 15px;\n  font-weight: 700;\n  color: #f4f7fb;\n  letter-spacing: 0.04em;\n}\n\n.values-wrap {\n  display: flex;\n  flex-wrap: nowrap;\n  gap: 5px 10px;\n  min-width: 0;\n  overflow: hidden;\n}\n\n.field-chip {\n  display: inline-flex;\n  align-items: baseline;\n  gap: 4px;\n  min-width: 0;\n  white-space: nowrap;\n}\n\n.field-label {\n  font-size: 10px;\n  color: #7f8d9c;\n  text-transform: uppercase;\n  letter-spacing: 0.06em;\n}\n\n.field-value {\n  font-size: 11px;\n  font-weight: 700;\n}\n\n.controls-grid {\n  display: grid;\n  grid-template-columns: repeat(7, 36px) 84px 40px 156px;\n  gap: 4px;\n  align-items: center;\n  justify-content: end;\n}\n\n.control-gap {\n  min-height: 30px;\n}\n\n.select-shell {\n  position: relative;\n  width: 100%;\n}\n\n.select-shell.compact {\n  width: 84px;\n}\n\n.select-shell .mini-select {\n  appearance: none;\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  padding-right: 24px;\n}\n\n.select-arrow {\n  position: absolute;\n  right: 8px;\n  top: 50%;\n  transform: translateY(-50%);\n  color: #9aa8b8;\n  font-size: 11px;\n  pointer-events: none;\n}\n\n.get-shell {\n  width: 156px;\n}\n\n.get-select,\n.mini-select.compact {\n  text-transform: uppercase;\n}\n\n.freshness-fresh {\n  color: #38b24a;\n}\n\n.freshness-stale {\n  color: #ff6b6b;\n}\n\n.freshness-empty {\n  color: #677382;\n}\n\n@media (max-width: 1500px) {\n  .systems-row {\n    grid-template-columns: 64px minmax(0, 1fr) 544px;\n  }\n\n  .controls-grid {\n    grid-template-columns: repeat(7, 34px) 80px 38px 144px;\n  }\n}\n\n@media (max-width: 1300px) {\n  .console-root {\n    min-height: auto;\n  }\n\n  .console-top {\n    grid-template-columns: 1fr;\n  }\n\n  .systems-row {\n    grid-template-columns: 60px minmax(0, 1fr);\n    align-items: start;\n  }\n\n  .col-actions {\n    grid-column: 2;\n  }\n\n  .values-wrap {\n    flex-wrap: wrap;\n  }\n\n  .controls-grid {\n    justify-content: start;\n    margin-top: 6px;\n    grid-template-columns: repeat(5, 40px) repeat(2, 40px) 90px 44px 160px;\n  }\n}\n</style>",
-        "storeOutMessages": true,
-        "passthru": false,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 1120,
-        "y": 160,
-        "wires": [
-            [
-                "a407349444f312cf"
-            ]
-        ]
-    },
-    {
         "id": "3f64f4d9c6b140f1",
         "type": "uibuilder",
         "z": "3b521b08f4388c2f",
@@ -315,8 +199,8 @@
         "title": "Mission Control V3",
         "descr": "MySat bespoke mission-control UI powered by uibuilder",
         "editurl": "vscode://file/uibuilder/dashboard-v3/src/?windowId=_blank",
-        "x": 1070,
-        "y": 220,
+        "x": 1030,
+        "y": 160,
         "wires": [
             [
                 "a407349444f312cf"
@@ -338,8 +222,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1350,
-        "y": 260,
+        "x": 1310,
+        "y": 200,
         "wires": [
             [
                 "5d4a978c35f7472a"
@@ -358,8 +242,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 400,
+        "x": 1200,
+        "y": 320,
         "wires": [
             [
                 "3f64f4d9c6b140f1"

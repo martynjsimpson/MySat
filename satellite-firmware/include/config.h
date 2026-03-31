@@ -24,6 +24,7 @@ namespace Config
     constexpr int loraCodingRateDenominator = 5;
     constexpr long loraPreambleLength = 8;
     constexpr uint8_t loraSyncWord = 0x12;
+    constexpr unsigned long telemetryDeferAfterActivityMs = 250;
   }
 
   namespace Telemetry
@@ -31,7 +32,6 @@ namespace Config
     constexpr bool defaultTelemetryEnabled = true;
     constexpr bool defaultReportTelemetry = false;
     constexpr bool defaultReportRtc = false;
-    constexpr bool defaultReportLed = false;
     constexpr bool defaultReportBattery = false;
     constexpr bool defaultReportGps = false;
     constexpr bool defaultReportThermal = false;
@@ -62,13 +62,6 @@ namespace Config
     constexpr unsigned long driftCheckIntervalSeconds = 600;
     constexpr unsigned long minResyncIntervalSeconds = 3600;
     constexpr unsigned long driftResyncThresholdSeconds = 1;
-  }
-
-  namespace Led
-  {
-    constexpr bool defaultEnabled = false;
-    constexpr bool defaultStateOn = false;
-    constexpr const char *defaultColor = "GREEN";
   }
 
   namespace Gps

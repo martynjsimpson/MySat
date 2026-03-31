@@ -9,6 +9,7 @@ namespace Config
   {
     constexpr unsigned long baudRate = 115200;
     constexpr unsigned long heartbeatIntervalMs = 5000;
+    constexpr bool logRxPayloadDiagnostics = false;
   }
 
   namespace Transport
@@ -26,6 +27,11 @@ namespace Config
   {
     constexpr unsigned long commandRetryDelayMs = 5000;
     constexpr uint8_t maxCommandRetries = 3;
+  }
+
+  namespace Led
+  {
+    constexpr unsigned long activityPulseMs = 120;
   }
 }
 

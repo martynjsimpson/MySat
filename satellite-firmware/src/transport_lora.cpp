@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "config.h"
+#include "led.h"
 #include "rf_envelope.h"
 
 namespace
@@ -15,6 +16,7 @@ namespace
   constexpr size_t kPacketBufferSize = RfEnvelope::maxPacketLength;
 
   bool radioReady = false;
+  unsigned long lastRadioActivityMs = 0;
 
   char inboundBuffer[kInboundBufferSize];
   size_t inboundLength = 0;
@@ -22,6 +24,12 @@ namespace
 
   char outboundBuffer[kOutboundBufferSize];
   size_t outboundLength = 0;
+
+  void noteRadioActivity()
+  {
+    lastRadioActivityMs = millis();
+    noteLedActivity();
+  }
 
   bool loadNextInboundPacket()
   {
@@ -79,6 +87,7 @@ namespace
     inboundLength = decodedPacket.payloadLength;
     inboundBuffer[inboundLength++] = '\n';
     inboundPosition = 0;
+    noteRadioActivity();
     return true;
   }
 
@@ -125,6 +134,7 @@ void setupTransport()
   inboundLength = 0;
   inboundPosition = 0;
   resetOutboundBuffer();
+  lastRadioActivityMs = 0;
 
   radioReady = (LoRa.begin(Config::Transport::loraFrequencyHz) == 1);
   if (!radioReady)
@@ -231,10 +241,38 @@ void transportWriteLine()
   }
 
   LoRa.write(packetBuffer, packetLength);
-  LoRa.endPacket(false);
+  if (LoRa.endPacket(false) == 1)
+  {
+    noteRadioActivity();
+  }
   resetOutboundBuffer();
 }
 
 void transportFlush()
 {
+}
+
+bool transportShouldDeferTelemetry()
+{
+  if (!radioReady)
+  {
+    return false;
+  }
+
+  if (inboundPosition < inboundLength)
+  {
+    return true;
+  }
+
+  if (loadNextInboundPacket())
+  {
+    return true;
+  }
+
+  if (lastRadioActivityMs == 0)
+  {
+    return false;
+  }
+
+  return (millis() - lastRadioActivityMs) < Config::Transport::telemetryDeferAfterActivityMs;
 }

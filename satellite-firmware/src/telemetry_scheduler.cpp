@@ -3,12 +3,12 @@
 #include "adcs.h"
 #include "imu.h"
 #include "gps.h"
-#include "led.h"
 #include "pmic.h"
 #include "rtc.h"
 #include "status.h"
 #include "thermal.h"
 #include "telemetry_config_internal.h"
+#include "transport.h"
 
 namespace
 {
@@ -28,10 +28,6 @@ void sendTelemetrySnapshot()
   if (isTargetTelemetryEnabled(TARGET_RTC))
   {
     reportRtcStatus();
-  }
-  if (isTargetTelemetryEnabled(TARGET_LED))
-  {
-    reportLedStatus();
   }
   if (isTargetTelemetryEnabled(TARGET_TELEMETRY))
   {
@@ -71,6 +67,11 @@ void handlePeriodicTelemetry()
     {
       // Even with normal telemetry disabled, the heartbeat remains the liveness signal.
       reportStatusHeartbeat(true);
+      return;
+    }
+
+    if (transportShouldDeferTelemetry())
+    {
       return;
     }
 

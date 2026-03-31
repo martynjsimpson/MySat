@@ -12,5 +12,6 @@ void transportWrite(unsigned long value);
 void transportWrite(float value, int decimals);
 void transportWriteLine();
 void transportFlush();
+bool transportShouldDeferTelemetry();
 
 #endif

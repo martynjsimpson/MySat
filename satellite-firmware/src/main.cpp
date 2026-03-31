@@ -38,6 +38,7 @@ void loop()
   updateThermal();
   updateImu();
   updateAdcs();
+  updateLed();
   handleRtcAutoSync();
   readIncomingCommands();
   handlePeriodicTelemetry();

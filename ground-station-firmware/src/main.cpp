@@ -29,9 +29,42 @@ namespace
   char hostInputBuffer[kLineBufferSize];
   size_t hostInputLength = 0;
   unsigned long lastHostHeartbeatMs = 0;
+  unsigned long ledPulseStartMs = 0;
+  bool ledPulseActive = false;
+  unsigned long txPacketCount = 0;
+  unsigned long rxPacketCount = 0;
+  unsigned long dropPacketCount = 0;
 
   PendingCommandState pendingCommand;
   bool radioReady = false;
+
+  void applyLedOutput()
+  {
+    digitalWrite(LED_BUILTIN, ledPulseActive ? HIGH : LOW);
+  }
+
+  void noteLedActivity()
+  {
+    ledPulseActive = true;
+    ledPulseStartMs = millis();
+    applyLedOutput();
+  }
+
+  void updateLed()
+  {
+    if (!ledPulseActive)
+    {
+      return;
+    }
+
+    if ((millis() - ledPulseStartMs) < Config::Led::activityPulseMs)
+    {
+      return;
+    }
+
+    ledPulseActive = false;
+    applyLedOutput();
+  }
 
   PendingResponseKind expectedResponseForCommand(const char *line)
   {
@@ -80,7 +113,14 @@ namespace
     }
 
     LoRa.write(packetBuffer, packetLength);
-    return LoRa.endPacket(false) == 1;
+    if (LoRa.endPacket(false) != 1)
+    {
+      return false;
+    }
+
+    txPacketCount++;
+    noteLedActivity();
+    return true;
   }
 
   void startPendingCommand(const char *line)
@@ -152,6 +192,78 @@ namespace
     Serial.println(payload);
   }
 
+  const __FlashStringHelper *decodeStatusLabel(RfEnvelope::DecodeStatus status)
+  {
+    switch (status)
+    {
+    case RfEnvelope::DECODE_PACKET_TOO_SHORT:
+      return F("PACKET_TOO_SHORT");
+    case RfEnvelope::DECODE_UNSUPPORTED_VERSION:
+      return F("UNSUPPORTED_VERSION");
+    case RfEnvelope::DECODE_LENGTH_MISMATCH:
+      return F("LENGTH_MISMATCH");
+    case RfEnvelope::DECODE_CRC_MISMATCH:
+      return F("CRC_MISMATCH");
+    case RfEnvelope::DECODE_NOT_FOR_DEVICE:
+      return F("NOT_FOR_DEVICE");
+    case RfEnvelope::DECODE_PAYLOAD_TOO_LARGE:
+      return F("PAYLOAD_TOO_LARGE");
+    case RfEnvelope::DECODE_OK:
+    default:
+      return F("OK");
+    }
+  }
+
+  void emitDiagTx(const char *event, const char *detail = nullptr)
+  {
+    Serial.print(F("GROUND,DIAG,TX,"));
+    Serial.print(event);
+    if (detail != nullptr && *detail != '\0')
+    {
+      Serial.print(F(","));
+      Serial.print(detail);
+    }
+    Serial.print(F(",COUNT,"));
+    Serial.println(txPacketCount);
+  }
+
+  void emitDiagRx(const char *payload)
+  {
+    if (!Config::Serial::logRxPayloadDiagnostics)
+    {
+      return;
+    }
+
+    Serial.print(F("GROUND,DIAG,RX,PAYLOAD,"));
+    Serial.print(payload);
+    Serial.print(F(",COUNT,"));
+    Serial.println(rxPacketCount);
+  }
+
+  void emitDiagDrop(RfEnvelope::DecodeStatus status)
+  {
+    Serial.print(F("GROUND,DIAG,DROP,"));
+    Serial.print(decodeStatusLabel(status));
+    Serial.print(F(",COUNT,"));
+    Serial.println(dropPacketCount);
+  }
+
+  void emitDiagRetry()
+  {
+    Serial.print(F("GROUND,DIAG,RETRY,ATTEMPT,"));
+    Serial.print(static_cast<unsigned long>(pendingCommand.retryCount + 1));
+    Serial.print(F(",COMMAND,"));
+    Serial.println(pendingCommand.line);
+  }
+
+  void emitDiagTimeout()
+  {
+    Serial.print(F("GROUND,DIAG,TIMEOUT,COMMAND,"));
+    Serial.print(pendingCommand.line);
+    Serial.print(F(",RETRIES,"));
+    Serial.println(static_cast<unsigned long>(pendingCommand.retryCount));
+  }
+
   void emitHostHeartbeat()
   {
     const unsigned long now = millis();
@@ -166,7 +278,13 @@ namespace
     Serial.print(F(",RADIO,"));
     Serial.print(radioReady ? F("READY") : F("FAILED"));
     Serial.print(F(",PENDING,"));
-    Serial.println(pendingCommand.active ? F("TRUE") : F("FALSE"));
+    Serial.print(pendingCommand.active ? F("TRUE") : F("FALSE"));
+    Serial.print(F(",TX,"));
+    Serial.print(txPacketCount);
+    Serial.print(F(",RX,"));
+    Serial.print(rxPacketCount);
+    Serial.print(F(",DROP,"));
+    Serial.println(dropPacketCount);
   }
 
   void handleHostSerial()
@@ -188,6 +306,11 @@ namespace
           if (sendPayloadToSatellite(hostInputBuffer))
           {
             startPendingCommand(hostInputBuffer);
+            emitDiagTx("COMMAND", hostInputBuffer);
+          }
+          else
+          {
+            emitDiagTx("SEND_FAILED", hostInputBuffer);
           }
         }
         hostInputLength = 0;
@@ -236,15 +359,22 @@ namespace
     }
 
     RfEnvelope::DecodedPacket decodedPacket{};
-    if (RfEnvelope::decodePacket(packetBuffer,
+    const RfEnvelope::DecodeStatus decodeStatus =
+        RfEnvelope::decodePacket(packetBuffer,
                                  bytesRead,
                                  RfEnvelope::groundStationDeviceId,
-                                 decodedPacket) != RfEnvelope::DECODE_OK)
+                                 decodedPacket);
+    if (decodeStatus != RfEnvelope::DECODE_OK)
     {
+      dropPacketCount++;
+      emitDiagDrop(decodeStatus);
       return;
     }
 
+    rxPacketCount++;
     forwardPayloadToHost(decodedPacket.payload);
+    noteLedActivity();
+    emitDiagRx(decodedPacket.payload);
     if (payloadMatchesPendingResponse(decodedPacket.payload))
     {
       clearPendingCommand();
@@ -266,14 +396,21 @@ namespace
 
     if (pendingCommand.retryCount >= Config::Retry::maxCommandRetries)
     {
+      emitDiagTimeout();
       clearPendingCommand();
       return;
     }
 
+    emitDiagRetry();
     if (sendPayloadToSatellite(pendingCommand.line))
     {
       pendingCommand.lastSendMs = now;
       pendingCommand.retryCount++;
+      emitDiagTx("RETRY", pendingCommand.line);
+    }
+    else
+    {
+      emitDiagTx("RETRY_SEND_FAILED", pendingCommand.line);
     }
   }
 }
@@ -281,7 +418,9 @@ namespace
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  ledPulseActive = false;
+  ledPulseStartMs = 0;
+  applyLedOutput();
 
   Serial.begin(Config::Serial::baudRate);
   while (!Serial)
@@ -306,8 +445,7 @@ void setup()
 
 void loop()
 {
-  digitalWrite(LED_BUILTIN, pendingCommand.active ? HIGH : LOW);
-
+  updateLed();
   emitHostHeartbeat();
   handleHostSerial();
   if (radioReady)

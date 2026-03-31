@@ -7,7 +7,7 @@ This directory contains the shared documentation for the firmware and ground sta
 - [Architecture.md](./Architecture.md) defines the repo-level system boundaries and project layout.
 - [Protocol.md](./Protocol.md) defines the generic command and response protocol.
 - [Telemetry.md](./Telemetry.md) defines generic telemetry framing and snapshot behavior.
-- [RF_Transition.md](./RF_Transition.md) captures the planned move from serial-first to an RF-backed architecture.
+- [RF_Transition.md](./RF_Transition.md) currently captures both the RF transition plan and the in-progress implemented RF behaviour, pending a later cleanup/rename pass.
 - [OTA_Proposal.md](./OTA_Proposal.md) captures the separate discussion around remote firmware update and why LoRa OTA is not part of the baseline RF plan.
 - [EPS_Proposal.md](./EPS_Proposal.md) captures the early concept for a monitored external subsystem power rail using an INA219.
 
@@ -22,7 +22,6 @@ Each implemented target has its own reference page with the same structure:
 
 Implemented target pages:
 
-- [LED](./targets/LED.md)
 - [TELEMETRY target](./targets/TELEMETRY_TARGET.md)
 - [BATTERY](./targets/BATTERY.md)
 - [GPS](./targets/GPS.md)

@@ -96,15 +96,4 @@ export const systemConfigs = [
     ],
     getOptions: ['ENABLE', 'AVAILABLE', 'SOURCE', 'ROLL_DEG', 'PITCH_DEG', 'HEADING_DEG', 'YAW_RATE_DPS', 'TELEMETRY'],
   },
-  {
-    target: 'LED',
-    title: 'LED',
-    fields: [
-      ['ENABLE', 'EN'],
-      ['STATE', 'STATE'],
-      ['TELEMETRY', 'TLM'],
-      ['COLOR', 'CLR'],
-    ],
-    getOptions: ['ENABLE', 'STATE', 'COLOR', 'TELEMETRY'],
-  },
 ]

@@ -89,13 +89,6 @@ export function bindEvents(state) {
       return
     }
 
-    if (button.dataset.role === 'led-color') {
-      const select = el('led-color-select')
-      state.ledColor = select.value
-      sendCommand(`SET,LED,COLOR,${state.ledColor}`)
-      return
-    }
-
     if (button.dataset.role === 'rtc-now') {
       const iso = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
       sendCommand(`SET,RTC,CURRENT_TIME,${iso}`)
@@ -107,11 +100,6 @@ export function bindEvents(state) {
     if (target.matches('[data-role="get-select"]')) {
       state.getSelections[target.dataset.target] = target.value
       sendCommand(`GET,${target.dataset.target},${target.value},NONE`)
-      return
-    }
-
-    if (target.id === 'led-color-select') {
-      state.ledColor = target.value
       return
     }
 
