@@ -15,6 +15,7 @@ namespace
   bool imuTelemetryEnabled;
   bool adcsTelemetryEnabled;
   unsigned long telemetryIntervalSeconds;
+  unsigned long skippedTelemetryCount;
 
   bool *getTargetTelemetryFlag(TargetType target)
   {
@@ -79,6 +80,7 @@ void setupTelemetry()
   imuTelemetryEnabled = false;
   adcsTelemetryEnabled = false;
   telemetryIntervalSeconds = Config::Telemetry::defaultIntervalSeconds;
+  skippedTelemetryCount = 0;
 }
 
 void handleGetTelemetry(const Command &cmd)
@@ -105,6 +107,10 @@ void handleGetTelemetry(const Command &cmd)
 
   case PARAM_INTERVAL_S:
     sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
+    break;
+
+  case PARAM_SKIPPED_N:
+    sendTelemetryULong("TELEMETRY", "SKIPPED_N", skippedTelemetryCount);
     break;
 
   default:
@@ -212,6 +218,7 @@ void reportTelemetryStatus()
   sendTelemetry("TELEMETRY", "TELEMETRY", telemetryTelemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetry("TELEMETRY", "ENABLE", telemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
+  sendTelemetryULong("TELEMETRY", "SKIPPED_N", skippedTelemetryCount);
 }
 
 bool isTelemetryEnabledInternal()
@@ -222,4 +229,14 @@ bool isTelemetryEnabledInternal()
 unsigned long getTelemetryIntervalSecondsInternal()
 {
   return telemetryIntervalSeconds;
+}
+
+unsigned long getSkippedTelemetryCountInternal()
+{
+  return skippedTelemetryCount;
+}
+
+void incrementSkippedTelemetryCountInternal()
+{
+  skippedTelemetryCount++;
 }

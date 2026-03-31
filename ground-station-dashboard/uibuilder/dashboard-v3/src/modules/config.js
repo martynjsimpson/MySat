@@ -43,8 +43,9 @@ export const systemConfigs = [
       ['ENABLE', 'EN'],
       ['INTERVAL_S', 'INT'],
       ['TELEMETRY', 'TLM'],
+      ['SKIPPED_N', 'SKP'],
     ],
-    getOptions: ['ENABLE', 'TELEMETRY', 'INTERVAL_S'],
+    getOptions: ['ENABLE', 'TELEMETRY', 'INTERVAL_S', 'SKIPPED_N'],
   },
   {
     target: 'BATTERY',

@@ -74,6 +74,7 @@ These events are target-specific and described in their target pages.
 - `GROUND,TELEMETRY` controls only the ground station's own periodic host-visible status snapshot
 - `GROUND,HEARTBEAT_N` is always emitted by the ground station on its heartbeat interval and ignores `GROUND,TELEMETRY`
 - `MODE,STATE` is included in normal periodic satellite snapshots while global telemetry is enabled
+- `TELEMETRY,SKIPPED_N` reports how many periodic cycles have been dropped by RF busy deferral
 - `TELEMETRY`, `BATTERY`, `GPS`, `RTC`, `THERMAL`, `IMU`, and `ADCS` can each be included or omitted from periodic snapshots independently
 - `GET,NONE,NONE,NONE` emits a one-time full snapshot across all implemented targets, including `STATUS,HEARTBEAT_N`
 - `GET,<target>,NONE,NONE` returns the full implemented telemetry set for that target

@@ -94,6 +94,8 @@ namespace
       return PARAM_HEALTH;
     if (strcmp(token, "INTERVAL_S") == 0)
       return PARAM_INTERVAL_S;
+    if (strcmp(token, "SKIPPED_N") == 0)
+      return PARAM_SKIPPED_N;
     if (strcmp(token, "TELEMETRY") == 0)
       return PARAM_TELEMETRY;
     if (strcmp(token, "CURRENT_TIME") == 0)

@@ -300,9 +300,7 @@ function renderSystems(state, systemConfigs) {
         <button class="mini-btn cmd-neutral" data-role="telemetry-interval">INT</button>`
     }
 
-    const telemetryControls = system.target === 'MODE'
-      ? '<div class="control-gap"></div><div class="control-gap"></div>'
-      : `<button class="mini-btn cmd-green-soft" data-role="telemetry" data-target="${system.target}" data-value="ENABLE">T+</button>
+    const telemetryControls = `<button class="mini-btn cmd-green-soft" data-role="telemetry" data-target="${system.target}" data-value="ENABLE">T+</button>
          <button class="mini-btn cmd-red-soft" data-role="telemetry" data-target="${system.target}" data-value="DISABLE">T-</button>`
 
     return `

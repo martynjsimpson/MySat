@@ -131,6 +131,7 @@ void handlePeriodicTelemetry()
 
     if (transportShouldDeferTelemetry())
     {
+      incrementSkippedTelemetryCountInternal();
       return;
     }
 
