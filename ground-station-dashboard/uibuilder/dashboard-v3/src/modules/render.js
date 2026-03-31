@@ -2,6 +2,8 @@ function el(id) {
   return document.getElementById(id)
 }
 
+let lastValidGpsFix = null
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -138,6 +140,7 @@ function gpsFix(state) {
   const lat = Number(entries.latitude.value)
   const lon = Number(entries.longitude.value)
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null
+  if (lat === 0 && lon === 0) return null
 
   return {
     lat,
@@ -160,7 +163,12 @@ function updateGpsMap(state) {
   const frame = el('gps-map')
   if (!status || !frame) return
 
-  const fix = gpsFix(state)
+  const liveFix = gpsFix(state)
+  if (liveFix) {
+    lastValidGpsFix = liveFix
+  }
+
+  const fix = liveFix || lastValidGpsFix
   if (!fix) {
     status.textContent = 'Awaiting fix'
     frame.removeAttribute('src')
@@ -173,7 +181,7 @@ function updateGpsMap(state) {
     frame.dataset.src = src
   }
 
-  status.textContent = `${fix.satellites} sats`
+  status.textContent = liveFix ? `${fix.satellites} sats` : 'Last fix'
 }
 
 function optionMarkup(options, selected) {
