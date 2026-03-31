@@ -40,5 +40,5 @@ Implemented target pages:
 - generic telemetry rules belong in `Telemetry.md`
 - target-specific command and field reference belongs in `documentation/targets/`
 - firmware build and source layout belong in [../satellite-firmware/README.md](../satellite-firmware/README.md)
-- ground-station firmware build layout belongs in [../ground-station-firmware/platformio.ini](../ground-station-firmware/platformio.ini)
+- ground-station firmware build and source layout belong in [../ground-station-firmware/README.md](../ground-station-firmware/README.md)
 - dashboard setup belongs in [../ground-station-dashboard/README.md](../ground-station-dashboard/README.md)

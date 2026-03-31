@@ -2,7 +2,7 @@
 
 This directory contains the MySat firmware for the Arduino MKR WAN 1310.
 
-The firmware is built with PlatformIO from the repository root using [platformio.ini](../platformio.ini). The MKR WAN 1310 ground-station firmware is built from its own separate project file at [../ground-station-firmware/platformio.ini](../ground-station-firmware/platformio.ini).
+The firmware is built with PlatformIO from the repository root using [platformio.ini](../platformio.ini). The separate ground-station firmware project is documented in [../ground-station-firmware/README.md](../ground-station-firmware/README.md) and built from its own local PlatformIO configuration.
 
 ## Build and Run
 

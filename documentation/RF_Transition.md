@@ -12,7 +12,7 @@ The basic phase-one RF link is up and running. The remaining transition work is 
 
 Current active items:
 
-- validate retry timing on real hardware and tune it if `5 s / 3 retries` feels wrong in practice
+- validate retry timing on real hardware and tune it if the current `3 s / 5 retries` policy feels wrong in practice
 - validate heartbeat cadence and traffic priority under longer bench runs
 - decide how much ground-station diagnostic output should remain enabled by default
 - do a final cleanup pass that retires this transition-oriented document name once the RF baseline feels stable

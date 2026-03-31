@@ -143,8 +143,8 @@ The ground station owns retry policy for satellite-bound commands.
 
 Current implemented behaviour:
 
-- wait `5` seconds for a completion response
-- retry up to `3` times
+- wait `3` seconds for a completion response
+- retry up to `5` times
 
 Response matching:
 
@@ -191,8 +191,8 @@ The dashboard can therefore treat both `STATUS,HEARTBEAT_N` and `GROUND,HEARTBEA
 Ground station:
 
 - serial heartbeat interval: `5000 ms`
-- command retry delay: `5000 ms`
-- max command retries: `3`
+- command retry delay: `3000 ms`
+- max command retries: `5`
 - LoRa frequency: `868000000 Hz`
 - LoRa TX power: `17 dBm`
 - spreading factor: `7`
