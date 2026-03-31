@@ -16,7 +16,7 @@ The EPS concept here is primarily about:
 
 ## Core Idea
 
-The Arduino MKR WiFi 1010 will continue to be powered normally by USB.
+The Arduino MKR WAN 1310 will continue to be powered normally by USB.
 
 Rather than trying to monitor the board's full USB power path, the INA219 will be used to monitor a **separate 3.3V external subsystem rail**.
 
@@ -55,13 +55,13 @@ This is a good match for a CubeSat-style prototype because it resembles an EPS d
 ## Hardware Concept
 
 ### Main controller
-- Arduino MKR WiFi 1010
+- Arduino MKR WAN 1310
 
 ### Power monitor
 - INA219 current/voltage monitor breakout
 
 ### Power source
-- USB power into the MKR WiFi 1010
+- USB power into the MKR WAN 1310
 
 ### Monitored rail
 - external 3.3V subsystem rail powered from the MKR `3V3` pin through the INA219 measurement path

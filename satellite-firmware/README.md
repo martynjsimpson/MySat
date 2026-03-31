@@ -2,7 +2,7 @@
 
 This directory contains the MySat firmware for the Arduino MKR WAN 1310.
 
-The firmware is built with PlatformIO from the repository root using [platformio.ini](../platformio.ini). The Arduino Mega 2560 ground-station firmware is built from its own separate project file at [../ground-station-firmware/platformio.ini](../ground-station-firmware/platformio.ini).
+The firmware is built with PlatformIO from the repository root using [platformio.ini](../platformio.ini). The MKR WAN 1310 ground-station firmware is built from its own separate project file at [../ground-station-firmware/platformio.ini](../ground-station-firmware/platformio.ini).
 
 ## Build and Run
 
@@ -36,7 +36,7 @@ platformio device monitor --environment mkrwan1310
 - `include/imu.h` - MPU-6050 and QMC5883L IMU subsystem interface
 - `include/adcs.h` - derived attitude subsystem interface
 - `include/protocol.h` - inbound command buffering and line-framing interface
-- `include/rf_envelope.h` - RF packet envelope and CRC helpers for the planned LoRa transport
+- `include/rf_envelope.h` - RF packet envelope and CRC helpers for the active LoRa transport
 - `include/rtc.h` - RTC interface
 - `include/sender.h` - outbound `ACK`, `ERR`, and `TLM` helpers
 - `include/status.h` - status heartbeat interface
@@ -95,11 +95,11 @@ The current ADCS implementation is derived from the `IMU` target and reports rol
 
 ## Transport Layer
 
-The firmware is still serial-first today, but command and response I/O no longer call `Serial` directly throughout the codebase.
+The active satellite transport is now LoRa-backed, but the higher-level protocol code still avoids calling the radio driver directly throughout the codebase.
 
 - `setupTransport()` is called early in `setup()` to initialize the active link.
 - `protocol.cpp` reads inbound bytes through `transportAvailable()` and `transportRead()`.
 - `sender.cpp` emits `ACK`, `ERR`, and `TLM` messages through `transportWrite(...)` helpers.
 - `protocol_dispatch.cpp` uses `transportFlush()` before reset so the reboot acknowledgement has a chance to leave the device.
 
-The active transport implementation is now `src/transport_lora.cpp`, which wraps one logical protocol line per RF packet using the shared RF envelope and feeds decoded payloads back into the existing parser path. The built-in LED is now used as a short activity pulse for RF send/receive events rather than as a commandable subsystem. The point of the abstraction remains the same: parser, dispatcher, sender, and telemetry code stay transport-agnostic while the link layer evolves underneath them.
+The active transport implementation is now `src/transport_lora.cpp`, which wraps one logical protocol line per RF packet using the shared RF envelope and feeds decoded payloads back into the existing parser path. The built-in LED is used as a short activity pulse for RF send/receive events rather than as a commandable subsystem. The point of the abstraction remains the same: parser, dispatcher, sender, and telemetry code stay transport-agnostic while the link layer evolves underneath them.

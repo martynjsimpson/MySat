@@ -30,7 +30,12 @@ MySat currently consists of three cooperating parts:
 3. **Ground-station dashboard**  
    A Node-RED-based ground-station UI used to parse, display, and interact with telemetry and commands. The current bespoke dashboard frontend is built with `uibuilder`.
 
-The system currently uses a structured serial protocol first, with the intention that the same logical message model could later be carried over RF.
+The system now uses the same structured logical protocol across two physical hops:
+
+- host PC to ground station over USB serial
+- ground station to satellite over LoRa using the project RF envelope
+
+At the host boundary, the ground station also exposes a host-local `GROUND` target for bridge status, counters, heartbeat, clock sync, and reset control.
 
 ## Repository layout
 
@@ -86,6 +91,7 @@ Project direction, design decisions, hardware work, and final review remain huma
 - [documentation/Architecture.md](./documentation/Architecture.md) — repo-level system boundaries and interaction map
 - [documentation/Protocol.md](./documentation/Protocol.md) — generic command and response protocol
 - [documentation/Telemetry.md](./documentation/Telemetry.md) — generic telemetry framing and snapshot rules
+- [documentation/RF.md](./documentation/RF.md) — current RF architecture, packet envelope, and link behaviour
 - [documentation/targets/](./documentation/targets) — target-specific command and telemetry reference pages
 
 ## Current direction

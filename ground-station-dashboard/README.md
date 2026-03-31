@@ -87,7 +87,7 @@ The v3 client is a bespoke mission-control style console rather than a widget gr
 
 Its current structure is:
 
-- `Operations`: heartbeat, last telemetry timestamp, last acknowledgement, last error, plus top-level `PING`, full-system `POLL`, `RESET`, and custom command send
+- `Operations`: split GND and SAT summary cards, with a ground-station command row on the left and satellite command row on the right
 - `Visuals`: a three-block strip containing a GPS map, high-signal key data, and an artificial horizon driven by ADCS values
 - `Systems`: one compact row per target with live parameters on the left and controls on the right
 - `Logs`: side-by-side `ACK`, `ERR`, and all-packet logs
@@ -134,3 +134,4 @@ Implementation notes:
 ## Notes
 
 - The dashboard now includes a host-local `GROUND` system row for bridge state, counters, and ground-station control actions such as local clock sync and reboot.
+- The operations summary now distinguishes ground-station and satellite heartbeat/last-message freshness rather than mixing both into one set of cards.
