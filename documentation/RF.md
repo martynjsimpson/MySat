@@ -42,6 +42,7 @@ Logical message model:
 - wraps and unwraps RF packets
 - forwards satellite traffic to and from the host
 - owns retry and timeout behaviour for satellite-bound commands
+- can seed its local clock from trusted satellite timestamps while still `UNSYNC`
 - exposes the host-local `GROUND` target for bridge status, counters, heartbeat, telemetry control, clock sync, ping, and reset
 
 ### Satellite

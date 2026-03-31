@@ -38,6 +38,13 @@ namespace
     const char *value = nullptr;
   };
 
+  enum ClockSource
+  {
+    CLOCK_SOURCE_UNSYNC = 0,
+    CLOCK_SOURCE_LOCAL,
+    CLOCK_SOURCE_SATELLITE
+  };
+
   char hostInputBuffer[kLineBufferSize];
   size_t hostInputLength = 0;
   unsigned long lastHostHeartbeatMs = 0;
@@ -57,6 +64,7 @@ namespace
   uint32_t clockBaseEpochSeconds = kUnsyncedEpochSeconds;
   unsigned long clockBaseMillis = 0;
   bool clockSynced = false;
+  ClockSource clockSource = CLOCK_SOURCE_UNSYNC;
   bool groundTelemetryEnabled = Config::Telemetry::defaultEnabled;
 
   void applyLedOutput()
@@ -250,6 +258,20 @@ namespace
     return clockBaseEpochSeconds + ((millis() - clockBaseMillis) / 1000UL);
   }
 
+  const __FlashStringHelper *clockSourceLabel()
+  {
+    switch (clockSource)
+    {
+    case CLOCK_SOURCE_LOCAL:
+      return F("LOCAL");
+    case CLOCK_SOURCE_SATELLITE:
+      return F("SATELLITE");
+    case CLOCK_SOURCE_UNSYNC:
+    default:
+      return F("UNSYNC");
+    }
+  }
+
   void writeCurrentTimestamp()
   {
     char timestamp[21];
@@ -358,7 +380,7 @@ namespace
     Serial.println(groundTelemetryEnabled ? F("TRUE") : F("FALSE"));
     Serial.print(timestamp);
     Serial.print(F(",TLM,GROUND,SOURCE,"));
-    Serial.println(clockSynced ? F("LOCAL") : F("UNSYNC"));
+    Serial.println(clockSourceLabel());
     Serial.print(timestamp);
     Serial.print(F(",TLM,GROUND,RADIO,"));
     Serial.println(radioReady ? F("READY") : F("FAILED"));
@@ -411,6 +433,74 @@ namespace
   {
     sendGroundTelemetryFlash("LAST_ERROR", decodeStatusLabel(status));
     sendGroundTelemetryULong("DROP_PACKETS_N", dropPacketCount);
+  }
+
+  bool extractPayloadTimestamp(const char *payload, char *timestampBuffer, size_t timestampBufferSize)
+  {
+    if (payload == nullptr || timestampBuffer == nullptr || timestampBufferSize < 21)
+    {
+      return false;
+    }
+
+    const char *firstComma = strchr(payload, ',');
+    if (firstComma == nullptr)
+    {
+      return false;
+    }
+
+    const size_t length = static_cast<size_t>(firstComma - payload);
+    if (length != 20 || length >= timestampBufferSize)
+    {
+      return false;
+    }
+
+    memcpy(timestampBuffer, payload, length);
+    timestampBuffer[length] = '\0';
+    return true;
+  }
+
+  bool isTrustedSatelliteTimestamp(const char *timestamp)
+  {
+    if (timestamp == nullptr)
+    {
+      return false;
+    }
+
+    return strcmp(timestamp, Config::Clock::minTrustedSatelliteTimestamp) >= 0;
+  }
+
+  void maybeSyncClockFromSatellitePayload(const char *payload)
+  {
+    if (!Config::Clock::autoSyncFromSatellite || clockSource != CLOCK_SOURCE_UNSYNC)
+    {
+      return;
+    }
+
+    char timestamp[21];
+    if (!extractPayloadTimestamp(payload, timestamp, sizeof(timestamp)))
+    {
+      return;
+    }
+
+    if (!isTrustedSatelliteTimestamp(timestamp))
+    {
+      return;
+    }
+
+    uint32_t epochSeconds = 0;
+    if (!parseIsoTimestamp(timestamp, epochSeconds))
+    {
+      return;
+    }
+
+    clockBaseEpochSeconds = epochSeconds;
+    clockBaseMillis = millis();
+    clockSynced = true;
+    clockSource = CLOCK_SOURCE_SATELLITE;
+
+    sendGroundTelemetry("CURRENT_TIME", timestamp);
+    sendGroundTelemetryFlash("SOURCE", F("SATELLITE"));
+    sendGroundTelemetryFlash("CLOCK_SYNC", F("TRUE"));
   }
 
   PendingResponseKind expectedResponseForCommand(const char *line)
@@ -662,7 +752,7 @@ namespace
 
     if (equalsToken(command.parameter, "SOURCE"))
     {
-      sendGroundTelemetry("SOURCE", clockSynced ? "LOCAL" : "UNSYNC");
+      sendGroundTelemetryFlash("SOURCE", clockSourceLabel());
       return;
     }
 
@@ -757,12 +847,13 @@ namespace
     clockBaseEpochSeconds = epochSeconds;
     clockBaseMillis = millis();
     clockSynced = true;
+    clockSource = CLOCK_SOURCE_LOCAL;
     sendGroundAck("CLOCK_SET");
     char timestamp[21];
     formatIsoTimestamp(currentEpochSeconds(), timestamp, sizeof(timestamp));
     sendGroundTelemetry("CURRENT_TIME", timestamp);
-    sendGroundTelemetry("SOURCE", "LOCAL");
-    sendGroundTelemetry("CLOCK_SYNC", "TRUE");
+    sendGroundTelemetryFlash("SOURCE", F("LOCAL"));
+    sendGroundTelemetryFlash("CLOCK_SYNC", F("TRUE"));
   }
 
   void handleGroundPing(const CommandView &command)
@@ -927,6 +1018,7 @@ namespace
       return;
     }
 
+    maybeSyncClockFromSatellitePayload(decodedPacket.payload);
     if (shouldSuppressDuplicatePayload(decodedPacket.payload))
     {
       return;
@@ -987,6 +1079,7 @@ void setup()
   clockBaseEpochSeconds = kUnsyncedEpochSeconds;
   clockBaseMillis = millis();
   clockSynced = false;
+  clockSource = CLOCK_SOURCE_UNSYNC;
   groundTelemetryEnabled = Config::Telemetry::defaultEnabled;
   lastForwardedPayload[0] = '\0';
   lastForwardedPayloadMs = 0;

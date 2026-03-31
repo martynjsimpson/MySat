@@ -39,6 +39,12 @@ namespace Config
     constexpr unsigned long resetAckDelayMs = 50;
   }
 
+  namespace Clock
+  {
+    constexpr bool autoSyncFromSatellite = true;
+    constexpr const char *minTrustedSatelliteTimestamp = "2026-03-27T00:00:00Z";
+  }
+
   namespace Telemetry
   {
     constexpr bool defaultEnabled = false;

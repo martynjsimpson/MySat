@@ -20,7 +20,14 @@ function tlmEntry(state, target, parameter) {
 
 function field(state, target, parameter, label) {
   const entry = tlmEntry(state, target, parameter)
-  return { key: `${target}-${parameter}`, parameter, label, value: entry.value || '', time: entry.time || '' }
+  return {
+    key: `${target}-${parameter}`,
+    parameter,
+    label,
+    value: entry.value || '',
+    time: entry.time || '',
+    receivedAtMs: entry.receivedAtMs,
+  }
 }
 
 function unitSuffix(parameter) {
@@ -38,7 +45,11 @@ function unitSuffix(parameter) {
 }
 
 function receivedMs(item) {
-  if (!item || !item.time) return null
+  if (!item) return null
+  if (typeof item.receivedAtMs === 'number' && Number.isFinite(item.receivedAtMs)) {
+    return item.receivedAtMs
+  }
+  if (!item.time) return null
   const parsed = Date.parse(item.time)
   return Number.isNaN(parsed) ? null : parsed
 }
@@ -101,7 +112,7 @@ function lastPacketRow(state, predicate) {
 function lastTlmEntry(state, origin) {
   const row = lastPacketRow(state, (item) => item.packetType === 'TLM' && packetOrigin(item) === origin && item.time)
   if (!row) return null
-  return { value: row.time, time: row.time }
+  return { value: row.time, time: row.time, receivedAtMs: row.receivedAtMs }
 }
 
 function ackSummary(state, origin) {
