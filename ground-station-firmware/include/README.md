@@ -8,4 +8,4 @@ Current structure:
 - `include/` - project headers shared by the bridge firmware
 - `include/config.h` - serial, LoRa, and retry tuning constants for the bridge
 
-The current bridge firmware accepts host serial commands, wraps them in the shared RF envelope, forwards them over LoRa, and sends received satellite payloads back to the host over USB serial.
+The current bridge firmware accepts host serial commands, wraps them in the shared RF envelope, forwards them over LoRa, reconstructs host-visible timestamps from the RF packet header, and sends received satellite payload lines back to the host over USB serial.

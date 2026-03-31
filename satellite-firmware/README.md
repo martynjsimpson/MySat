@@ -67,7 +67,7 @@ platformio device monitor --environment mkrwan1310
 - `src/imu.cpp` - MPU-6050 and QMC5883L polling, caching, and reporting
 - `src/adcs.cpp` - IMU-derived roll, pitch, heading, source, and yaw-rate reporting
 - `src/sender.cpp` - wire-format message emission
-- `src/transport_lora.cpp` - LoRa-backed transport that carries one logical protocol line per RF packet
+- `src/transport_lora.cpp` - LoRa-backed transport using the shared RF envelope, packet-level timestamps, and newline-delimited telemetry batching
 
 ## Current Targets
 
@@ -105,4 +105,4 @@ The active satellite transport is now LoRa-backed, but the higher-level protocol
 - `sender.cpp` emits `ACK`, `ERR`, and `TLM` messages through `transportWrite(...)` helpers.
 - `protocol_dispatch.cpp` uses `transportFlush()` before reset so the reboot acknowledgement has a chance to leave the device.
 
-The active transport implementation is now `src/transport_lora.cpp`, which wraps one logical protocol line per RF packet using the shared RF envelope and feeds decoded payloads back into the existing parser path. The built-in LED is used as a short activity pulse for RF send/receive events rather than as a commandable subsystem. The point of the abstraction remains the same: parser, dispatcher, sender, and telemetry code stay transport-agnostic while the link layer evolves underneath them.
+The active transport implementation is now `src/transport_lora.cpp`, which wraps commands and response lines in the shared RF envelope, carries a packet-level timestamp in the envelope header, and allows routine telemetry to batch multiple newline-delimited `TLM` lines into one RF packet. The built-in LED is used as a short activity pulse for RF send/receive events rather than as a commandable subsystem. The point of the abstraction remains the same: parser, dispatcher, sender, and telemetry code stay transport-agnostic while the link layer evolves underneath them.
