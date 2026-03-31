@@ -86,6 +86,13 @@ function gpsEntries(state) {
   }
 }
 
+function setVisualMetric(state, id, item) {
+  const node = el(id)
+  if (!node) return
+  node.textContent = displayValue(item)
+  node.className = `metric-value ${freshnessClass(state, item)}`
+}
+
 function gpsFix(state) {
   const entries = gpsEntries(state)
   if (entries.available.value !== 'TRUE') return null
@@ -128,7 +135,7 @@ function updateGpsMap(state) {
     frame.dataset.src = src
   }
 
-  status.textContent = `${fix.satellites} sats | ${fix.altitude}m`
+  status.textContent = `${fix.satellites} sats`
 }
 
 function optionMarkup(options, selected) {
@@ -238,6 +245,11 @@ export function refreshDashboardStatus(state, systemConfigs) {
 
   el('last-err').textContent = formatSummary(state.payload.lastErr, 'err')
   el('last-err').className = `stat-value stat-wrap ${state.payload.lastErr ? 'freshness-stale' : 'freshness-empty'}`
+
+  setVisualMetric(state, 'visual-altitude', field(state, 'GPS', 'ALTITUDE_M', 'ALT'))
+  setVisualMetric(state, 'visual-speed', field(state, 'GPS', 'SPEED_KPH', 'SPD'))
+  setVisualMetric(state, 'visual-roll', field(state, 'ADCS', 'ROLL_DEG', 'ROL'))
+  setVisualMetric(state, 'visual-pitch', field(state, 'ADCS', 'PITCH_DEG', 'PIT'))
 
   refreshSystemValues(state, systemConfigs)
   updateGpsMap(state)
