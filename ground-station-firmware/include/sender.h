@@ -17,6 +17,7 @@ struct GroundStatusSnapshot
   unsigned long rxPacketCount = 0;
   unsigned long dropPacketCount = 0;
   unsigned long lastRetryAttempt = 0;
+  const char *lastDropReason = "NONE";
 };
 
 void sendAck(uint32_t epochSeconds, const char *value);

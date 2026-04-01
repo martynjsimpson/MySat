@@ -16,6 +16,7 @@ namespace
   bool adcsTelemetryEnabled;
   unsigned long telemetryIntervalSeconds;
   unsigned long skippedTelemetryCount;
+  char lastSkippedTelemetryReason[16];
 
   bool *getTargetTelemetryFlag(TargetType target)
   {
@@ -81,6 +82,8 @@ void setupTelemetry()
   adcsTelemetryEnabled = false;
   telemetryIntervalSeconds = Config::Telemetry::defaultIntervalSeconds;
   skippedTelemetryCount = 0;
+  strncpy(lastSkippedTelemetryReason, "NONE", sizeof(lastSkippedTelemetryReason) - 1);
+  lastSkippedTelemetryReason[sizeof(lastSkippedTelemetryReason) - 1] = '\0';
 }
 
 void handleGetTelemetry(const Command &cmd)
@@ -111,6 +114,10 @@ void handleGetTelemetry(const Command &cmd)
 
   case PARAM_SKIPPED_N:
     sendTelemetryULong("TELEMETRY", "SKIPPED_N", skippedTelemetryCount);
+    break;
+
+  case PARAM_LAST_SKIP_REASON:
+    sendTelemetry("TELEMETRY", "LAST_SKIP_REASON", lastSkippedTelemetryReason);
     break;
 
   default:
@@ -219,6 +226,7 @@ void reportTelemetryStatus()
   sendTelemetry("TELEMETRY", "ENABLE", telemetryEnabled ? "TRUE" : "FALSE");
   sendTelemetryULong("TELEMETRY", "INTERVAL_S", telemetryIntervalSeconds);
   sendTelemetryULong("TELEMETRY", "SKIPPED_N", skippedTelemetryCount);
+  sendTelemetry("TELEMETRY", "LAST_SKIP_REASON", lastSkippedTelemetryReason);
 }
 
 bool isTelemetryEnabledInternal()
@@ -236,7 +244,21 @@ unsigned long getSkippedTelemetryCountInternal()
   return skippedTelemetryCount;
 }
 
+const char *getLastSkippedTelemetryReasonInternal()
+{
+  return lastSkippedTelemetryReason;
+}
+
 void incrementSkippedTelemetryCountInternal()
 {
   skippedTelemetryCount++;
+}
+
+void setLastSkippedTelemetryReasonInternal(const char *reason)
+{
+  const char *resolvedReason = (reason != nullptr && *reason != '\0')
+                                 ? reason
+                                 : "NONE";
+  strncpy(lastSkippedTelemetryReason, resolvedReason, sizeof(lastSkippedTelemetryReason) - 1);
+  lastSkippedTelemetryReason[sizeof(lastSkippedTelemetryReason) - 1] = '\0';
 }

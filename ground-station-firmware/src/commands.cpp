@@ -23,6 +23,7 @@ namespace
     snapshot.rxPacketCount = context.rxPacketCount;
     snapshot.dropPacketCount = context.dropPacketCount;
     snapshot.lastRetryAttempt = context.lastRetryAttempt;
+    snapshot.lastDropReason = context.lastDropReason;
     return snapshot;
   }
 
@@ -93,6 +94,14 @@ namespace
     if (equalsToken(command.parameter, "DROP_PACKETS_N"))
     {
       sendTelemetryULong(context.currentEpochSeconds, "DROP_PACKETS_N", context.dropPacketCount);
+      return;
+    }
+
+    if (equalsToken(command.parameter, "LAST_DROP_REASON"))
+    {
+      sendTelemetry(context.currentEpochSeconds,
+                    "LAST_DROP_REASON",
+                    context.lastDropReason != nullptr ? context.lastDropReason : "NONE");
       return;
     }
 

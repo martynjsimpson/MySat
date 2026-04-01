@@ -15,6 +15,7 @@
 | `GET,TELEMETRY,ENABLE,NONE` | Returns global periodic telemetry enable state |
 | `GET,TELEMETRY,INTERVAL_S,NONE` | Returns telemetry interval in seconds |
 | `GET,TELEMETRY,SKIPPED_N,NONE` | Returns how many periodic snapshots have been skipped because the RF link was busy |
+| `GET,TELEMETRY,LAST_SKIP_REASON,NONE` | Returns the last recorded reason a periodic telemetry cycle was skipped |
 
 ### SET
 
@@ -36,12 +37,14 @@ Per-target telemetry control for other targets uses the same `SET,<target>,TELEM
 | `TELEMETRY,ENABLE` | Whether normal periodic telemetry is enabled | `TRUE`, `FALSE` |
 | `TELEMETRY,INTERVAL_S` | Snapshot interval in seconds | unsigned integer |
 | `TELEMETRY,SKIPPED_N` | Count of periodic telemetry cycles skipped due to transport busy deferral | unsigned integer |
+| `TELEMETRY,LAST_SKIP_REASON` | Last recorded reason a periodic telemetry cycle was skipped | `NONE`, `BUSY` |
 
 ## Behavior Notes
 
 - `SET,TELEMETRY,ENABLE,FALSE` stops normal periodic snapshots.
 - `STATUS,HEARTBEAT_N` still continues on the same interval when global telemetry is disabled.
 - `TELEMETRY,SKIPPED_N` increments when a periodic telemetry cycle is deferred by the RF `skip-if-busy` rule.
+- `TELEMETRY,LAST_SKIP_REASON` currently records `BUSY` when the transport defer rule skips a cycle.
 - `MODE` can reapply a baseline per-target telemetry set, after which manual `SET,<target>,TELEMETRY,...` overrides still work.
 - `GET` works regardless of periodic telemetry state.
 

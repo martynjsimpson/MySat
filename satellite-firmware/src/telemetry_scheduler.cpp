@@ -145,6 +145,7 @@ void handlePeriodicTelemetry()
 
     if (transportShouldDeferTelemetry())
     {
+      setLastSkippedTelemetryReasonInternal("BUSY");
       incrementSkippedTelemetryCountInternal();
       return;
     }

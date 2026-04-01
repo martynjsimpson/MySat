@@ -127,6 +127,9 @@ void sendStatusSnapshot(uint32_t epochSeconds, const GroundStatusSnapshot &snaps
   Serial.print(F(",TLM,GROUND,DROP_PACKETS_N,"));
   Serial.println(snapshot.dropPacketCount);
   Serial.print(timestamp);
+  Serial.print(F(",TLM,GROUND,LAST_DROP_REASON,"));
+  Serial.println(snapshot.lastDropReason != nullptr ? snapshot.lastDropReason : "NONE");
+  Serial.print(timestamp);
   Serial.print(F(",TLM,GROUND,LAST_RETRY_N,"));
   Serial.println(snapshot.lastRetryAttempt);
   Serial.print(timestamp);

@@ -26,6 +26,7 @@ namespace
   unsigned long lastRetryAttempt = 0;
   unsigned long groundHeartbeatCount = 0;
   unsigned long lastForwardedPayloadMs = 0;
+  const char *lastDropReason = "NONE";
   char lastForwardedPayload[kLineBufferSize]{};
 
   char pendingCommandLine[kLineBufferSize]{};
@@ -45,6 +46,7 @@ namespace
     snapshot.rxPacketCount = rxPacketCount;
     snapshot.dropPacketCount = dropPacketCount;
     snapshot.lastRetryAttempt = lastRetryAttempt;
+    snapshot.lastDropReason = lastDropReason;
     return snapshot;
   }
 
@@ -73,8 +75,10 @@ namespace
   void emitDropTelemetry(RfEnvelope::DecodeStatus status)
   {
     const char *context = lastGroundRadioErrorContext();
+    lastDropReason = decodeStatusLabel(status);
     sendError(currentEpochSeconds(), decodeStatusLabel(status), (context != nullptr && *context != '\0') ? context : nullptr);
     sendTelemetry(currentEpochSeconds(), "LAST_ERROR", decodeStatusLabel(status));
+    sendTelemetry(currentEpochSeconds(), "LAST_DROP_REASON", lastDropReason);
     sendTelemetryULong(currentEpochSeconds(), "DROP_PACKETS_N", dropPacketCount);
   }
 
@@ -117,6 +121,7 @@ namespace
     context.rxPacketCount = rxPacketCount;
     context.dropPacketCount = dropPacketCount;
     context.lastRetryAttempt = lastRetryAttempt;
+    context.lastDropReason = lastDropReason;
     context.telemetryEnabledState = &groundTelemetryEnabled;
     context.performReset = performGroundReset;
     return handleGroundCommandLine(line, context);

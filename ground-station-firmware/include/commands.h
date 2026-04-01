@@ -18,6 +18,7 @@ struct GroundCommandContext
   unsigned long rxPacketCount = 0;
   unsigned long dropPacketCount = 0;
   unsigned long lastRetryAttempt = 0;
+  const char *lastDropReason = "NONE";
 
   bool *telemetryEnabledState = nullptr;
   void (*performReset)() = nullptr;

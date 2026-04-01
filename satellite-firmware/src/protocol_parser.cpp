@@ -96,6 +96,8 @@ namespace
       return PARAM_INTERVAL_S;
     if (strcmp(token, "SKIPPED_N") == 0)
       return PARAM_SKIPPED_N;
+    if (strcmp(token, "LAST_SKIP_REASON") == 0)
+      return PARAM_LAST_SKIP_REASON;
     if (strcmp(token, "TELEMETRY") == 0)
       return PARAM_TELEMETRY;
     if (strcmp(token, "CURRENT_TIME") == 0)

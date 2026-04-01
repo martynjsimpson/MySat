@@ -12,9 +12,10 @@ export const systemConfigs = [
       ['TX_PACKETS_N', 'TX'],
       ['RX_PACKETS_N', 'RX'],
       ['DROP_PACKETS_N', 'DRP'],
+      ['LAST_DROP_REASON', 'RSN'],
       ['LAST_RETRY_N', 'RTY'],
     ],
-    getOptions: ['HEARTBEAT_N', 'CURRENT_TIME', 'SOURCE', 'RADIO', 'PENDING', 'CLOCK_SYNC', 'TELEMETRY', 'TX_PACKETS_N', 'RX_PACKETS_N', 'DROP_PACKETS_N', 'LAST_RETRY_N'],
+    getOptions: ['HEARTBEAT_N', 'CURRENT_TIME', 'SOURCE', 'RADIO', 'PENDING', 'CLOCK_SYNC', 'TELEMETRY', 'TX_PACKETS_N', 'RX_PACKETS_N', 'DROP_PACKETS_N', 'LAST_DROP_REASON', 'LAST_RETRY_N'],
   },
   {
     target: 'RTC',
@@ -44,8 +45,9 @@ export const systemConfigs = [
       ['INTERVAL_S', 'INT'],
       ['TELEMETRY', 'TLM'],
       ['SKIPPED_N', 'SKP'],
+      ['LAST_SKIP_REASON', 'RSN'],
     ],
-    getOptions: ['ENABLE', 'TELEMETRY', 'INTERVAL_S', 'SKIPPED_N'],
+    getOptions: ['ENABLE', 'TELEMETRY', 'INTERVAL_S', 'SKIPPED_N', 'LAST_SKIP_REASON'],
   },
   {
     target: 'BATTERY',
