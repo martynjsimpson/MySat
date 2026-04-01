@@ -168,6 +168,7 @@ Current implemented behaviour:
 Current bench tuning:
 
 - telemetry defer window after RF activity: `250 ms`
+- telemetry inter-batch gap during routine snapshots: `15 ms`
 
 ## Heartbeat and Liveness
 
@@ -204,6 +205,7 @@ Ground station:
 Satellite:
 
 - telemetry defer after RF activity: `250 ms`
+- telemetry inter-batch gap during routine snapshots: `15 ms`
 - LoRa frequency: `868000000 Hz`
 - LoRa TX power: `17 dBm`
 - spreading factor: `7`

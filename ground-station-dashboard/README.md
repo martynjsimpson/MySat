@@ -89,6 +89,7 @@ Its current structure is:
 
 - `Operations`: split GND and SAT summary cards, with a ground-station command row on the left and satellite command row on the right
 - `Visuals`: a three-block strip containing a GPS map, high-signal key data, and an artificial horizon driven by ADCS values
+- `Link`: a compact RF/bridge diagnostics strip for ground-link counters, retry/drop state, and satellite telemetry pacing
 - `Systems`: one compact row per target with live parameters on the left and controls on the right
 - `Logs`: side-by-side `ACK`, `ERR`, and all-packet logs
 
@@ -132,8 +133,10 @@ Implementation notes:
 - this avoids open dropdowns being closed by routine UI updates while telemetry is streaming
 - the GPS map uses an OpenStreetMap embed rather than an in-page tile renderer
 - the GPS map ignores null or `0.00000,0.00000` fixes and holds the last valid location until a new valid fix arrives
+- each log card includes clear and copy actions; clear requests are routed back through Node-RED so the stored flow-context log arrays are reset, not just the visible browser view
 
 ## Notes
 
 - The dashboard now includes a host-local `GROUND` system row for bridge state, counters, and ground-station control actions such as local clock sync and reboot.
 - The operations summary now distinguishes ground-station and satellite heartbeat/last-message freshness rather than mixing both into one set of cards.
+- RF-heavy bridge diagnostics now live primarily in the `Link` panel instead of overloading the `GND` and `TLM` systems rows.
