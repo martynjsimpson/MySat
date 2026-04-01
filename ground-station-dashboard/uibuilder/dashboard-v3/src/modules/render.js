@@ -158,6 +158,20 @@ function setVisualFixedMetric(id, item) {
   node.className = 'metric-value'
 }
 
+function setLinkMetric(state, id, item) {
+  const node = el(id)
+  if (!node) return
+  node.textContent = displayValue(item)
+  node.className = `field-value ${freshnessClass(state, item)}`
+}
+
+function setLinkDot(id, healthy) {
+  const node = el(id)
+  if (!node) return
+  node.classList.toggle('is-healthy', healthy)
+  node.classList.toggle('is-unhealthy', !healthy)
+}
+
 function setAttitudeReadout(state, id, item) {
   const node = el(id)
   if (!node) return
@@ -245,6 +259,36 @@ function updateGpsMap(state) {
   }
 
   status.textContent = liveFix ? `${fix.satellites} sats` : 'Last fix'
+}
+
+function updateLinkPanel(state) {
+  const groundRadio = field(state, 'GROUND', 'RADIO', 'RAD')
+  const groundPending = field(state, 'GROUND', 'PENDING', 'PND')
+  const groundTx = field(state, 'GROUND', 'TX_PACKETS_N', 'TX')
+  const groundRx = field(state, 'GROUND', 'RX_PACKETS_N', 'RX')
+  const groundDrop = field(state, 'GROUND', 'DROP_PACKETS_N', 'DRP')
+  const groundRetry = field(state, 'GROUND', 'LAST_RETRY_N', 'RTY')
+  const groundDropReason = field(state, 'GROUND', 'LAST_DROP_REASON', 'RSN')
+
+  setLinkMetric(state, 'link-ground-radio', groundRadio)
+  setLinkMetric(state, 'link-ground-pending', groundPending)
+  setLinkMetric(state, 'link-ground-tx', groundTx)
+  setLinkMetric(state, 'link-ground-rx', groundRx)
+  setLinkMetric(state, 'link-ground-drop', groundDrop)
+  setLinkMetric(state, 'link-ground-retry', groundRetry)
+  setLinkMetric(state, 'link-ground-drop-reason', groundDropReason)
+  setLinkDot('link-ground-dot', groundRadio.value === 'READY')
+
+  const satTelemetryEnable = field(state, 'TELEMETRY', 'ENABLE', 'EN')
+  const satInterval = field(state, 'TELEMETRY', 'INTERVAL_S', 'INT')
+  const satSkipped = field(state, 'TELEMETRY', 'SKIPPED_N', 'SKP')
+  const satSkipReason = field(state, 'TELEMETRY', 'LAST_SKIP_REASON', 'RSN')
+
+  setLinkMetric(state, 'link-sat-telemetry-enable', satTelemetryEnable)
+  setLinkMetric(state, 'link-sat-interval', satInterval)
+  setLinkMetric(state, 'link-sat-skipped', satSkipped)
+  setLinkMetric(state, 'link-sat-skip-reason', satSkipReason)
+  setLinkDot('link-sat-dot', satTelemetryEnable.value === 'TRUE')
 }
 
 function optionMarkup(options, selected) {
@@ -380,6 +424,7 @@ export function refreshDashboardStatus(state, systemConfigs) {
   setVisualFixedMetric('visual-temperature', field(state, 'THERMAL', 'TEMPERATURE_C', 'TMP'))
 
   refreshSystemValues(state, systemConfigs)
+  updateLinkPanel(state)
   updateGpsMap(state)
   updateAttitudeIndicator(state)
 }

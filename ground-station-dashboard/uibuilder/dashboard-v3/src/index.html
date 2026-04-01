@@ -195,6 +195,42 @@
         </div>
       </section>
 
+      <section class="panel link-panel" data-panel="link">
+        <div class="panel-header">
+          <div class="panel-title">Link</div>
+          <button class="panel-toggle" type="button" data-panel-toggle aria-expanded="true" aria-controls="panel-link">Collapse</button>
+        </div>
+        <div class="panel-content" id="panel-link">
+          <div class="link-grid">
+            <article class="link-card">
+              <div class="link-card-header">
+                <div class="panel-title link-title">Ground Link <span class="inline-dot" id="link-ground-dot" aria-hidden="true"></span></div>
+              </div>
+              <div class="link-metrics link-metrics-ground">
+                <div class="metric-strip"><span class="field-label">RAD</span><span class="field-value freshness-empty" id="link-ground-radio">--</span></div>
+                <div class="metric-strip"><span class="field-label">PND</span><span class="field-value freshness-empty" id="link-ground-pending">--</span></div>
+                <div class="metric-strip"><span class="field-label">TX</span><span class="field-value freshness-empty" id="link-ground-tx">--</span></div>
+                <div class="metric-strip"><span class="field-label">RX</span><span class="field-value freshness-empty" id="link-ground-rx">--</span></div>
+                <div class="metric-strip"><span class="field-label">DRP</span><span class="field-value freshness-empty" id="link-ground-drop">--</span></div>
+                <div class="metric-strip"><span class="field-label">RTY</span><span class="field-value freshness-empty" id="link-ground-retry">--</span></div>
+                <div class="metric-strip metric-strip-wide"><span class="field-label">DROP RSN</span><span class="field-value freshness-empty" id="link-ground-drop-reason">--</span></div>
+              </div>
+            </article>
+            <article class="link-card">
+              <div class="link-card-header">
+                <div class="panel-title link-title">Satellite Telemetry <span class="inline-dot" id="link-sat-dot" aria-hidden="true"></span></div>
+              </div>
+              <div class="link-metrics link-metrics-sat">
+                <div class="metric-strip"><span class="field-label">EN</span><span class="field-value freshness-empty" id="link-sat-telemetry-enable">--</span></div>
+                <div class="metric-strip"><span class="field-label">INT</span><span class="field-value freshness-empty" id="link-sat-interval">--</span></div>
+                <div class="metric-strip"><span class="field-label">SKP</span><span class="field-value freshness-empty" id="link-sat-skipped">--</span></div>
+                <div class="metric-strip metric-strip-wide"><span class="field-label">SKIP RSN</span><span class="field-value freshness-empty" id="link-sat-skip-reason">--</span></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section class="panel systems-panel" data-panel="systems">
         <div class="panel-header">
           <div class="panel-title">Systems</div>
