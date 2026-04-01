@@ -27,6 +27,7 @@ namespace Config
     constexpr long loraPreambleLength = 6;
     constexpr uint8_t loraSyncWord = 0x12;
     constexpr unsigned long telemetryDeferAfterActivityMs = 250;
+    constexpr unsigned long telemetryInterBatchGapMs = 15;
   }
 
   namespace Telemetry

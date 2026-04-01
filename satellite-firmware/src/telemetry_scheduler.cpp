@@ -1,6 +1,7 @@
 #include "telemetry.h"
 
 #include "adcs.h"
+#include "config.h"
 #include "imu.h"
 #include "mode.h"
 #include "gps.h"
@@ -16,60 +17,70 @@ namespace
 {
   unsigned long lastTelemetryTime = 0;
 
+  void finishTelemetryBatch()
+  {
+    endTelemetryBatch();
+
+    if (Config::Transport::telemetryInterBatchGapMs > 0)
+    {
+      delay(Config::Transport::telemetryInterBatchGapMs);
+    }
+  }
+
   void sendModeBatch()
   {
     beginTelemetryBatch();
     reportModeStatus();
-    endTelemetryBatch();
+    finishTelemetryBatch();
   }
 
   void sendRtcBatch()
   {
     beginTelemetryBatch();
     reportRtcStatus();
-    endTelemetryBatch();
+    finishTelemetryBatch();
   }
 
   void sendTelemetryControlBatch()
   {
     beginTelemetryBatch();
     reportTelemetryStatus();
-    endTelemetryBatch();
+    finishTelemetryBatch();
   }
 
   void sendBatteryBatch()
   {
     beginTelemetryBatch();
     reportBatteryStatus();
-    endTelemetryBatch();
+    finishTelemetryBatch();
   }
 
   void sendGpsBatch()
   {
     beginTelemetryBatch();
     reportGpsStatus();
-    endTelemetryBatch();
+    finishTelemetryBatch();
   }
 
   void sendThermalBatch()
   {
     beginTelemetryBatch();
     reportThermalStatus();
-    endTelemetryBatch();
+    finishTelemetryBatch();
   }
 
   void sendImuBatch()
   {
     beginTelemetryBatch();
     reportImuStatus();
-    endTelemetryBatch();
+    finishTelemetryBatch();
   }
 
   void sendAdcsBatch()
   {
     beginTelemetryBatch();
     reportAdcsStatus();
-    endTelemetryBatch();
+    finishTelemetryBatch();
   }
 }
 
@@ -107,13 +118,13 @@ void sendTelemetrySnapshot()
   {
     sendThermalBatch();
   }
-  if (isTargetTelemetryEnabled(TARGET_IMU))
-  {
-    sendImuBatch();
-  }
   if (isTargetTelemetryEnabled(TARGET_ADCS))
   {
     sendAdcsBatch();
+  }
+  if (isTargetTelemetryEnabled(TARGET_IMU))
+  {
+    sendImuBatch();
   }
 }
 
